@@ -1,0 +1,186 @@
+############################ CODE #######################################
+
+int countStudents(vector<int> &arr, int pages)
+{
+    int n=arr.size();
+    int students =1;
+    long long pagesStudent=0;
+
+    for(int i=0;i<n;i++)
+    {
+        if(pagesStudent + arr[i]<= pages)
+        {
+            pagesStudent += arr[i];
+        }
+        else
+        {
+            students += 1;
+            pagesStudent = arr[i];
+        }
+    
+    }
+
+    return students;
+}
+
+
+
+int findPages(vector<int>& arr, int n, int m) 
+{
+    
+    if(m > n) return -1;
+    int low = * max_element(arr.begin(), arr.end());
+    int high = accumulate (arr.begin(), arr.end(),0);
+
+    while(low <= high)
+    {
+        int mid =(low + high)/2;
+        int students = countStudents (arr, mid);
+
+        if(students > m)
+        {
+            low= mid+1;
+        }
+        else
+        {
+            high = mid-1;
+        }
+    }
+
+    return low;
+}
+
+
+
+
+################################################### EXPLAINATION #####################################################
+
+
+
+
+
+
+Alright! Let’s break this down step by step, using simple language and examples. 
+
+### Problem Explanation
+
+The task here is to distribute a set of books (represented by an array of integers) among a certain number of students. Each integer in the array represents the number of pages in a book. The goal is to minimize the maximum number of pages that any student has to read.
+
+### Example Scenario
+
+Suppose you have the following books:
+
+- Book 1: 100 pages
+- Book 2: 200 pages
+- Book 3: 300 pages
+- Book 4: 400 pages
+
+Let’s say you have 2 students (m = 2). You want to divide these books such that the maximum pages read by any student is minimized.
+
+### Code Explanation
+
+Now, let’s look at the code, which consists of two main functions: `countStudents` and `findPages`.
+
+#### Function 1: `countStudents`
+
+```cpp
+int countStudents(vector<int> &arr, int pages)
+{
+    int n = arr.size();       // Get the number of books
+    int students = 1;         // Start with one student
+    long long pagesStudent = 0; // Track pages assigned to current student
+
+    for (int i = 0; i < n; i++)
+    {
+        // Check if current student can take more pages
+        if (pagesStudent + arr[i] <= pages)
+        {
+            pagesStudent += arr[i]; // Add pages to the current student
+        }
+        else
+        {
+            students += 1;          // Need another student
+            pagesStudent = arr[i];  // Assign current book to new student
+        }
+    }
+    return students; // Return total students used
+}
+```
+
+- **Purpose**: This function counts how many students are needed if each student can read up to `pages` number of pages.
+- **Logic**:
+  - Start with one student and keep track of the pages they are reading.
+  - If adding another book exceeds the limit (`pages`), then we assign the book to a new student.
+
+#### Function 2: `findPages`
+
+```cpp
+int findPages(vector<int>& arr, int n, int m) 
+{
+    if (m > n) return -1; // If there are more students than books, it's not possible
+
+    // Set the range for binary search
+    int low = *max_element(arr.begin(), arr.end()); // Minimum pages a student can read (largest book)
+    int high = accumulate(arr.begin(), arr.end(), 0); // Maximum pages (all books)
+
+    while (low <= high)
+    {
+        int mid = (low + high) / 2; // Midpoint of current range
+        int students = countStudents(arr, mid); // Count students needed for mid pages
+
+        if (students > m)
+        {
+            low = mid + 1; // Increase the limit if too many students are needed
+        }
+        else
+        {
+            high = mid - 1; // Decrease the limit if students are within the limit
+        }
+    }
+
+    return low; // Return the minimum of the maximum pages
+}
+```
+
+- **Purpose**: This function finds the minimum possible value of the maximum number of pages that a student has to read.
+- **Logic**:
+  - Use binary search to find the optimal solution.
+  - Start with `low` as the maximum pages in a single book and `high` as the total pages of all books.
+  - Adjust `low` and `high` based on how many students are required.
+
+### Dry Run Example
+
+Let’s dry run the example with books `[100, 200, 300, 400]` and `m = 2`.
+
+1. **Initial Setup**:
+   - `low = 400` (max pages in one book)
+   - `high = 1000` (total pages)
+
+2. **First Iteration**:
+   - `mid = (400 + 1000) / 2 = 700`
+   - Call `countStudents(arr, 700)`:
+     - Pages assigned: `100 + 200 + 300` (first student: 600 pages)
+     - 400 goes to new student (total students = 2).
+   - Since 2 <= m, we try lower values, set `high = 699`.
+
+3. **Second Iteration**:
+   - `mid = (400 + 699) / 2 = 549`
+   - Call `countStudents(arr, 549)`:
+     - Pages assigned: `100 + 200 + 300` (first student: 600 pages).
+     - Need 2 students (same as before).
+   - Set `high = 548`.
+
+4. **Continue this process** until you find `low` and `high` converge.
+
+### Final Output
+
+After finishing the iterations, the function returns the minimum pages that any student has to read, ensuring the maximum is minimized. 
+
+In this example, if the iterations lead us to `500`, that means the optimal way to distribute books is such that no student reads more than 500 pages.
+
+### Summary
+
+- The code effectively uses binary search to minimize the maximum load on students.
+- It dynamically checks how many students are required for various limits until it finds the optimal solution.
+
+I hope this explanation makes things clearer! If you have any questions or need further examples, feel free to ask!
