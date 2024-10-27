@@ -1,0 +1,111 @@
+Sure! Let's break down the code and its logic step-by-step, explaining it in simple terms.
+
+### Problem Statement
+The task here is to reverse the order of words in a given string while maintaining the original spacing. For example:
+- Input: `"Hello World"`
+- Output: `"World Hello"`
+
+### Understanding the Code
+
+Here's the code again, with comments added for clarity:
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+// Function to reverse the order of words in a string
+string reverseString(string &str) {
+    // Use istringstream to read words and handle multiple spaces
+    istringstream iss(str); // Create a stream from the input string
+    vector<string> words;    // Vector to store individual words
+    string word;            // Variable to store each word temporarily
+
+    // Extract words from the input string
+    while (iss >> word) {   // Read words from the stream
+        words.push_back(word); // Add each word to the vector
+    }
+
+    // Build the reversed string
+    string result;           // To store the final reversed string
+    for (int i = words.size() - 1; i >= 0; --i) { // Iterate from the last word to the first
+        result += words[i];  // Append the word to result
+        if (i > 0) result += ' '; // Add a space only if not the last word
+    }
+
+    return result;          // Return the final reversed string
+}
+```
+
+### Code Flow Explained
+
+1. **Initialization**:
+   - The function `reverseString` takes a string reference as input.
+   - We create an `istringstream` object called `iss` that reads from `str`.
+   - We declare a vector `words` to store the individual words and a string `word` to temporarily hold each word.
+
+2. **Extracting Words**:
+   - The `while (iss >> word)` line reads words from the string stream. 
+     - Here, `iss` is the input stream, and `>> word` extracts a word from the stream.
+     - The `while` loop continues until there are no more words to read.
+     - Each extracted word is stored in the `words` vector using `words.push_back(word)`.
+
+3. **Building the Reversed String**:
+   - We initialize an empty string `result`.
+   - We use a `for` loop to iterate backward through the `words` vector. The loop runs from the last index (`words.size() - 1`) to `0`.
+   - In each iteration, we append the current word to `result`.
+   - If it's not the last word, we add a space to `result`.
+
+4. **Returning the Result**:
+   - Finally, the function returns the `result`, which contains the words in reverse order.
+
+### Example Walkthrough
+
+Let's dry-run the code with an example.
+
+#### Example 1
+- Input: `"Hello World"`
+
+1. **Extracting Words**:
+   - `iss` reads `Hello` -> `word` becomes `"Hello"`
+   - `words` becomes `["Hello"]`
+   - `iss` reads `World` -> `word` becomes `"World"`
+   - `words` becomes `["Hello", "World"]`
+
+2. **Building Reversed String**:
+   - Start with an empty `result`.
+   - Loop starts from index `1` (last word):
+     - `result += words[1]` → `result` becomes `"World"`
+     - Add space: `result` is now `"World "`
+     - Next, for index `0`: `result += words[0]` → `result` becomes `"World Hello"`
+
+3. **Final Output**:
+   - The function returns `"World Hello"`.
+
+#### Example 2
+- Input: `"   Hello    World   "` (extra spaces)
+
+1. **Extracting Words**:
+   - Only extracts `Hello` and `World`.
+   - `words` becomes `["Hello", "World"]`.
+
+2. **Building Reversed String**:
+   - Same as before, we get `"World Hello"`.
+
+### Explanation of Specific Lines
+
+- **`while (iss >> word)`**:
+  - This line reads words from the string stream `iss`. The `>>` operator extracts words separated by spaces. If there are multiple spaces, they are ignored, and only words are collected.
+
+- **`for (int i = words.size() - 1; i >= 0; --i)`**:
+  - This line iterates backward through the `words` vector. `words.size() - 1` gives the index of the last word. The loop continues until `i` is `0`, effectively reversing the order of the words.
+
+### Differences between `word` and `words`
+- `word` is a single string variable that temporarily holds the current word being extracted from the input string.
+- `words` is a vector that stores all the words extracted from the input string.
+
+### Conclusion
+
+This code efficiently reverses the words in a string while ignoring extra spaces. It uses a string stream for word extraction and a vector to store those words. The process involves reading, storing, and then reconstructing the string in reverse order. 
+
+Feel free to ask if you have any more questions or need further clarification!
