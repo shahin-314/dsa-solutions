@@ -1,0 +1,91 @@
+Alright, let's break this down step by step in a simple manner.
+
+### Question Explanation
+
+The problem is to find the largest odd number you can form from a given string of digits. The output should be the longest substring that ends with an odd digit. If there are no odd digits, you should return an empty string.
+
+### Code Explanation
+
+Here’s the code again, with comments added for clarity:
+
+```cpp
+class Solution {
+public:
+    string largestOddNumber(string num) {
+        // Start from the last character and move backwards
+        for (int i = num.length() - 1; i >= 0; --i) {
+            // Check if the character at index i is an odd digit
+            if ((num[i] - '0') % 2 == 1) {
+                // If it's odd, return the substring from the start to this index (inclusive)
+                return num.substr(0, i + 1);
+            }
+        }
+        // If no odd digit is found, return an empty string
+        return "";
+    }
+};
+```
+
+### Iteration Explained
+
+1. **Looping from the End**: The loop starts from the last digit of the string and checks each digit backwards. This is done using `for (int i = num.length() - 1; i >= 0; --i)`. This way, you ensure you find the largest odd number since you're checking the digits in reverse.
+
+2. **Checking for Odd Digit**: Inside the loop, the condition `if ((num[i] - '0') % 2 == 1)` checks if the digit at index `i` is odd. Here, `num[i] - '0'` converts the character to its integer value. For example, if `num[i]` is `'3'`, then `num[i] - '0'` gives `3`.
+
+3. **Returning the Substring**: If an odd digit is found, `return num.substr(0, i + 1);` gives you the substring from the beginning of the string to the index `i`, which includes the odd digit.
+
+4. **No Odd Digit**: If no odd digit is found after checking all digits, it returns an empty string `return "";`.
+
+### Flow of the Code with Examples
+
+Let’s run through a few examples to illustrate how the code works.
+
+#### Example 1: `num = "123456"`
+
+- Starting from index `5` (character `'6'`), check if it’s odd:
+  - `'6'` is even → Move to index `4` (character `'5'`)
+  - `'5'` is odd → Return `num.substr(0, 5)`, which is `"12345"`
+
+**Output**: `"12345"`
+
+#### Example 2: `num = "2468"`
+
+- Starting from index `3` (character `'8'`), check if it’s odd:
+  - `'8'` is even → Move to index `2` (character `'6'`)
+  - `'6'` is even → Move to index `1` (character `'4'`)
+  - `'4'` is even → Move to index `0` (character `'2'`)
+  - `'2'` is even → No odd digits found
+
+**Output**: `""` (empty string)
+
+#### Example 3: `num = "13579"`
+
+- Start from index `4` (character `'9'`):
+  - `'9'` is odd → Return `num.substr(0, 5)`, which is `"13579"`
+
+**Output**: `"13579"`
+
+### Dry Run of the Code
+
+Let’s do a dry run using `num = "579"`:
+
+1. **Index 2**: `num[2] = '9'` → Odd → Return `num.substr(0, 3)` → Output: `"579"`
+  
+The loop stops here because we found our odd digit.
+
+### Explanation of Specific Code Lines
+
+1. **`(num[i] - '0') % 2 == 1`**:
+   - If `num[i]` is `'3'`, then:
+     - `num[i] - '0'` → `3`
+     - `3 % 2` → `1` (since it's odd)
+   - If `num[i]` is `'4'`, then:
+     - `num[i] - '0'` → `4`
+     - `4 % 2` → `0` (even)
+
+2. **`num.substr(0, i + 1)`**:
+   - If `i` is `2`, it means we return from the start of the string to index `2`, giving us `num.substr(0, 3)`.
+
+### Conclusion
+
+So, the code effectively checks each digit from the end of the string until it finds an odd digit. If found, it returns the substring up to and including that digit. If not, it returns an empty string. This approach ensures you always get the largest odd number possible from the given string.
