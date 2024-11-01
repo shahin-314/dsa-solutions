@@ -1,0 +1,33 @@
+In your code, the `deletehead` function is designed to remove the head node of a linked list and return the new head of the list. Let’s break down your questions:
+
+### 1. Why is the return type of `deletehead` `Node*`?
+
+The return type is `Node*` (pointer to Node) because when you delete the head of the linked list, the original head node is removed from memory, and the new head of the list is now the second node. You need to return this new head pointer so that it can be used to reference the updated list.
+
+### 2. What happens if you do not use the `*`?
+
+If you don’t use the `*`, and instead just return a `Node`, you would be returning a copy of the Node, not a pointer to the new head. This would not update the caller's reference to the head of the list, which means that after the `deletehead` function is called, the original head pointer in `main` would still point to the old head node, which has been deleted. As a result, it would lead to undefined behavior if you tried to access or use that pointer after the deletion.
+
+### 3. Why are the `deletehead` and `print` functions not written in `cout` like other functions?
+
+The `deletehead` function doesn’t return a value that you want to print. Instead, it modifies the linked list by deleting the head and returning the new head pointer. You use it like this:
+
+```cpp
+head = deletehead(head);
+```
+
+This updates the `head` pointer to point to the new head of the list after deletion.
+
+The `print` function is called to display the contents of the linked list, but it directly prints to the console instead of returning a value. Thus, you call it like this:
+
+```cpp
+print(head);
+```
+
+It performs an action (printing) rather than returning a value that you would print with `cout`.
+
+### Summary
+
+- **Pointer return types** (`Node*`) are used to modify linked list structures properly.
+- If you don’t use pointers, you lose the ability to update your list effectively after operations like deletions.
+- Functions like `print` perform actions (printing) rather than returning values for further processing.
