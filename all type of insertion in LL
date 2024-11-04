@@ -1,0 +1,474 @@
+############################################## CODE ####################################################
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+   class Node
+    {
+        public:
+        int data;
+        Node* next;
+        
+        public:
+        Node(int data1 , Node* next1)
+        {
+            data = data1;
+            next = next1;
+        }
+        
+        public:
+        Node (int data1)
+        {
+            data = data1;
+            next = nullptr;
+        }
+    };
+    
+    Node* convertArr2LL (vector<int> &arr) // convert array to LL
+    {
+        Node* head = new Node (arr[0]);
+        Node* mover =  head;
+        
+        for(int i=1 ; i<arr.size() ; i++)
+        {
+            Node* temp = new Node(arr[i]);
+            mover->next=temp;
+            mover = temp;
+        }
+        return head;
+    }
+    
+    int lenghtofLL(Node* head)
+    {
+        int cnt = 0;
+        Node* temp = head;
+        while(temp) // this will print the whole LL 
+        {
+            temp = temp -> next;
+            cnt++;
+        }
+        
+        return cnt;
+    }
+    
+    int searchinLL(Node* head , int val)
+    {
+        Node* temp = head;
+        while(temp) //OR  temp!==null
+        {
+            if(temp -> data == val) return 1;
+            temp = temp -> next;
+        }
+        return 0;
+    }
+    
+    void print (Node* head) // prints LL
+    {
+        while(head!= NULL) // head
+        {
+            cout<<head ->data << " ";
+            head = head -> next;
+        }
+        cout<<endl;
+    }
+    
+    Node* deletehead (Node* head)
+    {
+        if(head == nullptr) return head;
+        Node* temp = head;
+        head = head -> next;
+        delete temp;
+        return head;
+    }
+    
+    Node* deletetail(Node* head)
+    {
+        if(head == NULL || head -> next == NULL ) return NULL;
+        
+        Node* temp = head;
+        while(temp -> next -> next != NULL)
+        {
+            temp = temp -> next;
+        }
+        
+        delete temp -> next;
+        temp -> next = nullptr;
+        return head;
+    }
+    
+    Node* removeKele(Node* head, int k) // ele as per position
+    {
+       if(head == NULL) return head;
+       
+       if(k==1)
+       {
+           Node* temp = head;
+           head = head -> next;
+           delete temp;
+           return head;
+       }
+       
+       int cnt = 0;
+       Node* temp = head;
+       Node* prev = NULL;
+       
+       while(temp != NULL)
+       {
+           cnt++;
+           
+           if(cnt == k)
+           {
+               prev -> next = prev -> next ->next;
+               delete temp ;
+               break;
+           }
+           
+           prev = temp;
+           temp = temp -> next;
+       }
+       return head;
+        
+    }
+    
+     Node* removeVal(Node* head, int val) // del val 
+    {
+       if(head == NULL) return head;
+       
+       if(head -> data == val)
+       {
+           Node* temp = head;
+           head = head -> next;
+           delete temp;
+           return head;
+       }
+      
+       Node* temp = head;
+       Node* prev = NULL;
+       
+       while(temp != NULL)
+       {
+           if(temp -> data == val)
+           {
+               prev -> next = prev -> next ->next;
+               delete temp ;
+               break;
+           }
+           
+           prev = temp;
+           temp = temp -> next;
+       }
+       return head;
+    }
+    
+    Node* insertNodeAt1st (Node* head , int val)
+    {
+        return new Node (val , head);
+        // OR Node* temp = new Node (val,head); return temp;
+    }
+    
+    Node* insertTail (Node*head, int val)
+    {
+        if(head == NULL)
+        {
+            return new Node (val);
+        }
+        
+        Node* temp = head;
+        while(temp-> next != NULL)
+        {
+            temp = temp -> next;
+        }
+        
+        Node * newNode = new Node(val);
+        temp -> next = newNode;
+        return head ;
+    }
+    
+    Node* insertAtPosition (Node* head, int el, int k)
+    {
+        if(head == NULL)
+        {
+            if(k == 1)
+            {
+                return new Node (el);
+            }
+            else
+            {
+                return head;
+            }
+            
+            if(k == 1)
+            {
+               return new Node (el,head); 
+            }
+        }
+            
+            int cnt = 0;
+            Node* temp = head;
+            
+            while (temp != NULL)
+            {
+                cnt++;
+          
+                if(cnt == (k-1))
+                {
+                    Node* x = new Node (el, temp -> next);
+                    temp -> next = x;
+                    break;
+                }
+                
+                temp = temp -> next;
+            
+            }
+            
+            return head;
+    }
+    
+    Node* insertBeforValue (Node* head, int el, int val)
+    {
+        if(head == NULL)
+        {
+           return NULL;
+        }
+            
+        if(head -> data == val)
+        {
+             return new Node (el,head); 
+        }
+       
+        Node* temp = head;
+            
+        while (temp -> next != NULL)
+        {
+            if(temp -> next -> data == val)
+            {
+                Node* x = new Node (el, temp -> next);  
+                temp -> next = x;
+                break;
+            }
+                
+            temp = temp -> next;
+            
+        }
+            
+            return head;
+    }
+
+int main() 
+{
+    vector<int> arr = {12,5,8,9};
+    Node* head = convertArr2LL(arr);
+    // cout<< head->data; // this will print the head of the LL (12)
+    
+    // traversal in LL 
+    // Node* temp = head;
+    // while(temp) // this will print the whole LL 
+    // {
+    //     cout<<temp->data <<" "; 
+    //     temp = temp -> next;
+    // }
+    
+    // cout<<lenghtofLL(head);  4
+    
+    // cout << searchinLL (head,9);  search in list.
+    
+    // head = deletehead(head);
+    // head = deletetail(head);
+    // head = removeKele(head, 2);
+    // head =  removeVal (head , 8);
+    // head = insertNodeAt1st (head , 100);
+    // head = insertTail (head, 100);
+    // head = insertAtPosition(head,100, 4);
+    head = insertBeforValue(head,100,5);
+    print(head);
+    
+}
+
+
+
+###################################### EXPLAINATION #########################################
+
+
+Sure! Let’s break down the code step by step, and I’ll explain it clearly, just like you would hear in a discussion. We'll go through what the code is doing, how the linked list operations work, and how we get to the output.
+
+### Overview of the Problem
+The task here is to implement a linked list in C++. We have various operations to perform on this linked list like inserting, deleting, and searching for nodes. A linked list is a data structure where each element (node) points to the next, forming a chain. 
+
+### Code Breakdown
+Let’s go through the code and explain it line by line with examples.
+
+1. **Node Class Definition**
+   ```cpp
+   class Node {
+       public:
+       int data;
+       Node* next;
+   ```
+   Here, we define a `Node` class. Each `Node` has two properties:
+   - `data`: stores the integer value.
+   - `next`: a pointer that points to the next `Node` in the list.
+
+2. **Node Constructors**
+   ```cpp
+   Node(int data1 , Node* next1) {
+       data = data1;
+       next = next1;
+   }
+   Node (int data1) {
+       data = data1;
+       next = nullptr;
+   }
+   ```
+   We have two constructors:
+   - The first constructor allows setting both `data` and `next`.
+   - The second constructor initializes a node with just the `data` and sets `next` to `nullptr`.
+
+3. **Converting an Array to a Linked List**
+   ```cpp
+   Node* convertArr2LL (vector<int> &arr) {
+       Node* head = new Node (arr[0]);
+       Node* mover =  head;
+
+       for(int i=1; i<arr.size(); i++) {
+           Node* temp = new Node(arr[i]);
+           mover->next = temp;
+           mover = temp;
+       }
+       return head;
+   }
+   ```
+   - We create a linked list from an array. The head of the list is initialized with the first element.
+   - We use a pointer `mover` to keep track of where we are in the list while adding new nodes.
+   - For example, if `arr = {12, 5, 8, 9}`, we create nodes for each number and link them.
+
+4. **Length of Linked List**
+   ```cpp
+   int lengthofLL(Node* head) {
+       int cnt = 0;
+       Node* temp = head;
+       while(temp) {
+           temp = temp->next;
+           cnt++;
+       }
+       return cnt;
+   }
+   ```
+   - This function counts how many nodes are in the list by traversing it until `temp` becomes `nullptr`.
+
+5. **Searching for a Value in the Linked List**
+   ```cpp
+   int searchinLL(Node* head , int val) {
+       Node* temp = head;
+       while(temp) {
+           if(temp->data == val) return 1;
+           temp = temp->next;
+       }
+       return 0;
+   }
+   ```
+   - We check each node’s data. If we find the value, we return `1` (found), otherwise `0` (not found).
+
+6. **Printing the Linked List**
+   ```cpp
+   void print(Node* head) {
+       while(head != NULL) {
+           cout << head->data << " ";
+           head = head->next;
+       }
+       cout << endl;
+   }
+   ```
+   - This function prints all the elements in the linked list in order.
+
+7. **Deleting the Head Node**
+   ```cpp
+   Node* deletehead(Node* head) {
+       if(head == nullptr) return head;
+       Node* temp = head;
+       head = head->next;
+       delete temp;
+       return head;
+   }
+   ```
+   - This function deletes the first node. It checks if the list is empty, moves the head to the next node, deletes the old head, and returns the new head.
+
+8. **Deleting the Tail Node**
+   ```cpp
+   Node* deletetail(Node* head) {
+       if(head == NULL || head->next == NULL) return NULL;
+
+       Node* temp = head;
+       while(temp->next->next != NULL) {
+           temp = temp->next;
+       }
+
+       delete temp->next;
+       temp->next = nullptr;
+       return head;
+   }
+   ```
+   - Here, we traverse to the second-last node and delete the last node. If there’s only one node, we simply return `NULL`.
+
+9. **Inserting at the Beginning**
+   ```cpp
+   Node* insertNodeAt1st(Node* head, int val) {
+       return new Node(val, head);
+   }
+   ```
+   - This creates a new node and makes it the new head of the list.
+
+10. **Inserting at the Tail**
+    ```cpp
+    Node* insertTail(Node* head, int val) {
+        if(head == NULL) {
+            return new Node(val);
+        }
+
+        Node* temp = head;
+        while(temp->next != NULL) {
+            temp = temp->next;
+        }
+
+        Node * newNode = new Node(val);
+        temp->next = newNode;
+        return head;
+    }
+    ```
+    - This function traverses to the end of the list and adds a new node there.
+
+11. **Example Usage in `main()`**
+    ```cpp
+    int main() {
+        vector<int> arr = {12,5,8,9};
+        Node* head = convertArr2LL(arr);
+        print(head);
+        head = insertBeforValue(head, 100, 5);
+        print(head);
+    }
+    ```
+    - We start by converting an array into a linked list. Then we call `print` to display the list.
+    - Finally, we insert `100` before the node containing `5`.
+
+### Flow of Code Execution
+1. Convert the array into a linked list:
+   - Create `Node(12)`, `Node(5)`, `Node(8)`, `Node(9)`.
+   - Link them together.
+   
+2. Print the list:
+   - Output: `12 5 8 9`
+
+3. Insert `100` before `5`:
+   - Traverse to `5`, create a new `Node(100)` and link it.
+   
+4. Print the modified list:
+   - Output: `12 100 5 8 9`
+
+### Final Output
+After inserting `100` before `5`, the final output will be:
+```
+12 100 5 8 9
+```
+
+### Conclusion
+This code provides a comprehensive implementation of a linked list with various operations. Each function is designed to handle specific tasks like inserting, deleting, and printing nodes, allowing for dynamic management of data. The flow of execution can be traced through the function calls and variable changes, giving you a solid understanding of how linked lists work in practice.
