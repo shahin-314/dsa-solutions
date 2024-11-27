@@ -1,0 +1,17 @@
+Node * insertAtTail(Node *head, int k) 
+{
+    if(head == NULL)
+    {
+        return new Node(k);
+    }
+
+    Node* tail = head;
+    while(tail -> next != NULL)
+    {
+        tail = tail -> next;
+    }
+
+    Node* newNode = new Node (k , nullptr , tail);
+    tail -> next = newNode;
+    return head;
+}
