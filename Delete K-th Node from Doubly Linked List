@@ -1,0 +1,53 @@
+/*
+ * Definition for linked list.
+ * class Node {
+ *  public:
+ *		int val;
+ *		Node *next;
+ * 		Node *prev;
+ *		Node() : val(0), next(nullptr), prev(nullptr){};
+ *		Node(int x) : val(x), next(nullptr), prev(nullptr) {}
+ *		Node(int x, Node *next, Node *prev) : val(x), next(next), prev(prev) {}
+ * };
+ */
+
+Node *deleteNode(Node *head, int k) {
+    if (head == nullptr) {
+        return nullptr;  // If the list is empty, return null
+    }
+    
+    Node* current = head;
+    int cnt = 1;
+    
+    // Traverse to the k-th node (1-indexed)
+    while (current != nullptr && cnt < k) {
+        current = current->next;
+        cnt++;
+    }
+    
+    // If current is nullptr, k is out of range, return head as is
+    if (current == nullptr) {
+        return head;
+    }
+    
+    // Case 1: Deleting the head node
+    if (current == head) {
+        head = current->next;
+        if (head != nullptr) {
+            head->prev = nullptr;
+        }
+    }
+    // Case 2: Deleting a node in the middle or tail
+    else {
+        if (current->prev != nullptr) {
+            current->prev->next = current->next;
+        }
+        if (current->next != nullptr) {
+            current->next->prev = current->prev;
+        }
+    }
+    
+    // Clean up the deleted node
+    delete current;
+    return head;
+}
