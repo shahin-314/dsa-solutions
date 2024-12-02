@@ -1,0 +1,169 @@
+Let’s break this code step by step and explain how it works, in an easy and systematic manner, just like before.
+
+---
+
+### **What does this code do?**
+This code finds the **length of a cycle (loop)** in a linked list. If there’s a loop, it calculates how many nodes are in the cycle.
+
+---
+
+### **How does it work?**
+The code has two parts:
+1. **Detect the loop**: Use two pointers (`slow` and `fast`) to check if there’s a cycle in the linked list.
+2. **Calculate loop length**: If a loop is detected, count the number of nodes in the cycle using another function.
+
+---
+
+### **Step-by-Step Explanation**
+
+#### **1. Detect the Loop**
+The function `lengthOfLoop(Node* head)` detects if a loop exists in the linked list:
+- Two pointers (`slow` and `fast`) start at the head.
+- `slow` moves one step at a time.
+- `fast` moves two steps at a time.
+- If `slow` and `fast` meet, a loop exists.
+
+---
+
+#### **2. Calculate the Loop Length**
+The function `findLengthOfLoopLL(Node* slow, Node* fast)` calculates the loop length:
+- Start from the meeting point of `slow` and `fast`.
+- Traverse the loop using one pointer (`fast`) until it meets `slow` again.
+- Count the number of steps taken.
+
+---
+
+### **Dry Run with Example**
+
+#### **Linked List with a Loop**
+Example:
+```
+1 -> 2 -> 3 -> 4 -> 5
+          ^          |
+          |----------|
+```
+Here:
+- Node `5` points back to node `3`, forming a loop.
+
+---
+
+#### **Step-by-Step Execution**
+
+**Code Flow:**
+1. **Initialization**:
+   - `slow = head (1)`
+   - `fast = head (1)`
+
+---
+
+**Detect the Loop (`lengthOfLoop`)**:
+- **Iteration 1**:
+  - `slow = 2`
+  - `fast = 3`
+- **Iteration 2**:
+  - `slow = 3`
+  - `fast = 5`
+- **Iteration 3**:
+  - `slow = 4`
+  - `fast = 4` (they meet, loop detected).
+
+At this point, the code calls `findLengthOfLoopLL(slow, fast)`.
+
+---
+
+**Find the Loop Length (`findLengthOfLoopLL`)**:
+- Start from the meeting point (`slow = fast = 4`).
+- **Count the nodes**:
+  - `fast = 5`, count = 1.
+  - `fast = 3`, count = 2.
+  - `fast = 4` (back to `slow`), count = 3.
+
+The loop length is **3**.
+
+---
+
+### **Key Functions and Their Purpose**
+
+#### **1. `findLengthOfLoopLL`**
+Calculates the length of the cycle:
+```cpp
+int findLengthOfLoopLL(Node* slow , Node* fast)
+{
+    int cnt = 1; // Start count with the current node
+    fast = fast->next; // Move fast to the next node
+
+    while(slow != fast) // Traverse until fast meets slow again
+    {
+        cnt++; // Increment the count
+        fast = fast->next; // Move fast to the next node
+    }
+
+    return cnt; // Return the total count
+}
+```
+
+---
+
+#### **2. `lengthOfLoop`**
+Detects the cycle and calculates the length if a loop exists:
+```cpp
+int lengthOfLoop(Node *head) 
+{
+    Node* slow = head; // Slow pointer starts at head
+    Node* fast = head; // Fast pointer starts at head
+
+    while(fast != NULL && fast->next != NULL) // Check fast and fast->next are not NULL
+    {
+        slow = slow->next;            // Move slow by 1 step
+        fast = fast->next->next;      // Move fast by 2 steps
+
+        if(slow == fast) // Loop detected
+        {
+            return findLengthOfLoopLL(slow, fast); // Calculate loop length
+        }
+    }
+
+    return 0; // No loop
+}
+```
+
+---
+
+### **Example Without a Loop**
+For a linked list:
+```
+1 -> 2 -> 3 -> 4 -> 5 -> NULL
+```
+- `slow` and `fast` traverse the list, but `fast` reaches `NULL`.
+- The function returns `0` (no loop).
+
+---
+
+### **Dry Run Table**
+
+Let’s track the values for the looped example:
+
+| **Iteration** | `slow`   | `fast`   | Comment                       |
+|---------------|----------|----------|-------------------------------|
+| 1             | `2`      | `3`      | Moving pointers               |
+| 2             | `3`      | `5`      | Moving pointers               |
+| 3             | `4`      | `4`      | Loop detected, pointers meet  |
+
+---
+
+**Loop Traversal for Length**:
+
+| **Iteration** | `fast`   | `count`  | Comment                       |
+|---------------|----------|----------|-------------------------------|
+| 1             | `5`      | `1`      | Counting nodes in the loop    |
+| 2             | `3`      | `2`      | Moving through the loop       |
+| 3             | `4`      | `3`      | Back to start, loop length = 3|
+
+---
+
+### **Final Output**
+For the given example, the length of the loop is `3`.
+
+---
+
+Let me know if you need further clarification or additional examples!
