@@ -1,0 +1,182 @@
+##################### CODE ################################
+
+Node* removeKthNode(Node* head, int K)
+{
+    Node* slow= head;
+    Node* fast = head;
+
+    for ( int i = 0 ; i < K ; i++) fast = fast -> next;
+
+    if(fast == NULL) return head -> next ;
+
+    while(fast -> next != NULL)
+    {
+        slow = slow -> next;
+        fast = fast -> next;
+    }
+
+    Node* deleteNode = slow -> next;
+    slow -> next = slow -> next -> next;
+    free (deleteNode);
+    return head;
+    
+}
+
+
+
+################### explaination ##############################
+
+
+
+Got it! Let me explain the entire code properly in a detailed and **systematic manner**, step-by-step, exactly as you want. I'll make it **easy**, include **examples**, and dry-run it fully.
+
+---
+
+### **What is this code doing?**
+The function **removes the K-th node from the end** of a linked list. The code achieves this efficiently in one pass using two pointers (`slow` and `fast`). 
+
+---
+
+### **How does it work?**
+1. Move the `fast` pointer `K` steps ahead from the start.
+2. Simultaneously move both `slow` and `fast` pointers until `fast` reaches the end of the list.
+3. At this point, the `slow` pointer is just before the node that needs to be removed.
+4. Update the `next` pointer of `slow` to skip the K-th node from the end.
+5. If `fast` becomes `NULL` immediately after the initial K steps, the head itself is the node to be removed.
+
+---
+
+### **Code Explanation**
+
+#### **Step-by-Step Breakdown**
+Let’s look at each line of code:
+
+```cpp
+Node* removeKthNode(Node* head, int K)
+{
+    Node* slow = head; // Slow pointer starts at the head
+    Node* fast = head; // Fast pointer also starts at the head
+```
+- Two pointers are initialized at the head of the list.
+
+---
+
+```cpp
+    for (int i = 0; i < K; i++) 
+        fast = fast->next;
+```
+- Move `fast` pointer `K` steps forward. This ensures that when `fast` reaches the end, `slow` will be just before the node to be removed.
+
+---
+
+```cpp
+    if (fast == NULL) 
+        return head->next;
+```
+- If `fast` becomes `NULL` after moving `K` steps, it means the list has exactly `K` nodes, and the head node needs to be removed. So, return `head->next`.
+
+---
+
+```cpp
+    while (fast->next != NULL)
+    {
+        slow = slow->next; // Move slow one step forward
+        fast = fast->next; // Move fast one step forward
+    }
+```
+- Move both pointers one step at a time until `fast` reaches the last node. At this point, `slow` will be just before the K-th node from the end.
+
+---
+
+```cpp
+    Node* deleteNode = slow->next;       // Save the node to be deleted
+    slow->next = slow->next->next;      // Skip the K-th node
+    free(deleteNode);                   // Free the memory of the deleted node
+    return head;                        // Return the updated head
+```
+- Remove the K-th node by skipping it in the list.
+
+---
+
+### **Flow of the Code with Example**
+
+#### Example Input
+Linked list: `1 -> 2 -> 3 -> 4 -> 5`, `K = 2`.
+
+#### **Dry Run**
+
+1. **Initialization**:
+   - `slow = 1`, `fast = 1`
+
+---
+
+2. **Move `fast` K steps ahead**:
+   - Step 1: `fast = 2`
+   - Step 2: `fast = 3`
+
+---
+
+3. **Move both pointers until `fast` reaches the end**:
+   - Iteration 1: `slow = 2`, `fast = 4`
+   - Iteration 2: `slow = 3`, `fast = 5` (end reached)
+
+---
+
+4. **Delete the K-th node from the end**:
+   - `slow->next` is pointing to `4` (the node to be removed).
+   - Update `slow->next` to `slow->next->next` (i.e., `3 -> 5`).
+
+---
+
+**Final Linked List**:
+`1 -> 2 -> 3 -> 5`.
+
+---
+
+### **Diagram Representation**
+
+#### Original List:
+```
+head -> 1 -> 2 -> 3 -> 4 -> 5
+                     ^    ^
+                   slow  fast
+```
+
+#### After Deletion:
+```
+head -> 1 -> 2 -> 3 -----> 5
+```
+
+---
+
+### **Edge Cases**
+
+1. **K = 1 (Remove last node)**:
+   - Input: `1 -> 2 -> 3 -> 4 -> 5`, `K = 1`.
+   - Output: `1 -> 2 -> 3 -> 4`.
+
+2. **K = Length of the List (Remove the head)**:
+   - Input: `1 -> 2 -> 3 -> 4 -> 5`, `K = 5`.
+   - Output: `2 -> 3 -> 4 -> 5`.
+
+3. **Single Node List (Remove the only node)**:
+   - Input: `1`, `K = 1`.
+   - Output: `NULL`.
+
+---
+
+### **Why is this Efficient?**
+- The code uses only **one traversal** of the linked list, so the time complexity is **O(n)**.
+- No extra space is used, so the space complexity is **O(1)**.
+
+---
+
+### **Final Output**
+For the example list `1 -> 2 -> 3 -> 4 -> 5` and `K = 2`, the function returns:
+```
+1 -> 2 -> 3 -> 5
+```
+
+---
+
+Let me know if you have any doubts or want more examples! 😊
