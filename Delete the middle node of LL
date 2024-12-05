@@ -1,0 +1,195 @@
+###################### CODE #########################################
+
+  ListNode* deleteMiddle(ListNode* head) 
+    {
+        if(head == NULL || head -> next == NULL) return NULL;
+
+        ListNode* slow = head;
+        ListNode* fast = head;
+
+        fast = head -> next -> next;
+
+        while(fast != NULL && fast -> next != NULL)
+        {
+            slow = slow -> next ;
+            fast = fast -> next -> next;
+        }
+
+        ListNode* middle = slow -> next;
+        slow -> next = slow -> next -> next;
+        delete(middle);
+        return head;
+        
+    }
+
+############################# EXPLAINATION ##################################
+
+Got it! I will explain everything to you step by step, in simple, beginner-friendly language. We'll break it down slowly so that you understand the problem, the code, and how everything works, just like in an easy Indian-English accent explanation. Let's dive into it!
+
+---
+
+### Problem Statement
+
+The problem you're trying to solve is: **Delete the middle node of a linked list.**
+
+Let me explain the problem in a simple way:
+
+- You have a **linked list** of nodes. Each node has a **value** and a **pointer** to the next node in the list.
+- Your task is to remove the "middle" node from the list. If the list has an **even number of nodes**, remove the second middle node. For example, if the list has 4 nodes, remove the 2nd node from the middle.
+
+### Explanation of the Code
+
+Let’s break down the code you've written and explain it:
+
+#### Step 1: Initial Check for Edge Cases
+```cpp
+if(head == NULL || head -> next == NULL) return NULL;
+```
+- **What is this doing?** It checks if the list is empty (`head == NULL`) or has only one node (`head -> next == NULL`).
+  - If the list is empty or has only one node, there is no middle node to delete, so we simply return `NULL`.
+  
+#### Step 2: Initializing Two Pointers: Slow and Fast
+```cpp
+ListNode* slow = head;
+ListNode* fast = head;
+```
+- **What is this doing?** We initialize two pointers:
+  - `slow`: This pointer will move one step at a time.
+  - `fast`: This pointer will move two steps at a time.
+  
+  These two pointers are used to find the middle node in the list.
+
+#### Step 3: Moving the Fast Pointer Two Steps, and Slow Pointer One Step
+```cpp
+fast = head -> next -> next;
+```
+- **What is this doing?** We move the `fast` pointer two steps ahead.
+  - If `head` is the first node, `fast` now points to the third node.
+  - This is to prepare both pointers for the iteration that follows.
+
+#### Step 4: The Main Loop to Find the Middle Node
+```cpp
+while(fast != NULL && fast -> next != NULL)
+{
+    slow = slow -> next ;
+    fast = fast -> next -> next;
+}
+```
+- **What is this doing?** This is the main loop where the magic happens.
+  - The `fast` pointer moves two steps at a time, while the `slow` pointer moves one step at a time.
+  - When `fast` reaches the end of the list, `slow` will be pointing to the middle node.
+  
+- **Why?** When `fast` reaches the end of the list, `slow` will have traveled half the length, so it will be in the middle.
+
+#### Step 5: Deleting the Middle Node
+```cpp
+ListNode* middle = slow -> next;
+slow -> next = slow -> next -> next;
+delete(middle);
+```
+- **What is this doing?** Here, we do the actual deletion:
+  - We save the reference to the middle node (`slow -> next`).
+  - We update `slow -> next` to point to the node after the middle node (`slow -> next -> next`).
+  - Then we **delete** the middle node to free memory.
+
+#### Step 6: Returning the Modified List
+```cpp
+return head;
+```
+- **What is this doing?** After deleting the middle node, we return the head of the modified list.
+
+---
+
+### Example to Understand the Code
+
+Let’s take an example to walk through this process.
+
+#### Example 1: List with 5 nodes
+Consider the following list:  
+**1 -> 2 -> 3 -> 4 -> 5**
+
+- **Step 1:** We initialize `slow` and `fast` both at the head (`1`).
+- **Step 2:** We move the `fast` pointer to the third node (`3`) and leave the `slow` pointer at the first node (`1`).
+- **Step 3:** Now we start the loop:
+  - On the first iteration, `slow` moves to `2`, and `fast` moves to `5`.
+  - At this point, `fast` has reached the end of the list, so we stop.
+  
+- **Step 4:** The `slow` pointer is at node `2`, and `slow -> next` points to the middle node, which is `3`. We delete this middle node and update the pointers.
+
+- **Final List:** **1 -> 2 -> 4 -> 5**.
+
+#### Example 2: List with 4 nodes
+Now, let’s take another example with 4 nodes:  
+**1 -> 2 -> 3 -> 4**
+
+- **Step 1:** We initialize `slow` and `fast` both at the head (`1`).
+- **Step 2:** We move the `fast` pointer to the third node (`3`) and leave the `slow` pointer at the first node (`1`).
+- **Step 3:** Now we start the loop:
+  - On the first iteration, `slow` moves to `2`, and `fast` moves to `NULL` (end of the list).
+  - Since the list has an even number of nodes, we remove the **second middle node**, which is `2`.
+
+- **Final List:** **1 -> 3 -> 4**.
+
+---
+
+### Dry Run of Code with Values
+
+Let’s dry run the code with **5 nodes** and **4 nodes**.
+
+#### Case 1: List = 1 -> 2 -> 3 -> 4 -> 5
+
+- **Before Loop:**
+  - `slow` points to `1`
+  - `fast` points to `1` but is moved to `3` (2 steps ahead).
+  
+- **First Loop Iteration:**
+  - `slow` moves to `2`.
+  - `fast` moves to `5`.
+  
+- **End of Loop:** `fast` is at `5`, so we stop. `slow` is at `2`, and `slow -> next` is the middle node `3`.
+
+- **Deletion:**
+  - `slow -> next` points to `3`, so we update `slow -> next` to point to `4` (`slow -> next = slow -> next -> next`).
+  - We delete node `3`.
+
+- **Final List:** `1 -> 2 -> 4 -> 5`.
+
+---
+
+#### Case 2: List = 1 -> 2 -> 3 -> 4
+
+- **Before Loop:**
+  - `slow` points to `1`
+  - `fast` points to `1` but is moved to `3` (2 steps ahead).
+  
+- **First Loop Iteration:**
+  - `slow` moves to `2`.
+  - `fast` moves to `NULL`.
+  
+- **End of Loop:** `fast` is at `NULL`, so we stop. `slow` is at `2`, and `slow -> next` is the middle node `2`.
+
+- **Deletion:**
+  - `slow -> next` points to `2`, so we update `slow -> next` to point to `4` (`slow -> next = slow -> next -> next`).
+  - We delete node `2`.
+
+- **Final List:** `1 -> 3 -> 4`.
+
+---
+
+### Flow of the Code
+
+1. **Initialization:** We set both `slow` and `fast` pointers at the head of the list.
+2. **Fast Pointer Moves 2 Steps, Slow Moves 1 Step:** We start moving the pointers in the loop.
+3. **Middle Node Found:** When `fast` reaches the end, `slow` is at the middle node.
+4. **Delete Middle Node:** The middle node is removed by updating the pointers and deleting the node.
+5. **Return Modified List:** The updated list is returned.
+
+---
+
+### Conclusion
+
+So, you can see that:
+- We use **two pointers** (slow and fast) to find the middle node efficiently in one pass.
+- We handle both **odd and even-length lists** correctly by removing the middle node.
+
+I hope this explanation was clear and helpful. If you have any more doubts or need further clarification, feel free to ask! 😊
