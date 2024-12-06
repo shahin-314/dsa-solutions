@@ -1,0 +1,251 @@
+####################### CODE ########################################
+
+Node* sortList(Node *head)
+{
+   if(head == NULL || head -> next == NULL) return head;
+
+   Node* zeroHead = new Node(-1);
+   Node* oneHead  = new Node(-1);
+   Node* twoHead  = new Node(-1);
+
+   Node* zero = zeroHead;
+   Node* one  = oneHead;
+   Node* two  = twoHead;
+   Node* temp = head;
+
+
+   while(temp)
+   {
+       if(temp -> data ==0)
+       {
+           zero -> next = temp;
+           zero = zero -> next;
+       }
+       else if (temp -> data == 1)
+       {
+           one -> next = temp;
+           one = one -> next;
+       }
+       else
+       {
+           two -> next = temp;
+           two = two -> next;
+       }
+        
+        temp = temp -> next;
+
+   } 
+
+    zero -> next = (oneHead -> next) ? (oneHead -> next) : (twoHead -> next);
+    one -> next = twoHead -> next;
+    two -> next = NULL;
+
+    Node* newHead = zeroHead -> next;
+
+    delete zeroHead;
+    delete oneHead;
+    delete twoHead;
+
+    return newHead;
+
+}
+
+
+
+################################ EXPLAINATION ######################################
+
+Node* sortList(Node *head)
+{
+   if(head == NULL || head -> next == NULL) return head;
+
+   Node* zeroHead = new Node(-1);
+   Node* oneHead  = new Node(-1);
+   Node* twoHead  = new Node(-1);
+
+   Node* zero = zeroHead;
+   Node* one  = oneHead;
+   Node* two  = twoHead;
+   Node* temp = head;
+
+
+   while(temp)
+   {
+       if(temp -> data ==0)
+       {
+           zero -> next = temp;
+           zero = zero -> next;
+       }
+       else if (temp -> data == 1)
+       {
+           one -> next = temp;
+           one = one -> next;
+       }
+       else
+       {
+           two -> next = temp;
+           two = two -> next;
+       }
+        
+        temp = temp -> next;
+
+   } 
+
+    zero -> next = (oneHead -> next) ? (oneHead -> next) : (twoHead -> next);
+    one -> next = twoHead -> next;
+    two -> next = NULL;
+
+    Node* newHead = zeroHead -> next;
+
+    delete zeroHead;
+    delete oneHead;
+    delete twoHead;
+
+    return newHead;
+
+}
+
+
+
+######################################### EXPLAINATION #############################
+
+
+Yes, I got it! I'll go through the code step-by-step in a simple way and explain it in an easy-to-understand manner, using examples and diagrams. Let's take a systematic approach so that you can follow each part of the code, understand how it works, and see how the output is generated.
+
+### Question: Explain how the `sortList` function works with examples and diagrams.
+
+The goal of the `sortList` function is to **sort a linked list** that contains only the values `0`, `1`, and `2`. This is known as a **Dutch National Flag problem** where you have to separate nodes into three groups based on their values. The function uses three separate lists to collect nodes of each value (`0`, `1`, and `2`), and then it combines them at the end to form a sorted list.
+
+### Step-by-step Explanation of the Code
+
+#### Part 1: Function Definition and Initialization
+
+```cpp
+Node* sortList(Node *head)
+{
+   // Base case: If the list is empty or has only one node, return it as it is already sorted
+   if(head == NULL || head -> next == NULL) return head;
+
+   // Create dummy nodes for the three linked lists to store nodes with data 0, 1, and 2
+   Node* zeroHead = new Node(-1);
+   Node* oneHead  = new Node(-1);
+   Node* twoHead  = new Node(-1);
+
+   // Create pointers to help traverse and build each linked list
+   Node* zero = zeroHead;
+   Node* one  = oneHead;
+   Node* two  = twoHead;
+   Node* temp = head;  // Pointer to traverse the original list
+```
+
+**Explanation:**
+- The function starts by checking if the linked list is empty or contains only one element. If true, it returns the `head` as it is already sorted.
+- Three dummy nodes `zeroHead`, `oneHead`, and `twoHead` are created. These will be used to store nodes with `0`, `1`, and `2`, respectively.
+- Pointers `zero`, `one`, and `two` are used to build the three separate linked lists.
+- `temp` is used to iterate over the original linked list.
+
+#### Part 2: Traversing the List and Distributing Nodes
+
+```cpp
+   while(temp)
+   {
+       if(temp -> data == 0)  // If the current node's data is 0
+       {
+           zero -> next = temp;  // Add it to the zero list
+           zero = zero -> next;  // Move the pointer to the new last node of the zero list
+       }
+       else if (temp -> data == 1)  // If the current node's data is 1
+       {
+           one -> next = temp;  // Add it to the one list
+           one = one -> next;  // Move the pointer to the new last node of the one list
+       }
+       else  // If the current node's data is 2
+       {
+           two -> next = temp;  // Add it to the two list
+           two = two -> next;  // Move the pointer to the new last node of the two list
+       }
+        
+       temp = temp -> next;  // Move to the next node in the original list
+   } 
+```
+
+**Explanation:**
+- The `while` loop iterates through each node of the original list (`temp`).
+- Depending on the value of `temp -> data`, the node is added to one of the three linked lists (`zero`, `one`, or `two`).
+- The pointer (`zero`, `one`, or `two`) is updated to point to the newly added node.
+- `temp` moves to the next node in the original list.
+
+**Example:**
+Suppose the input list is `1 -> 0 -> 2 -> 1 -> 0 -> 2`.
+- First iteration: `temp -> data` is `1`, add it to `oneHead`.
+- Second iteration: `temp -> data` is `0`, add it to `zeroHead`.
+- Third iteration: `temp -> data` is `2`, add it to `twoHead`.
+- Continue this until the end of the list.
+
+**Diagram after traversal:**
+```
+Original List: 1 -> 0 -> 2 -> 1 -> 0 -> 2
+zeroHead:      0 -> 0
+oneHead:       1 -> 1
+twoHead:       2 -> 2
+```
+
+#### Part 3: Combining the Lists
+
+```cpp
+   // Link the zero list with the one list, and the one list with the two list
+   zero -> next = (oneHead -> next) ? (oneHead -> next) : (twoHead -> next);
+   one -> next = twoHead -> next;
+   two -> next = NULL;  // End the list with NULL
+
+   // Get the new head of the combined list
+   Node* newHead = zeroHead -> next;
+
+   // Free memory of the dummy nodes to avoid memory leak
+   delete zeroHead;
+   delete oneHead;
+   delete twoHead;
+
+   return newHead;  // Return the new sorted list
+}
+```
+
+**Explanation:**
+- The `zero -> next` is set to the start of the `oneHead` list if it exists; otherwise, it points to `twoHead`.
+- `one -> next` is set to the start of `twoHead`.
+- `two -> next` is set to `NULL` to mark the end of the list.
+- The final combined list starts from `zeroHead -> next`.
+- The dummy nodes are deleted to free memory, as they are no longer needed.
+
+**Diagram of Combined List:**
+```
+Sorted List: 0 -> 0 -> 1 -> 1 -> 2 -> 2
+```
+
+### Dry Run of `sortList` with Example `1 -> 0 -> 2 -> 1 -> 0 -> 2`
+
+1. **Initial list**: `1 -> 0 -> 2 -> 1 -> 0 -> 2`
+2. **First iteration**:
+   - `temp -> data = 1`, add to `oneHead`.
+   - `oneHead`: `1`
+3. **Second iteration**:
+   - `temp -> data = 0`, add to `zeroHead`.
+   - `zeroHead`: `0`
+4. **Third iteration**:
+   - `temp -> data = 2`, add to `twoHead`.
+   - `twoHead`: `2`
+5. **Continue until end**:
+   - `zeroHead`: `0 -> 0`
+   - `oneHead`: `1 -> 1`
+   - `twoHead`: `2 -> 2`
+
+**Combining Lists**:
+- `zero -> next = oneHead -> next` (points to `1`)
+- `one -> next = twoHead -> next` (points to `2`)
+- `two -> next = NULL`
+
+**Result**: `0 -> 0 -> 1 -> 1 -> 2 -> 2`
+
+### Final Thoughts
+The function efficiently sorts a linked list containing only `0s`, `1s`, and `2s` in **O(n)** time and **O(1)** space (apart from the space used for the dummy nodes). It's a straightforward way to sort the list without needing additional sorting algorithms.
+
+I hope this clear and step-by-step explanation helps you understand the `sortList` function. Let me know if you'd like more examples or further clarifications!
