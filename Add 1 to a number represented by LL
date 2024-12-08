@@ -1,0 +1,192 @@
+###############################  CODE  ###################################
+
+int addHelper(Node* temp)
+{
+    if(temp == NULL) return 1;
+
+    int carry = addHelper (temp -> next);
+
+    temp -> data = temp -> data + carry;
+
+    if(temp -> data <10) return 0;
+
+    temp -> data = 0;
+    return 1;
+}
+
+
+Node *addOne(Node *head)
+{
+    int carry = addHelper(head);
+    if (carry == 1)
+    {
+        Node* newNode = new Node(1);
+        newNode -> next = head;
+        return newNode;
+    }
+
+    return head;
+}
+
+
+###################################  EXPLAINATION  #########################################
+
+
+Got it! Let's break down the code systematically and explain it step-by-step in an easy manner, with examples and diagrams. We'll follow this structure:
+
+1. **Understanding the Problem Statement**  
+   - What the code is supposed to do.
+2. **Code Explanation with Comments**  
+   - Line-by-line explanation of the code.
+3. **Example with Diagram**  
+   - Take an example linked list, show how it works.
+4. **Dry Run (Step-by-Step)**  
+   - Show how values flow during each iteration.
+5. **All Possible Scenarios**  
+   - Cover edge cases to explain thoroughly.
+
+---
+
+### 1. **Understanding the Problem**
+
+This code is solving the problem of adding `1` to a number represented by a linked list.  
+- **Example**: If the linked list represents the number **129**, adding `1` will make it **130**.  
+  - Input: `1 -> 2 -> 9`
+  - Output: `1 -> 3 -> 0`
+
+We need to:
+- Traverse the list from the last node to the first node.
+- Add 1 to the last node and handle the carry (if any).
+- If a carry remains after traversing the entire list, add a new node at the beginning.
+
+---
+
+### 2. **Code Explanation with Comments**
+
+Here’s the code with comments explaining each line:
+
+```cpp
+int addHelper(Node* temp)
+{
+    // Base case: If we've reached the end of the list
+    if(temp == NULL) return 1; // Return carry as 1 (initially adding 1)
+
+    // Recursive call to process the next node
+    int carry = addHelper(temp->next);
+
+    // Add carry to the current node's data
+    temp->data = temp->data + carry;
+
+    // If the current node's data is less than 10, no carry is needed
+    if(temp->data < 10) return 0;
+
+    // If the sum is 10 or more, we reset data to 0 and return carry as 1
+    temp->data = 0;
+    return 1;
+}
+
+Node *addOne(Node *head)
+{
+    // Call helper function to add 1 starting from the last node
+    int carry = addHelper(head);
+
+    // If there's still a carry after processing all nodes
+    if (carry == 1)
+    {
+        // Create a new node with value 1 and make it the new head
+        Node* newNode = new Node(1);
+        newNode->next = head;
+        return newNode;
+    }
+
+    // Return the original head if no extra carry
+    return head;
+}
+```
+
+---
+
+### 3. **Example with Diagram**
+
+Let’s take the example **129** (`1 -> 2 -> 9`).
+
+#### Initial Linked List
+```
+Head -> 1 -> 2 -> 9 -> NULL
+```
+
+### Step 1: Start from the Last Node
+- Add `1` to the last node (`9`):  
+  - `9 + 1 = 10`.  
+  - Set the node's data to `0` and pass a carry of `1`.
+
+#### Updated List:
+```
+Head -> 1 -> 2 -> 0 -> NULL (carry = 1)
+```
+
+---
+
+### Step 2: Move to the Second Last Node
+- Add the carry (`1`) to the second last node (`2`):  
+  - `2 + 1 = 3`.  
+  - No carry now.
+
+#### Updated List:
+```
+Head -> 1 -> 3 -> 0 -> NULL (carry = 0)
+```
+
+---
+
+### Step 3: Check the First Node
+- Add the carry (`0`) to the first node (`1`):  
+  - `1 + 0 = 1`.  
+  - No changes needed.
+
+---
+
+### Final Output
+```
+Head -> 1 -> 3 -> 0 -> NULL
+```
+
+---
+
+### 4. **Dry Run (Step-by-Step)**
+
+#### Input Linked List: `1 -> 2 -> 9`
+- **Recursive Calls**:
+  - `addHelper(9)` → Returns `1` (sets node to `0`).
+  - `addHelper(2)` → Adds `1`, returns `0` (sets node to `3`).
+  - `addHelper(1)` → Adds `0`, no carry remains.
+
+#### Final List: `1 -> 3 -> 0`.
+
+---
+
+### 5. **All Possible Scenarios**
+
+1. **No Carry After Addition**  
+   Input: `1 -> 2 -> 3`  
+   Output: `1 -> 2 -> 4`  
+
+2. **Carry Propagates Through Entire List**  
+   Input: `9 -> 9 -> 9`  
+   Output: `1 -> 0 -> 0 -> 0`
+
+3. **Single Node**  
+   Input: `9`  
+   Output: `1 -> 0`
+
+---
+
+### Flow of Code
+
+1. **Recursive Traversal**: Goes to the last node first, then comes back while handling carry.
+2. **Carry Handling**: If the sum is `10`, resets the node to `0` and propagates carry.
+3. **Edge Case**: Adds a new node if a carry remains after traversing the whole list.
+
+---
+
+I hope this explanation clears all your doubts! Let me know if you'd like any part explained further. 😊
