@@ -1,0 +1,191 @@
+############################  CODE  ######################################
+
+Node* findtail(Node* head)
+{
+    Node* tail = head;
+    while(tail -> next != NULL) tail = tail -> next;
+    return tail;
+}
+
+vector<pair<int, int>> findPairs(Node* head, int k)
+{
+    vector<pair<int , int >> ans;
+    if(head == NULL) return ans;
+
+    Node* left  = head;
+    Node* right = findtail(head);
+
+    while(left -> data < right -> data)
+    {
+        if(left -> data + right -> data == k)
+        {
+            ans.push_back({left -> data , right -> data});
+            left = left -> next;
+            right = right -> prev;
+        }
+
+        else if(left -> data + right -> data < k)
+        {
+            left = left -> next;
+        }
+
+        else
+        {
+            right = right -> prev;
+        }
+        
+    }
+
+    return ans;
+}
+
+
+##############################  EXPLAIANATION ###################################
+
+
+### **Understanding the Problem**
+
+The task is to find **all pairs of numbers in a doubly linked list** whose sum equals a given value `k`. We need to return these pairs as a vector of pairs.
+
+---
+
+### **How It Works**
+
+We use two pointers:
+1. **`left`**: Starts from the beginning of the list.
+2. **`right`**: Starts from the end of the list (we find it using the `findtail` function).
+
+The idea is similar to the "two-pointer approach" in arrays:
+- If the sum of `left` and `right` matches `k`, we record the pair.
+- If the sum is **less than `k`**, move the `left` pointer forward (increase the sum).
+- If the sum is **greater than `k`**, move the `right` pointer backward (decrease the sum).
+
+---
+
+### **Step-by-Step Explanation of the Code**
+
+#### **1. Function: `findtail`**
+
+```cpp
+Node* findtail(Node* head)
+{
+    Node* tail = head; // Start from the head of the list
+    while(tail->next != NULL) // Move to the end of the list
+        tail = tail->next;
+    return tail; // Return the last node (tail)
+}
+```
+
+- **Purpose**: Find the last node (tail) of the doubly linked list.
+- **Example**:  
+  Input: `1 <-> 3 <-> 5 <-> 7`  
+  Output: Tail node (value = 7).
+
+---
+
+#### **2. Function: `findPairs`**
+
+```cpp
+vector<pair<int, int>> findPairs(Node* head, int k)
+{
+    vector<pair<int, int>> ans; // To store the pairs
+    if(head == NULL) return ans; // If the list is empty, return empty
+
+    Node* left = head;          // Start from the beginning
+    Node* right = findtail(head); // Find the tail
+
+    while(left->data < right->data) // Continue until pointers meet
+    {
+        if(left->data + right->data == k) // Check if the sum equals k
+        {
+            ans.push_back({left->data, right->data}); // Store the pair
+            left = left->next;  // Move left forward
+            right = right->prev; // Move right backward
+        }
+        else if(left->data + right->data < k) // If the sum is less than k
+        {
+            left = left->next; // Increase the sum by moving left
+        }
+        else // If the sum is greater than k
+        {
+            right = right->prev; // Decrease the sum by moving right
+        }
+    }
+
+    return ans; // Return all pairs found
+}
+```
+
+---
+
+### **Example Walkthrough**
+
+Let’s take an example to understand better.
+
+#### **Input**:  
+Doubly Linked List: `1 <-> 3 <-> 5 <-> 7 <-> 9`  
+Sum (`k`): `10`
+
+#### **Step 1: Find the Tail**
+- Start from `1`, move to `9`.  
+- **`right` points to 9**.
+
+---
+
+#### **Step 2: Initialize Pointers**
+- `left = 1`, `right = 9`.
+
+---
+
+#### **Step 3: Process Each Pair**
+| **Step** | `left->data` | `right->data` | `left->data + right->data` | Action                       | Result      |
+|----------|--------------|---------------|----------------------------|------------------------------|-------------|
+| 1        | 1            | 9             | 10                         | Pair matches, add `(1, 9)`   | `ans = [(1, 9)]` |
+| 2        | 3            | 7             | 10                         | Pair matches, add `(3, 7)`   | `ans = [(1, 9), (3, 7)]` |
+| 3        | 5            | 5             | 10                         | Pointers meet, stop          | -           |
+
+---
+
+#### **Output**
+`ans = [(1, 9), (3, 7)]`
+
+---
+
+### **Flow of Values**
+
+1. **Initialize**: `left` and `right` pointers are set to the start and end of the list.
+2. **Check Sum**:
+   - Compare the sum of `left` and `right` values with `k`.
+   - Depending on the sum, move either `left` forward or `right` backward.
+3. **Store Pair**: If the sum matches, store the pair in the vector.
+4. **Repeat**: Continue until `left` meets `right`.
+
+---
+
+### **Edge Cases**
+
+1. **Empty List**:  
+   Input: `head = NULL`, `k = 5`  
+   Output: `[]` (no pairs).
+
+2. **No Pairs**:  
+   Input: `1 <-> 2 <-> 3`, `k = 10`  
+   Output: `[]`.
+
+3. **Single Element**:  
+   Input: `5`, `k = 5`  
+   Output: `[]`.
+
+4. **Multiple Pairs**:  
+   Input: `1 <-> 2 <-> 3 <-> 4 <-> 5`, `k = 6`  
+   Output: `[(1, 5), (2, 4)]`.
+
+---
+
+### **Why It Works**
+
+This approach is efficient because:
+1. The two-pointer method reduces unnecessary checks.
+2. We process each node at most once.
+
+Let me know if you need more examples or diagrams! 😊
