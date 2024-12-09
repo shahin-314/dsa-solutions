@@ -1,0 +1,193 @@
+###########################  CODE ###########################
+
+Node * removeDuplicates(Node *head)
+{
+    Node* temp = head;
+
+    while( temp != NULL && temp -> next != NULL)
+    {
+        Node* nextnode = temp -> next;
+
+        while(nextnode != NULL && nextnode -> data == temp -> data)
+        {
+            Node* duplicate = nextnode;
+            nextnode = nextnode -> next;
+            delete(duplicate);
+
+        }
+
+        temp -> next = nextnode;
+
+        if(nextnode != NULL) nextnode -> prev = temp;
+
+        temp = temp -> next;
+
+    }
+
+    return head;
+}
+
+
+
+###############################  EXPLAINATION  ##############################
+
+
+### **Understanding the Problem**
+
+The task is to remove all duplicate nodes from a **sorted doubly linked list**. If two or more nodes have the same data, we keep the first occurrence and delete the others. The list should remain connected and sorted after removing duplicates.
+
+---
+
+### **How the Code Works**
+
+#### **High-Level Explanation**
+
+1. Start at the head of the list.
+2. For each node (`temp`), check all subsequent nodes (`nextnode`).
+3. If a subsequent node has the same data as the current node:
+   - Delete that node.
+   - Update the links to maintain the doubly linked list structure.
+4. Move to the next distinct node.
+5. Repeat until the entire list is processed.
+
+---
+
+### **Step-by-Step Code Explanation**
+
+Here is the code with detailed comments and explanation:
+
+```cpp
+Node* removeDuplicates(Node* head)
+{
+    Node* temp = head; // Start from the head of the list
+
+    // Iterate through the list
+    while (temp != NULL && temp->next != NULL)
+    {
+        Node* nextnode = temp->next; // Pointer to the next node
+
+        // Check for duplicates of the current node
+        while (nextnode != NULL && nextnode->data == temp->data)
+        {
+            Node* duplicate = nextnode; // Store the duplicate node
+            nextnode = nextnode->next;  // Move to the next node
+            delete(duplicate);          // Delete the duplicate node
+        }
+
+        // Update the links to skip the duplicates
+        temp->next = nextnode;
+
+        if (nextnode != NULL)
+            nextnode->prev = temp; // Update the backward link for the doubly linked list
+
+        temp = temp->next; // Move to the next distinct node
+    }
+
+    return head; // Return the updated list
+}
+```
+
+---
+
+### **Key Concepts**
+
+1. **Doubly Linked List**:
+   - Each node has three parts: `data`, `next`, and `prev`.
+   - `next` points to the next node.
+   - `prev` points to the previous node.
+
+2. **Duplicate Removal**:
+   - Compare the `data` of consecutive nodes.
+   - Delete a node if its data matches the current node's data.
+
+---
+
+### **Example Walkthrough**
+
+#### **Input**:
+Doubly Linked List:  
+`1 <-> 1 <-> 2 <-> 3 <-> 3 <-> 4 <-> 4`
+
+---
+
+#### **Dry Run**:
+
+| **Step** | `temp` | `nextnode` | **Action**                     | **List after Step**        |
+|----------|--------|------------|---------------------------------|----------------------------|
+| 1        | 1      | 1          | Delete duplicate `1`           | `1 <-> 2 <-> 3 <-> 3 <-> 4 <-> 4` |
+| 2        | 1      | 2          | No action, move `temp` to `2`  | `1 <-> 2 <-> 3 <-> 3 <-> 4 <-> 4` |
+| 3        | 2      | 3          | No action, move `temp` to `3`  | `1 <-> 2 <-> 3 <-> 3 <-> 4 <-> 4` |
+| 4        | 3      | 3          | Delete duplicate `3`           | `1 <-> 2 <-> 3 <-> 4 <-> 4`       |
+| 5        | 3      | 4          | No action, move `temp` to `4`  | `1 <-> 2 <-> 3 <-> 4 <-> 4`       |
+| 6        | 4      | 4          | Delete duplicate `4`           | `1 <-> 2 <-> 3 <-> 4`             |
+| 7        | 4      | NULL       | End of list                    | `1 <-> 2 <-> 3 <-> 4`             |
+
+---
+
+#### **Output**:
+Doubly Linked List:  
+`1 <-> 2 <-> 3 <-> 4`
+
+---
+
+### **Flow of Execution**
+
+1. **Initialization**:
+   - Start at the head (`temp = head`).
+
+2. **Outer Loop**:
+   - Continue until `temp` reaches the end (`temp != NULL`).
+   - Check the current node (`temp`) for duplicates.
+
+3. **Inner Loop**:
+   - Compare `nextnode` with `temp`.
+   - If they match, delete `nextnode`.
+
+4. **Link Update**:
+   - After removing duplicates, link `temp->next` to `nextnode`.
+   - Also, link `nextnode->prev` to `temp`.
+
+5. **Move Forward**:
+   - Move `temp` to `nextnode`.
+
+---
+
+### **Edge Cases**
+
+1. **Empty List**:
+   - Input: `head = NULL`
+   - Output: `NULL` (no change).
+
+2. **No Duplicates**:
+   - Input: `1 <-> 2 <-> 3`
+   - Output: `1 <-> 2 <-> 3` (no change).
+
+3. **All Duplicates**:
+   - Input: `1 <-> 1 <-> 1`
+   - Output: `1` (only one node remains).
+
+4. **Large List**:
+   - The code works efficiently even for long lists because we process each node only once.
+
+---
+
+### **Diagram**
+
+#### Before:
+```
+1 <-> 1 <-> 2 <-> 3 <-> 3 <-> 4 <-> 4
+```
+
+#### After:
+```
+1 <-> 2 <-> 3 <-> 4
+```
+
+---
+
+### **Summary**
+
+- The algorithm removes duplicates efficiently by using two nested loops.
+- It maintains the structure of the doubly linked list by properly updating `next` and `prev` pointers.
+- Handles all edge cases gracefully.
+- Let me know if you need more examples or further clarification! 😊
