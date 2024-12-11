@@ -1,0 +1,255 @@
+#########################  CODE ################################
+
+Node* reverseLinkedList(Node *head)
+{
+    Node* temp = head;
+    Node* prev = NULL;
+
+    while(temp != NULL)
+    {
+        Node* front = temp->next;
+        temp->next = prev;
+        prev = temp;
+        temp = front;
+    }
+
+    return prev;
+}
+
+Node* getKthNode(Node* temp, int k)
+{
+    k--;  // we want to move k-1 steps from the current node
+
+    while(temp != NULL && k > 0)
+    {
+        k--;
+        temp = temp->next;
+    }
+
+    return temp;
+}
+
+Node* kReverse(Node* head, int k)
+{
+    Node* temp = head;
+    Node* prevLast = NULL;
+
+    while(temp != NULL)
+    {
+        Node* kthNode = getKthNode(temp, k);
+
+        if(kthNode == NULL)
+        {
+            if(prevLast)
+                prevLast->next = temp;
+            break;  // Not enough nodes to reverse, just connect the rest
+        }
+
+        Node* nextNode = kthNode->next;
+        kthNode->next = NULL;
+
+        // Reverse the sublist from 'temp' to 'kthNode'
+        Node* reversedHead = reverseLinkedList(temp);
+
+        if(prevLast == NULL)
+        {
+            // If it's the first sublist being reversed, update the head
+            head = reversedHead;
+        }
+        else
+        {
+            // Connect the previously processed part to the reversed sublist
+            prevLast->next = reversedHead;
+        }
+
+        // Update prevLast to the last node of the reversed sublist
+        temp->next = nextNode;  // Now, temp is the last node in the reversed sublist
+        prevLast = temp;
+
+        // Move to the next section of the list to reverse
+        temp = nextNode;
+    }
+
+    return head;
+}
+
+
+
+
+###################################  EXPLAINATION ################################
+
+Got it! I'll explain everything step by step in a simple way, with clear examples and diagrams, and I'll keep it beginner-friendly. I’ll also take you through each line of code with detailed comments and explain how things work. We’ll do a dry run with examples so that you understand the flow completely.
+
+### Problem Explanation:
+
+The question you have is about reversing parts of a **Linked List** in chunks of size `k`. Let me break down the task for you and explain how the code solves it.
+
+**What is a Linked List?**
+- A **Linked List** is a collection of nodes where each node has two parts:
+  1. `data`: the value stored.
+  2. `next`: a pointer/reference to the next node in the list.
+  
+  For example, a linked list with nodes having values 1, 2, and 3 would look like this:
+  
+  ```
+  [1] -> [2] -> [3] -> NULL
+  ```
+
+### Problem:
+You need to reverse the linked list in chunks of size `k`. For example, if `k = 2`, the linked list `[1, 2, 3, 4, 5]` would be reversed in pairs, like this:
+- Reverse the first 2 nodes: `[2, 1, 3, 4, 5]`
+- Reverse the next 2 nodes: `[2, 1, 4, 3, 5]`
+- The last node remains the same: `[2, 1, 4, 3, 5]`
+
+If there are fewer than `k` nodes left, you don’t reverse them, just leave them as is.
+
+### Code Explanation:
+
+Let’s break down the code and explain each part.
+
+```cpp
+Node* reverseLinkedList(Node *head)
+{
+    Node* temp = head;
+    Node* prev = NULL;
+
+    while(temp != NULL)
+    {
+        Node* front = temp->next;  // Store the next node
+        temp->next = prev;          // Reverse the current node’s pointer
+        prev = temp;                // Move prev to current node
+        temp = front;               // Move temp to the next node
+    }
+
+    return prev;  // Return the new head after the list is reversed
+}
+```
+
+- This function takes the head of a linked list and reverses it.
+- It uses three pointers:
+  1. `temp`: to traverse the list.
+  2. `prev`: to keep track of the previous node (which will become the next node after reversing).
+  3. `front`: to keep track of the next node in the list before changing the pointer of `temp`.
+
+### `getKthNode` Function:
+
+```cpp
+Node* getKthNode(Node* temp, int k)
+{
+    k--;  // We want to move k-1 steps from the current node
+
+    while(temp != NULL && k > 0)
+    {
+        k--;                // Decrement k each time
+        temp = temp->next;  // Move to the next node
+    }
+
+    return temp;  // Return the kth node
+}
+```
+
+- This function finds the `k`-th node starting from a given node (`temp`).
+- It moves `k-1` steps from the `temp` node and returns the `k`-th node.
+
+### Main `kReverse` Function:
+
+```cpp
+Node* kReverse(Node* head, int k)
+{
+    Node* temp = head;
+    Node* prevLast = NULL;  // Keeps track of the last node of the previous reversed section
+
+    while(temp != NULL)
+    {
+        Node* kthNode = getKthNode(temp, k);  // Find the kth node
+
+        if(kthNode == NULL)
+        {
+            if(prevLast)
+                prevLast->next = temp;  // If less than k nodes left, attach them as they are
+            break;  // Stop processing if we have fewer than k nodes
+        }
+
+        Node* nextNode = kthNode->next;  // Save the next node after kth node
+        kthNode->next = NULL;  // Disconnect the kth node from the rest of the list
+
+        Node* reversedHead = reverseLinkedList(temp);  // Reverse the segment from temp to kthNode
+
+        if(prevLast == NULL)
+        {
+            head = reversedHead;  // If it's the first sublist, update the head of the list
+        }
+        else
+        {
+            prevLast->next = reversedHead;  // Connect the previous part of the list to the reversed part
+        }
+
+        temp->next = nextNode;  // Connect the last node of the reversed part to the remaining list
+        prevLast = temp;        // Update prevLast to the last node of the current reversed sublist
+
+        temp = nextNode;  // Move temp to the next part of the list
+    }
+
+    return head;  // Return the head of the new list
+}
+```
+
+### Explanation:
+
+1. **Initialization:**
+   - `temp`: Points to the current node (starting at the head).
+   - `prevLast`: Keeps track of the last node of the previous reversed section (initialized to `NULL`).
+   
+2. **Main Loop:**
+   - In each iteration, find the `k`-th node from `temp` using `getKthNode`.
+   - If there are fewer than `k` nodes, simply connect the remaining nodes and stop.
+   - Otherwise, reverse the list from `temp` to `kthNode` using `reverseLinkedList`.
+   - After reversing the sublist, connect it to the previously processed part of the list (if any).
+   - Move `temp` to the next part of the list for the next iteration.
+
+### Dry Run with Example:
+
+Let’s do a dry run with a simple example:
+
+#### Example:
+Linked List: `[1] -> [2] -> [3] -> [4] -> [5]`
+`k = 3`
+
+1. **First Iteration**:
+   - `temp = 1`, `prevLast = NULL`.
+   - Find the 3rd node (`kthNode` = 3).
+   - Reverse the sublist from `temp` to `kthNode` (`1 -> 2 -> 3` becomes `3 -> 2 -> 1`).
+   - Now, the list looks like: `[3] -> [2] -> [1] -> [4] -> [5]`.
+   - `prevLast` is updated to point to node `1`.
+   - `temp` moves to node `4`.
+
+2. **Second Iteration**:
+   - `temp = 4`, `prevLast = 1`.
+   - Find the 3rd node (`kthNode` = 5).
+   - Reverse the sublist from `temp` to `kthNode` (`4 -> 5` becomes `5 -> 4`).
+   - Now, the list looks like: `[3] -> [2] -> [1] -> [5] -> [4]`.
+   - `prevLast` is updated to point to node `4`.
+   - `temp` moves to `NULL`.
+
+3. **End**:
+   - Since `temp` is now `NULL`, the process ends.
+
+#### Final List:
+After reversing in chunks of 3, the final list looks like this:
+```
+[3] -> [2] -> [1] -> [5] -> [4]
+```
+
+### Flow of Code:
+
+1. Start with the head of the linked list.
+2. Reverse the first `k` nodes.
+3. After reversing, update the connections to maintain the list.
+4. Repeat the process until all chunks are processed.
+
+### Summary:
+- This code reverses a linked list in groups of `k` nodes.
+- It handles edge cases where the last chunk has fewer than `k` nodes.
+- The solution is efficient and handles all scenarios.
+
+Let me know if you need further explanation or more examples!
