@@ -1,0 +1,316 @@
+##################################  CODE  ###########################
+
+// Step 1: Insert copied nodes in between original nodes
+void insertCopyInBetween(Node* head)
+{
+    Node* temp = head;
+
+    while(temp != NULL)
+    {
+        Node* nextElement = temp -> next;  // Store the next node of the current node
+        Node* copy = new Node(temp -> data);  // Create a new copy node with the same data
+
+        copy -> next = nextElement;  // The next of copy node will be the original next node
+        temp -> next = copy;  // The next of original node will point to the copy
+
+        temp = nextElement;  // Move to the next original node
+    }
+}
+
+// Step 2: Connect random pointers for the copied nodes
+void connectRandomPointers(Node* head)
+{
+    Node* temp = head;
+
+    while(temp != NULL)
+    {
+        Node* copyNode = temp -> next;  // Copy node is the next node after the original node
+
+        if(temp -> random)  // If the original node has a random pointer
+        {
+            copyNode -> random = temp ->random -> next;  // Set the random pointer of copy node
+        }
+
+        temp = temp -> next -> next;  // Move to the next original node
+    }
+}
+
+// Step 3: Separate the original list and the copied list
+Node* getDeepCopyList(Node* head)
+{
+    Node* temp = head;
+    Node* dummyNode = new Node(-1);  // Temporary node to help in the new list creation
+    Node* res = dummyNode;
+
+    while(temp != NULL)
+    {
+        res -> next = temp -> next;  // Add the copied node to the result list
+        res = res -> next;  // Move to the next copied node
+
+        temp -> next = temp -> next -> next;  // Skip the copied node in the original list
+        temp = temp -> next;  // Move to the next original node
+    }
+
+    return dummyNode -> next;  // Return the deep copy list starting from the first copied node
+}
+
+// Final function to clone the linked list
+Node *cloneLL(Node *head)
+{
+    insertCopyInBetween(head);  // Step 1: Insert copied nodes
+    connectRandomPointers(head);  // Step 2: Set random pointers for copied nodes
+
+    return getDeepCopyList(head);  // Step 3: Separate the two lists and return the copied list
+}
+
+
+
+##################################   EXPLAINATION  ###########################################
+
+Got it! I'll explain the given code in a very simple and easy manner, step by step. I'll break it down, show you how the logic works, and explain everything with the help of examples and diagrams.
+
+---
+
+### What is the problem here?
+
+The task is to **clone a linked list with random pointers**. 
+
+This means that for each node in a given linked list:
+1. Each node has two pointers:
+   - **next**: pointing to the next node in the list.
+   - **random**: pointing to any random node (it can point to any node or NULL).
+
+The goal is to **create a deep copy** of this linked list, meaning we need to create a new linked list where:
+- Each node has the same **data** as the original.
+- Each node’s **random** pointer points to the same node as the original list.
+- The **next** pointer is also copied.
+
+---
+
+### Steps to Solve
+
+We will break down the solution into 3 main steps:
+
+1. **Insert Copy Nodes Between Original Nodes**: We create a copy of each node and insert it right after the original node.
+2. **Set Random Pointers for Copy Nodes**: After step 1, we will link the random pointers of the copied nodes.
+3. **Separate the Original List and the Copied List**: Finally, we will separate the two lists, so we have the original list and the new copied list.
+
+### Let's Break Down the Code
+
+```cpp
+// Step 1: Insert copied nodes in between original nodes
+void insertCopyInBetween(Node* head)
+{
+    Node* temp = head;
+
+    while(temp != NULL)
+    {
+        Node* nextElement = temp -> next;  // Store the next node of the current node
+        Node* copy = new Node(temp -> data);  // Create a new copy node with the same data
+
+        copy -> next = nextElement;  // The next of copy node will be the original next node
+        temp -> next = copy;  // The next of original node will point to the copy
+
+        temp = nextElement;  // Move to the next original node
+    }
+}
+
+// Step 2: Connect random pointers for the copied nodes
+void connectRandomPointers(Node* head)
+{
+    Node* temp = head;
+
+    while(temp != NULL)
+    {
+        Node* copyNode = temp -> next;  // Copy node is the next node after the original node
+
+        if(temp -> random)  // If the original node has a random pointer
+        {
+            copyNode -> random = temp ->random -> next;  // Set the random pointer of copy node
+        }
+
+        temp = temp -> next -> next;  // Move to the next original node
+    }
+}
+
+// Step 3: Separate the original list and the copied list
+Node* getDeepCopyList(Node* head)
+{
+    Node* temp = head;
+    Node* dummyNode = new Node(-1);  // Temporary node to help in the new list creation
+    Node* res = dummyNode;
+
+    while(temp != NULL)
+    {
+        res -> next = temp -> next;  // Add the copied node to the result list
+        res = res -> next;  // Move to the next copied node
+
+        temp -> next = temp -> next -> next;  // Skip the copied node in the original list
+        temp = temp -> next;  // Move to the next original node
+    }
+
+    return dummyNode -> next;  // Return the deep copy list starting from the first copied node
+}
+
+// Final function to clone the linked list
+Node *cloneLL(Node *head)
+{
+    insertCopyInBetween(head);  // Step 1: Insert copied nodes
+    connectRandomPointers(head);  // Step 2: Set random pointers for copied nodes
+
+    return getDeepCopyList(head);  // Step 3: Separate the two lists and return the copied list
+}
+```
+
+---
+
+### Explanation with Example
+
+Let's take an example to explain the code. Suppose the original list looks like this:
+
+```
+Original List:
+    Node1 -> Node2 -> Node3
+    random:  |       |       |
+            v       v       v
+           Node3   Node1   Node2
+```
+
+Here, the `random` pointer of each node points to another node, or it could be `NULL`.
+
+Now, let’s see how the code works:
+
+---
+
+### Step 1: Insert Copy Nodes Between Original Nodes
+
+#### Code:
+
+```cpp
+void insertCopyInBetween(Node* head)
+{
+    Node* temp = head;
+    while(temp != NULL)
+    {
+        Node* nextElement = temp -> next;  // Step 1: Store the next node
+        Node* copy = new Node(temp -> data);  // Step 2: Create a new copy node with the same data
+
+        copy -> next = nextElement;  // Step 3: Copy node’s next points to the original next node
+        temp -> next = copy;  // Step 4: Original node’s next points to the copy node
+
+        temp = nextElement;  // Step 5: Move to the next original node
+    }
+}
+```
+
+#### Dry Run:
+
+- Initially, `head = Node1 -> Node2 -> Node3`.
+- `temp = Node1`: We create a copy of `Node1`, so the new list becomes:
+  
+  ```
+  Node1 -> Copy1 -> Node2 -> Node3
+  ```
+
+- Now, `temp = Node2`: We create a copy of `Node2`, so the list becomes:
+
+  ```
+  Node1 -> Copy1 -> Node2 -> Copy2 -> Node3
+  ```
+
+- Finally, `temp = Node3`: We create a copy of `Node3`, and the list becomes:
+
+  ```
+  Node1 -> Copy1 -> Node2 -> Copy2 -> Node3 -> Copy3
+  ```
+
+---
+
+### Step 2: Connect Random Pointers for Copy Nodes
+
+#### Code:
+
+```cpp
+void connectRandomPointers(Node* head)
+{
+    Node* temp = head;
+    while(temp != NULL)
+    {
+        Node* copyNode = temp -> next;  // Copy node is next to the original node
+
+        if(temp -> random)  // If random pointer exists for the original node
+        {
+            copyNode -> random = temp -> random -> next;  // Copy node’s random points to copied random node
+        }
+
+        temp = temp -> next -> next;  // Move to the next original node
+    }
+}
+```
+
+#### Dry Run:
+
+- For `temp = Node1`, the random pointer of `Node1` points to `Node3`, so `Copy1`'s random points to `Copy3`.
+- For `temp = Node2`, the random pointer of `Node2` points to `Node1`, so `Copy2`'s random points to `Copy1`.
+- For `temp = Node3`, the random pointer of `Node3` points to `Node2`, so `Copy3`'s random points to `Copy2`.
+
+---
+
+### Step 3: Separate the Original List and the Copied List
+
+#### Code:
+
+```cpp
+Node* getDeepCopyList(Node* head)
+{
+    Node* temp = head;
+    Node* dummyNode = new Node(-1);  // Temporary node to help in the new list creation
+    Node* res = dummyNode;
+
+    while(temp != NULL)
+    {
+        res -> next = temp -> next;  // Add the copied node to the result list
+        res = res -> next;  // Move to the next copied node
+
+        temp -> next = temp -> next -> next;  // Skip the copied node in the original list
+        temp = temp -> next;  // Move to the next original node
+    }
+
+    return dummyNode -> next;  // Return the deep copy list starting from the first copied node
+}
+```
+
+#### Dry Run:
+
+- `temp = Node1`: We move `Copy1` to the new list.
+- `temp = Node2`: We move `Copy2` to the new list.
+- `temp = Node3`: We move `Copy3` to the new list.
+
+The result is the deep copy list:
+
+```
+Deep Copy List:
+    Copy1 -> Copy2 -> Copy3
+    random:  |       |       |
+              v       v       v
+             Copy3   Copy1   Copy2
+```
+
+### Final Output:
+
+The function returns the new deep copy list, where each node has its `random` pointer set correctly and the list structure is preserved.
+
+---
+
+### Conclusion
+
+In simple steps, you:
+1. Create copies of each node and insert them between the original nodes.
+2. Set the random pointers of the copied nodes.
+3. Separate the original list and the copied list to return the deep copy.
+
+This method ensures that the random pointers are also correctly copied, and we get a **deep clone** of the original list.
+
+---
+
+I hope this makes sense! Let me know if you need more clarifications or further examples.
