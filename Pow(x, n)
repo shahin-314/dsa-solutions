@@ -1,0 +1,153 @@
+Got it! I'll explain everything in simple and easy steps, just like I'm explaining to a beginner. I'll explain in a very easy way, with simple words and show you how the code works, how the values pass through it, and I'll give examples for each case. We'll start with the question you've provided.
+
+### Problem Overview
+
+You are given a number `X` (the base) and an integer `N` (the exponent). Your task is to calculate \( X^N \), which means multiplying `X` by itself `N` times. If `N` is negative, you need to calculate the inverse, i.e., \( X^{-N} \) which is \( \frac{1}{X^N} \).
+
+### Concept Behind the Problem
+
+- When `N = 3`, \( X^3 = X \times X \times X \)
+- When `N = 2`, \( X^2 = X \times X \)
+- When `N = 1`, \( X^1 = X \)
+- When `N = 0`, \( X^0 = 1 \) (this is a special case)
+- When `N = -1`, \( X^{-1} = \frac{1}{X} \)
+
+### What is Binary Exponentiation?
+
+In simple terms, **binary exponentiation** is a technique to calculate large powers quickly. Instead of multiplying the number repeatedly, it reduces the problem size at each step by squaring the base and halving the exponent.
+
+For example:
+- \( 2^8 \) can be broken down into \( 2^4 \times 2^4 \).
+- \( 2^4 \) can be further broken down into \( 2^2 \times 2^2 \).
+- \( 2^2 \) can be further broken down into \( 2 \times 2 \).
+
+This allows us to reduce the number of operations and speed up the process.
+
+### Understanding the Code
+
+Here's the code you provided:
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+long long Pow(int X, int N) {
+    long long ans = 1; // Initialize result to 1
+    long long x = X;   // Assign X to x, to keep the base safe
+    long long n = N;   // Assign N to n, to keep the exponent safe
+
+    if (n < 0) { // If exponent is negative
+        // Handle negative exponents for integer base
+        return 0;  // For integer base and negative exponent, return 0 or handle error
+    }
+
+    // Loop while n is greater than 0
+    while (n > 0) {
+        if (n % 2) { // If exponent is odd
+            ans = ans * x;  // Multiply the current result by x
+            n = n - 1;  // Decrease the exponent by 1 to make it even
+        } else { 
+            x = x * x;  // Square the base (x = x * x)
+            n = n / 2;  // Halve the exponent
+        }
+    }
+
+    return ans; // Return the final result
+}
+```
+
+### Breaking Down the Code
+
+Let's go step by step through the code.
+
+1. **Initialization**:
+   - `long long ans = 1;` → We start with an initial result of 1. We will multiply this by `x` during the loop.
+   - `long long x = X;` → Copy the base `X` into a variable `x`.
+   - `long long n = N;` → Copy the exponent `N` into a variable `n`.
+
+2. **Handling Negative Exponents**:
+   - The code checks if `n < 0`, and if true, it returns `0`. This is an error case because the code is designed for positive integer exponents. Negative exponents would require special handling (involving division).
+
+3. **Main Logic**:
+   - We use a **while loop** that runs as long as `n > 0`.
+   - Inside the loop, we check if `n` is odd (`n % 2 == 1`). If it is, we multiply the current result `ans` by `x`. We then reduce `n` by 1 to make it even.
+   - If `n` is even (`n % 2 == 0`), we square the base `x` (i.e., multiply `x` by itself) and halve the exponent `n`.
+
+### Dry Run Example 1: \( X = 2, N = 5 \)
+
+We are trying to calculate \( 2^5 \). 
+
+#### Step 1:
+- **Initial Values**: 
+  - `x = 2`
+  - `n = 5`
+  - `ans = 1`
+  
+#### Step 2: First Iteration (n = 5)
+- Since `n` is odd (`n % 2 == 1`), we multiply `ans` by `x`:
+  - `ans = 1 * 2 = 2`
+- Now, `n = 4` (we subtract 1 from `n` to make it even).
+  
+#### Step 3: Second Iteration (n = 4)
+- Since `n` is even (`n % 2 == 0`), we square `x`:
+  - `x = 2 * 2 = 4`
+- Now, `n = 2` (we divide `n` by 2).
+
+#### Step 4: Third Iteration (n = 2)
+- Since `n` is even (`n % 2 == 0`), we square `x` again:
+  - `x = 4 * 4 = 16`
+- Now, `n = 1` (we divide `n` by 2).
+
+#### Step 5: Fourth Iteration (n = 1)
+- Since `n` is odd (`n % 2 == 1`), we multiply `ans` by `x`:
+  - `ans = 2 * 16 = 32`
+- Now, `n = 0` (we subtract 1 from `n` to make it 0).
+
+#### Final Result:
+- The loop ends, and the final value of `ans` is `32`.
+- So, \( 2^5 = 32 \).
+
+### Dry Run Example 2: \( X = 3, N = 4 \)
+
+We are trying to calculate \( 3^4 \).
+
+#### Step 1:
+- **Initial Values**: 
+  - `x = 3`
+  - `n = 4`
+  - `ans = 1`
+
+#### Step 2: First Iteration (n = 4)
+- Since `n` is even (`n % 2 == 0`), we square `x`:
+  - `x = 3 * 3 = 9`
+- Now, `n = 2` (we divide `n` by 2).
+
+#### Step 3: Second Iteration (n = 2)
+- Since `n` is even (`n % 2 == 0`), we square `x` again:
+  - `x = 9 * 9 = 81`
+- Now, `n = 1` (we divide `n` by 2).
+
+#### Step 4: Third Iteration (n = 1)
+- Since `n` is odd (`n % 2 == 1`), we multiply `ans` by `x`:
+  - `ans = 1 * 81 = 81`
+- Now, `n = 0` (we subtract 1 from `n` to make it 0).
+
+#### Final Result:
+- The loop ends, and the final value of `ans` is `81`.
+- So, \( 3^4 = 81 \).
+
+### Edge Case: \( X = 2, N = 0 \)
+
+Any number raised to the power 0 is always 1. So, \( 2^0 = 1 \).
+
+### Time Complexity:
+- The time complexity is \( O(\log N) \). This is because in each iteration, we either square the base (`x = x * x`) or halve the exponent (`n = n / 2`), which means we are reducing the problem size exponentially.
+
+### Space Complexity:
+- The space complexity is \( O(1) \) because we only need a constant amount of space to store the result and the variables.
+
+### Final Conclusion
+
+This is a simple yet efficient way to calculate powers using binary exponentiation. The algorithm reduces the number of operations significantly compared to the naive approach where you multiply the base `X` by itself `N` times.
+
+I hope this breakdown helps you understand how the code works!
