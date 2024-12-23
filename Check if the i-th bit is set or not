@@ -1,0 +1,96 @@
+bool isKthBitSet(int n, int k)
+{
+    // Use bitwise AND with (1 << (k - 1)) to check if the Kth bit is set
+    return (n & (1 << (k - 1))) != 0;
+}
+
+############### Explanation ##########################
+
+Let me break it down even further and explain step by step in **a very simple way**.
+
+---
+
+### Problem Recap
+We need to check whether the `K`th bit in the binary representation of a number `N` is **set** (1) or **not set** (0).
+
+---
+
+### Basics: Binary Numbers
+- Binary numbers are made of bits (0 or 1). 
+- Each position in the binary number represents a **power of 2**, starting from 0 on the right:
+  - \( 2^0, 2^1, 2^2, 2^3, \dots \)
+- Example:
+  - Decimal `5` → Binary `101`.
+  - The **rightmost bit** is the 1st bit (K = 1).
+  - The **middle bit** is the 2nd bit (K = 2).
+  - The **leftmost bit** is the 3rd bit (K = 3).
+
+---
+
+### Step-by-Step Explanation
+
+Let’s explain the statement:  
+```cpp
+(n & (1 << (k - 1))) != 0
+```
+
+#### **1. What does `1 << (k - 1)` mean?**
+
+- `1` is a binary number: `0001`.
+- `<<` means **shift bits to the left**.
+- `(k - 1)` tells us **how many positions** to shift the `1`.
+
+##### Example:
+If `k = 3`, then:
+- `1 << (k - 1)` = `1 << 2`.  
+- Start with `0001`.  
+- Shift `1` **2 positions to the left**:  
+  - `0001 → 0010 → 0100`  
+  - Result: `0100` (binary for 4).
+
+This creates a **mask** that has a single `1` at the `K`th position.
+
+---
+
+#### **2. What does `(n & mask)` mean?**
+- **`&` (AND)** compares each bit of `n` and the mask.
+- If both bits are `1`, the result is `1`. Otherwise, it’s `0`.
+
+##### Example:
+If `n = 5` (binary `101`) and `k = 3`:
+- Mask = `1 << (k - 1)` = `0100`.
+- `n & mask` = `101` AND `100`:
+  - Compare bits:
+    - \( 1 \& 0 = 0 \)
+    - \( 0 \& 0 = 0 \)
+    - \( 1 \& 1 = 1 \)
+  - Result: `100`.
+
+If the result is non-zero (`!= 0`), the `K`th bit in `n` is set (1).  
+If the result is zero (`== 0`), the `K`th bit in `n` is not set (0).
+
+---
+
+#### **Complete Example 1:**
+**Input:** `n = 5` (binary: `101`), `k = 3`  
+1. Mask = `1 << (k - 1)` = `1 << 2` = `0100`.  
+2. `n & mask` = `101` AND `100` = `100`.  
+3. Result: Non-zero, so the 3rd bit is **set**.  
+**Output:** `YES`.
+
+---
+
+#### **Complete Example 2:**
+**Input:** `n = 5` (binary: `101`), `k = 2`  
+1. Mask = `1 << (k - 1)` = `1 << 1` = `0010`.  
+2. `n & mask` = `101` AND `010` = `000`.  
+3. Result: Zero, so the 2nd bit is **not set**.  
+**Output:** `NO`.
+
+---
+
+### Simple Analogy
+Think of bits as **light switches**:
+- `1` = ON.
+- `0` = OFF.
+The mask (`1 << (k - 1)`) is like flipping **only the Kth switch** ON and checking if the same switch in `n` is ON.
