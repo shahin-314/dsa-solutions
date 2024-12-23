@@ -1,0 +1,85 @@
+Here’s how you can determine if a number is a power of two in C++ with an optimized solution.
+
+### **Code:**
+
+```cpp
+bool isPowerOfTwo(int n)
+{
+    // A number is a power of two if it is positive and
+    // there is only one bit set in its binary representation.
+    return n > 0 && (n & (n - 1)) == 0;
+}
+```
+
+---
+
+### **Step-by-Step Explanation:**
+
+#### **1. What does `(n > 0)` check?**
+- Powers of two are always **positive** (e.g., \(2^0 = 1, 2^1 = 2, 2^2 = 4, \dots\)).
+- If `n` is negative or zero, return `false`.
+
+---
+
+#### **2. What does `(n & (n - 1)) == 0` mean?**
+This is a clever bitwise trick to check if `n` has **only one bit set** in its binary representation:
+- **Subtracting 1 from `n` flips all bits after the rightmost set bit.**
+- **ANDing `n` with `(n - 1)` clears the rightmost set bit.**
+
+For powers of two:
+- Binary of `n` has exactly **one set bit** (e.g., `1`, `10`, `100`, `1000`).
+- Subtracting 1 makes all bits after the set bit `1`, and the original set bit becomes `0`.
+- ANDing these two results in `0`.
+
+---
+
+### **Examples Walkthrough:**
+
+#### **Example 1: `n = 16`**
+1. Binary: `16 = 10000`.
+2. `n - 1 = 15`, Binary: `15 = 01111`.
+3. `n & (n - 1)`:
+   - `10000 & 01111 = 00000`.
+4. Result: `00000 == 0`, so `n` is a power of two.  
+**Output:** `true`.
+
+---
+
+#### **Example 2: `n = 10`**
+1. Binary: `10 = 1010`.
+2. `n - 1 = 9`, Binary: `9 = 1001`.
+3. `n & (n - 1)`:
+   - `1010 & 1001 = 1000`.
+4. Result: `1000 != 0`, so `n` is not a power of two.  
+**Output:** `false`.
+
+---
+
+#### **Example 3: `n = 1`**
+1. Binary: `1 = 0001`.
+2. `n - 1 = 0`, Binary: `0 = 0000`.
+3. `n & (n - 1)`:
+   - `0001 & 0000 = 0000`.
+4. Result: `0000 == 0`, so `n` is a power of two.  
+**Output:** `true`.
+
+---
+
+### **Edge Cases:**
+1. **Negative Numbers**: `n = -8`  
+   - Negative numbers cannot be powers of two.  
+   - `(n > 0)` will fail, so return `false`.
+
+2. **Zero**: `n = 0`  
+   - \(2^K\) is never zero for any \(K\).  
+   - `(n > 0)` will fail, so return `false`.
+
+---
+
+### **Time Complexity:**
+- **Bitwise operations** (`&`, `-`) are \(O(1)\), so the solution runs in **constant time**.
+
+### **Space Complexity:**
+- The solution uses **no extra space**, so \(O(1)\).
+
+Let me know if you need further clarification! 😊
