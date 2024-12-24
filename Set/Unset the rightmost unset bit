@@ -1,0 +1,121 @@
+###################  CODE  ########################
+
+int setBits(int N) {
+    // Check if there are no unset bits
+    if ((N & (N + 1)) == 0) {
+        return N; // Return unchanged if all bits are already set
+    }
+    // Otherwise, set the rightmost unset bit
+    return N | (~N & (N + 1));
+}
+
+
+
+#############  EXPLAINATION  #####################
+
+No worries! I'll break down everything clearly and explain how the code works step-by-step. Let's start from scratch, and I'll explain each part with simple analogies.
+
+---
+
+### **Problem Statement:**
+
+We need to find the **rightmost unset bit** (the first `0` bit from the right) in the binary representation of a number \( N \) and change it to `1`. If there are **no unset bits** (i.e., all bits are set to `1`), we return \( N \) as it is.
+
+### **What is the approach?**
+
+There are two main tasks:
+1. **Check if all bits in \( N \) are set** (i.e., no `0` bits).
+2. **Find the rightmost `0` bit** and set it to `1`.
+
+---
+
+### **Explanation of the Code:**
+
+```cpp
+if ((N & (N + 1)) == 0) {
+    return N; // Return unchanged if all bits are already set
+}
+```
+
+#### **Step 1: Check if all bits are set**
+- **How:** The expression `(N & (N + 1)) == 0` checks if all bits in \( N \) are `1`.
+  
+  - Let's say \( N = 7 \) (binary: `111`).
+  - \( N + 1 = 8 \) (binary: `1000`).
+  
+  When we do a bitwise `AND` between \( N \) and \( N + 1 \), we compare the bits of \( N \) and \( N + 1 \) bit by bit:
+  - `111 & 1000` → `0000` (This is zero).
+
+  The idea is that if all bits in \( N \) are `1`, adding 1 to \( N \) results in a number where the bits from the rightmost `1` turn to `0`, and the next higher bit becomes `1`. So, if we do a bitwise AND between \( N \) and \( N + 1 \), we will get `0` if **all** bits in \( N \) were `1`.
+
+#### **When to return \( N \):**
+- If the result is `0`, it means **all bits are set** to `1`, so we don't need to change anything and we return \( N \) as it is.
+
+---
+
+#### **Step 2: Set the rightmost unset bit**
+```cpp
+return N | (~N & (N + 1));
+```
+
+- **What are we doing here?**
+  - We are looking for the **rightmost unset bit** in \( N \) and setting it to `1`.
+
+  **How do we do that?**
+  1. `~N`: This flips all the bits of \( N \) (turns `1` into `0` and `0` into `1`).
+  2. `N + 1`: This adds `1` to \( N \), which has the effect of changing the rightmost `0` bit in \( N \) to `1` and turning all the bits to the right of it into `0`s.
+  3. `~N & (N + 1)`: This isolates the **rightmost `0` bit** in \( N \), and makes sure that no other bits are affected.
+
+  - Finally, we do a bitwise **OR** (`|`) between \( N \) and the result of `(~N & (N + 1))` to **set** the rightmost `0` bit to `1`.
+
+---
+
+### **Example Walkthrough:**
+
+#### **Example 1: \( N = 10 \)**
+
+- **Binary Representation:** \( N = 10 \) → `1010`.
+
+1. **Check if all bits are set:**
+   - \( N + 1 = 11 \), so \( N \& (N + 1) = 1010 \& 1011 = 1010 \).
+   - This is not `0`, so we move to the next step to set the rightmost unset bit.
+
+2. **Set the rightmost unset bit:**
+   - \( ~N = 0101 \), \( N + 1 = 1011 \).
+   - \( ~N \& (N + 1) = 0101 \& 1011 = 0001 \) (this is the position of the rightmost unset bit).
+   - Now, we do a bitwise `OR` between \( N \) and `0001`:  
+     \( 1010 | 0001 = 1011 \), which is 11 in decimal.
+
+#### **Example 2: \( N = 7 \)**
+
+- **Binary Representation:** \( N = 7 \) → `111`.
+
+1. **Check if all bits are set:**
+   - \( N + 1 = 8 \), so \( N \& (N + 1) = 111 \& 1000 = 0000 \), which is `0`.
+   - This means all bits are set to `1`, so we **return \( N \) unchanged**.
+   - Result: \( 7 \).
+
+---
+
+### **Summary of the Code Behavior:**
+
+1. **If all bits in \( N \) are set:**  
+   - The code will return \( N \) unchanged (because no `0` bits are left to set).
+
+2. **Otherwise:**  
+   - The code will find the **rightmost unset bit** and set it to `1`.
+
+---
+
+### **Why Does the `& (N + 1)` Work?**
+- When \( N \) is all `1`s, adding `1` will make the entire number look like a series of `0`s followed by a single `1` at a higher place value.
+- Performing `N & (N + 1)` checks if there are any `0` bits in \( N \) by inspecting the transition from `1` to `0` when adding `1`.
+
+---
+
+### **Conclusion:**
+
+- The first step checks if all bits are set using `(N & (N + 1)) == 0`.
+- The second step sets the rightmost unset bit using `N | (~N & (N + 1))`.
+
+I hope this explanation clears things up! Let me know if you need further help. 😊
