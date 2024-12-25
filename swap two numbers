@@ -1,0 +1,69 @@
+The XOR method for swapping two numbers is clever and avoids using a temporary variable. Let’s break it down step by step to understand it in an easy way.
+
+---
+
+### **Key Concept of XOR (^)**
+
+The XOR operation works on binary digits:
+- **0 ^ 0 = 0**
+- **1 ^ 1 = 0**
+- **0 ^ 1 = 1**
+- **1 ^ 0 = 1**
+
+Some important properties of XOR:
+1. \( x ^ x = 0 \) (Any number XOR itself is 0)
+2. \( x ^ 0 = x \) (Any number XOR 0 is the number itself)
+3. XOR is **commutative** and **associative**, meaning \( a ^ b = b ^ a \).
+
+---
+
+### **How the Code Works**
+
+Here’s the code again:
+
+```cpp
+void swapNumber(int &a, int &b) 
+{
+    a = a ^ b; // Step 1
+    b = a ^ b; // Step 2
+    a = a ^ b; // Step 3
+}
+```
+
+Let’s take an example:
+- **Initial values:** `a = 5` (binary: `101`), `b = 6` (binary: `110`).
+
+#### **Step-by-Step Explanation**
+1. **Step 1:** `a = a ^ b`
+   - Binary: \( 101 \, \text{(a)} ^ 110 \, \text{(b)} = 011 \)
+   - Now, `a = 011` (decimal: 3) and `b = 110` (unchanged, still 6).
+
+2. **Step 2:** `b = a ^ b`
+   - Substitute the new `a` (which is `011`) and original `b` (`110`):
+   - Binary: \( 011 \, \text{(new a)} ^ 110 \, \text{(original b)} = 101 \)
+   - Now, `b = 101` (decimal: 5, the original value of `a`) and `a = 011`.
+
+3. **Step 3:** `a = a ^ b`
+   - Substitute the new `b` (which is `101`) and new `a` (which is `011`):
+   - Binary: \( 011 \, \text{(new a)} ^ 101 \, \text{(new b)} = 110 \)
+   - Now, `a = 110` (decimal: 6, the original value of `b`).
+
+---
+
+### **Final Values**
+After the 3 steps:
+- `a = 6` (original value of `b`)
+- `b = 5` (original value of `a`)
+
+---
+
+### **Why It Works**
+The XOR method cleverly "stores" information about both numbers in `a` without losing any data. Each step reverses part of the XOR operation to extract the other number.
+
+1. In **Step 1**, `a` becomes a combination of both numbers.
+2. In **Step 2**, XORing the combination with `b` cancels out `b` and gives `a`.
+3. In **Step 3**, XORing the combination with the new `b` cancels out `a` and gives `b`.
+
+This method is efficient and avoids extra memory usage for a temporary variable.
+
+Let me know if you need further clarification! 😊
