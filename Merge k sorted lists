@@ -1,0 +1,212 @@
+#######################  CODE  #################################### ( HARD )
+
+struct compare {
+    bool operator()(Node* a, Node* b) {
+        return a->data > b->data; // Min-heap based on data value
+    }
+};
+
+Node* mergeKLists(vector<Node*>& listArray) {
+    // Edge case: if the listArray is empty
+    if (listArray.empty()) return NULL;
+
+    // Min-heap to store the head of each list
+    priority_queue<Node*, vector<Node*>, compare> minHeap;
+
+    // Add the head of each linked list to the heap
+    for (Node* head : listArray) {
+        if (head) {
+            minHeap.push(head);
+        }
+    }
+
+    // Dummy node to form the merged list
+    Node* dummy = new Node();
+    Node* tail = dummy;
+
+    // Process the heap
+    while (!minHeap.empty()) {
+        // Get the smallest element (top of the heap)
+        Node* smallest = minHeap.top();
+        minHeap.pop();
+
+        // Add it to the merged list
+        tail->next = smallest;
+        tail = tail->next;
+
+        // If there's a next node in the current list, add it to the heap
+        if (smallest->next) {
+            minHeap.push(smallest->next);
+        }
+    }
+
+    // Return the head of the merged list
+    return dummy->next;
+}
+
+
+
+
+#################### EXPLAINATION  #########################
+
+Let’s combine the **code explanation** and **example walkthrough** in a simple way to make it easier to understand how the code works step by step with an example.
+
+---
+
+### **Code Explanation with Example**
+We are given multiple sorted linked lists, and the goal is to merge them into one sorted list efficiently. Here’s how the code works step-by-step, using the following example:
+
+#### **Input Example**  
+We have 3 linked lists:
+```
+List 1: 4 -> 6 -> 8
+List 2: 2 -> 5 -> 7
+List 3: 1 -> 9
+```
+
+#### **Code**
+```cpp
+struct compare {
+    bool operator()(Node* a, Node* b) {
+        return a->data > b->data; // Min-heap based on data value
+    }
+};
+```
+- This comparator ensures we use a **min-heap**, where the smallest node will always be at the top.
+
+---
+
+```cpp
+Node* mergeKLists(vector<Node*>& listArray) {
+    if (listArray.empty()) return NULL;
+```
+- If no lists are given (`listArray` is empty), return `NULL`.
+
+---
+
+**Step 1: Create the Min-Heap**  
+```cpp
+priority_queue<Node*, vector<Node*>, compare> minHeap;
+```
+- We create a **priority queue** (min-heap) to store nodes.  
+  - Smallest values will stay on top based on the `compare` function.
+
+---
+
+**Step 2: Add the Head of Each List to the Heap**  
+```cpp
+for (Node* head : listArray) {
+    if (head) {
+        minHeap.push(head);
+    }
+}
+```
+- Add the first node of each list to the heap.  
+  For our example:
+  ```
+  Heap: [1, 2, 4]  (1 is the smallest and stays on top)
+  ```
+
+---
+
+**Step 3: Merge Lists**  
+```cpp
+Node* dummy = new Node(); 
+Node* tail = dummy;
+```
+- Use a **dummy node** to simplify merging.  
+  - `tail` keeps track of the last node in the merged list.
+
+---
+
+```cpp
+while (!minHeap.empty()) {
+    Node* smallest = minHeap.top(); 
+    minHeap.pop();
+    tail->next = smallest; 
+    tail = tail->next;
+
+    if (smallest->next) {
+        minHeap.push(smallest->next);
+    }
+}
+```
+
+- **While the heap is not empty**, repeat the following steps:
+
+---
+
+#### **Iteration 1**  
+- Extract the smallest node from the heap (`1`).
+- Add it to the merged list.
+- Push the next node of `1` (`9`) into the heap.
+
+**Merged List:** `1`  
+**Heap:** `[2, 4, 9]` (2 is now the smallest).
+
+---
+
+#### **Iteration 2**  
+- Extract the smallest node from the heap (`2`).
+- Add it to the merged list.
+- Push the next node of `2` (`5`) into the heap.
+
+**Merged List:** `1 -> 2`  
+**Heap:** `[4, 9, 5]` (4 is now the smallest).
+
+---
+
+#### **Iteration 3**  
+- Extract the smallest node from the heap (`4`).
+- Add it to the merged list.
+- Push the next node of `4` (`6`) into the heap.
+
+**Merged List:** `1 -> 2 -> 4`  
+**Heap:** `[5, 9, 6]` (5 is now the smallest).
+
+---
+
+#### **Continue**  
+Repeat these steps until all nodes are processed:
+- **Iteration 4:** Add `5` to the list, push `7`.  
+  Merged List: `1 -> 2 -> 4 -> 5`.  
+  Heap: `[6, 9, 7]`.
+
+- **Iteration 5:** Add `6` to the list, push `8`.  
+  Merged List: `1 -> 2 -> 4 -> 5 -> 6`.  
+  Heap: `[7, 9, 8]`.
+
+- **Iteration 6:** Add `7`.  
+  Merged List: `1 -> 2 -> 4 -> 5 -> 6 -> 7`.  
+  Heap: `[8, 9]`.
+
+- **Iteration 7:** Add `8`.  
+  Merged List: `1 -> 2 -> 4 -> 5 -> 6 -> 7 -> 8`.  
+  Heap: `[9]`.
+
+- **Iteration 8:** Add `9`.  
+  Merged List: `1 -> 2 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9`.  
+  Heap: `[]` (empty).
+
+---
+
+**Final Step**  
+```cpp
+return dummy->next;
+```
+- Return the merged list starting from the first real node (skipping the dummy).
+
+---
+
+### **Final Output**  
+The merged list is:
+```
+1 -> 2 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
+```
+
+---
+
+### **Why Min-Heap Works**
+The min-heap ensures that the smallest node among all the lists is always selected first, maintaining the sorted order. By repeatedly adding the next smallest node, we efficiently merge the lists. 
+
+Let me know if further clarification is needed! 😊
