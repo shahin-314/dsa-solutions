@@ -1,0 +1,242 @@
+### **Question Explanation:**
+
+The question is asking to find the number in the array that appears **only once**, while all other numbers appear **exactly twice**. The solution should be:
+1. **Fast**: O(n) runtime complexity.
+2. **Efficient**: Use only constant extra space (no extra arrays or data structures).
+
+---
+
+### **Approach and Concept**
+
+To solve this, we can use the **XOR (Exclusive OR)** property:
+1. XOR of a number with itself is `0` → `x ^ x = 0`.
+2. XOR of a number with `0` is the number itself → `x ^ 0 = x`.
+3. XOR is commutative and associative → The order of operations doesn’t matter.
+
+**Key Insight**:  
+If all numbers except one appear twice, the XOR of the entire array will cancel out the duplicates, leaving only the single number.
+
+---
+
+### **Code with Explanation**
+
+```cpp
+class Solution {
+public:
+    int singleNumber(vector<int>& nums) {
+        int result = 0; // Initialize result to 0
+
+        // XOR all the numbers in the array
+        for (int num : nums) {
+            result ^= num; // XOR current number with result
+        }
+
+        // The result will contain the single number
+        return result;
+    }
+};
+```
+
+---
+
+### **Step-by-Step Explanation**
+
+#### Example 1:  
+**Input**: `nums = [2, 2, 1]`  
+**Process**:
+- Start with `result = 0`.
+- XOR each number:
+  - `result = 0 ^ 2 = 2`.
+  - `result = 2 ^ 2 = 0` (duplicates cancel out).
+  - `result = 0 ^ 1 = 1`.
+
+**Output**: `1`.
+
+---
+
+#### Example 2:  
+**Input**: `nums = [4, 1, 2, 1, 2]`  
+**Process**:
+- Start with `result = 0`.
+- XOR each number:
+  - `result = 0 ^ 4 = 4`.
+  - `result = 4 ^ 1 = 5`.
+  - `result = 5 ^ 2 = 7`.
+  - `result = 7 ^ 1 = 6`.
+  - `result = 6 ^ 2 = 4`.
+
+**Output**: `4`.
+
+---
+
+#### Example 3:  
+**Input**: `nums = [1]`  
+**Process**:
+- Start with `result = 0`.
+- XOR each number:
+  - `result = 0 ^ 1 = 1`.
+
+**Output**: `1`.
+
+---
+
+### **Dry Run**
+
+Let’s dry-run the code for `nums = [4, 1, 2, 1, 2]`:
+
+| Step | `num` | `result` (`result ^ num`) |
+|------|-------|---------------------------|
+| 1    | 4     | `0 ^ 4 = 4`               |
+| 2    | 1     | `4 ^ 1 = 5`               |
+| 3    | 2     | `5 ^ 2 = 7`               |
+| 4    | 1     | `7 ^ 1 = 6`               |
+| 5    | 2     | `6 ^ 2 = 4`               |
+
+Final `result = 4`.
+
+---
+
+### **Why is This Efficient?**
+
+1. **O(n) Time Complexity**: We only loop through the array once.
+2. **O(1) Space Complexity**: No extra data structures are used.
+3. XOR naturally handles duplicates, so no need for condition checks.
+
+---
+
+Let me know if you want more examples or further clarification! 😊
+
+
+
+###################  DETAILED  ##############################
+
+Let’s break this step-by-step so you can clearly understand how the **XOR operation** works and how we are getting these results.
+
+---
+
+### **Key Properties of XOR**
+
+1. **0 XOR x = x**  
+   Any number XORed with 0 remains unchanged.  
+   Example: `0 ^ 4 = 4`.
+
+2. **x XOR x = 0**  
+   Any number XORed with itself results in 0.  
+   Example: `4 ^ 4 = 0`.
+
+3. **XOR is commutative and associative**  
+   The order of XOR operations doesn’t matter:  
+   `(a ^ b) ^ c = a ^ (b ^ c)`.
+
+---
+
+### **Step-by-Step XOR Operations**
+
+#### Input: `nums = [4, 1, 2, 1, 2]`  
+We are calculating `result` by XORing all elements in the array.
+
+---
+
+#### **Step 1: Initialize `result = 0`**
+
+- Start with `result = 0`.
+
+#### **Step 2: XOR `0` with `4`**
+
+- `result = 0 ^ 4`.
+- From property 1, `0 XOR x = x`.
+- So, `result = 4`.
+
+---
+
+#### **Step 3: XOR `result` with `1`**
+
+- `result = 4 ^ 1`.  
+- Binary of `4 = 100` and `1 = 001`.
+- Perform XOR bit by bit:
+  ```
+  100
+  XOR
+  001
+  ----
+  101 (binary) = 5 (decimal)
+  ```
+- So, `result = 5`.
+
+---
+
+#### **Step 4: XOR `result` with `2`**
+
+- `result = 5 ^ 2`.  
+- Binary of `5 = 101` and `2 = 010`.
+- Perform XOR bit by bit:
+  ```
+  101
+  XOR
+  010
+  ----
+  111 (binary) = 7 (decimal)
+  ```
+- So, `result = 7`.
+
+---
+
+#### **Step 5: XOR `result` with `1`**
+
+- `result = 7 ^ 1`.  
+- Binary of `7 = 111` and `1 = 001`.
+- Perform XOR bit by bit:
+  ```
+  111
+  XOR
+  001
+  ----
+  110 (binary) = 6 (decimal)
+  ```
+- So, `result = 6`.
+
+---
+
+#### **Step 6: XOR `result` with `2`**
+
+- `result = 6 ^ 2`.  
+- Binary of `6 = 110` and `2 = 010`.
+- Perform XOR bit by bit:
+  ```
+  110
+  XOR
+  010
+  ----
+  100 (binary) = 4 (decimal)
+  ```
+- So, `result = 4`.
+
+---
+
+### **Why Does This Work?**
+
+- In XOR, **duplicates cancel out**, because `x ^ x = 0`.
+- Only the unique number remains because `0 XOR x = x`.
+
+---
+
+### **Final Output**
+
+After processing all numbers in the array, `result = 4`.  
+This is the single number that appears only once.
+
+---
+
+### **Visualizing Iteration Results**
+
+| Step | Current Number | Binary of Current Number | `result` (Decimal) | `result` (Binary) |
+|------|----------------|--------------------------|---------------------|-------------------|
+| 1    | 4              | `100`                    | 4                   | `100`             |
+| 2    | 1              | `001`                    | 5                   | `101`             |
+| 3    | 2              | `010`                    | 7                   | `111`             |
+| 4    | 1              | `001`                    | 6                   | `110`             |
+| 5    | 2              | `010`                    | 4                   | `100`             |
+
+---
+
+Let me know if you need further clarification! 😊
