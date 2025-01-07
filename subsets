@@ -1,0 +1,149 @@
+vector<vector<int>> FindAllSubsets(vector<int> &arr)
+{
+    int n = arr.size();
+    int totalsubsets = 1 << n;
+
+    vector<vector<int>> result(totalsubsets);
+
+    for(int i = 0; i < totalsubsets; i++)
+    {
+        for(int j = 0; j < n; j++)
+        {
+            if(i & (1 << j))
+            {
+                result[i].push_back(arr[j]);
+            }
+        }
+    }
+
+    return result;
+}
+
+
+
+Let me explain the code step by step in the **simplest way possible**, keeping in mind that you’re a beginner. 😊
+
+---
+
+### **What does the code do?**
+This code generates all possible subsets (or power sets) of a given array `nums`.
+
+For example:
+- If `nums = [1, 2, 3]`, the subsets will be:
+  `[[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]]`.
+- The code does this using **bit manipulation** to efficiently calculate subsets.
+
+---
+
+### **Breaking Down the Code**
+
+#### 1. **Understanding Key Variables**
+- **`n = nums.size();`**
+  - `n` is the size of the array `nums`.
+  - For example, if `nums = [1, 2, 3]`, then `n = 3`.
+
+- **`totalSubsets = 1 << n;`**
+  - `1 << n` calculates `2^n`, which is the total number of subsets.
+  - Why `2^n`?
+    - Each number in `nums` can either be included or excluded in a subset.  
+    - So, for `n` numbers, there are `2^n` combinations (subsets).
+
+#### 2. **Initializing Result Storage**
+- **`vector<vector<int>> result(totalSubsets);`**
+  - Pre-allocate memory for all subsets.  
+  - This means `result` will eventually hold all subsets of `nums`.
+
+#### 3. **Outer Loop (`i`): Generating All Subsets**
+- **`for (int i = 0; i < totalSubsets; i++) {`**
+  - `i` is a number representing a subset in binary.
+  - For example:
+    - `i = 0` → Subset: `[]` (no elements selected).  
+    - `i = 1` → Subset: `[1]` (select first element).  
+    - `i = 2` → Subset: `[2]` (select second element).  
+    - `i = 3` → Subset: `[1, 2]` (select first and second elements), and so on.
+
+#### 4. **Inner Loop (`j`): Checking Which Elements to Include**
+- **`for (int j = 0; j < n; j++) {`**
+  - This loop checks each bit of `i` to decide if `nums[j]` should be included in the subset.
+
+#### 5. **The If Condition**
+Now comes the heart of the code:
+```cpp
+if (i & (1 << j)) {
+    result[i].push_back(nums[j]);
+}
+```
+
+---
+
+### **Explaining the If Condition**
+This condition determines **whether to include `nums[j]` in the current subset**.
+
+#### **Step-by-Step Breakdown**
+1. **`(1 << j)`**: 
+   - Creates a number where only the `j`th bit is set to `1`.
+   - Example:
+     - For `j = 0`: `1 << 0 = 0001` → Represents the first bit.
+     - For `j = 1`: `1 << 1 = 0010` → Represents the second bit.
+     - For `j = 2`: `1 << 2 = 0100` → Represents the third bit.
+
+2. **`i & (1 << j)`**:  
+   - Performs a bitwise AND between `i` and `(1 << j)`.  
+   - This checks if the `j`th bit in `i` is `1`.
+   - If true, it means `nums[j]` should be included in the current subset.
+
+3. **Result of the If Condition**:  
+   - If `i & (1 << j)` is **non-zero**, it means the `j`th bit is set in `i`.
+   - **Include `nums[j]`** in the current subset.
+
+---
+
+### **Example: nums = [1, 2, 3]**
+
+#### Dry Run with `nums = [1, 2, 3]`
+We calculate subsets for all `i` from `0` to `7` (`2^3 = 8` subsets).
+
+| `i`  (binary) | Subset Representation (binary) | Resulting Subset |
+|---------------|--------------------------------|------------------|
+| `000`         | No bits set (empty subset)     | `[]`             |
+| `001`         | 1st bit set → include `1`      | `[1]`            |
+| `010`         | 2nd bit set → include `2`      | `[2]`            |
+| `011`         | 1st & 2nd bits set → include `1, 2` | `[1, 2]`    |
+| `100`         | 3rd bit set → include `3`      | `[3]`            |
+| `101`         | 1st & 3rd bits set → include `1, 3` | `[1, 3]`    |
+| `110`         | 2nd & 3rd bits set → include `2, 3` | `[2, 3]`    |
+| `111`         | All bits set → include `1, 2, 3` | `[1, 2, 3]` |
+
+---
+
+#### Dry Run for `i = 5` (binary `101`)
+1. Outer loop: `i = 5` (binary `101`).
+2. Inner loop (`j`):
+   - `j = 0`:  
+     - `(1 << 0) = 0001` → `i & (1 << 0) = 101 & 001 = 001` → Non-zero → Include `nums[0] = 1`.
+   - `j = 1`:  
+     - `(1 << 1) = 0010` → `i & (1 << 1) = 101 & 010 = 000` → Zero → Do not include `nums[1]`.
+   - `j = 2`:  
+     - `(1 << 2) = 0100` → `i & (1 << 2) = 101 & 100 = 100` → Non-zero → Include `nums[2] = 3`.
+
+**Result for `i = 5`: Subset = `[1, 3]`**
+
+---
+
+### **Flow of the Code**
+1. **Outer Loop**: Loops through all `2^n` possible subsets.
+2. **Inner Loop**: For each subset `i`, checks each bit position `j` to decide if `nums[j]` should be included.
+3. **If Condition**: Ensures only elements corresponding to set bits in `i` are added to the subset.
+4. **Result**: Collects all subsets in the `result` vector.
+
+---
+
+### **Final Output**
+For `nums = [1, 2, 3]`, the output will be:
+```
+[[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]]
+```
+
+---
+
+### **Was this clear? Let me know if you need more examples or clarifications! 😊**
