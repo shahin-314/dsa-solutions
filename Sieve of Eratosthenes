@@ -1,0 +1,182 @@
+
+
+### **Is `isPrime` Built-in?**
+No, `isPrime` is **NOT built-in**. In the code:
+
+```cpp
+vector<bool> isPrime(n, true);
+```
+
+- This line **creates a vector** of size \( n \) and initializes all values to `true`.
+- A **vector** is a dynamic array in C++ that can store multiple elements.
+- Here, `isPrime` is just the **name of the array** we are using to keep track of which numbers are prime.
+
+---
+
+### **Flow of the Code**
+
+Let’s break it step by step and show how values change at each important part of the code.
+
+---
+
+#### **Code Overview:**
+```cpp
+class Solution {
+public:
+    int countPrimes(int n) 
+    {
+        if (n <= 2) return 0;  // Handle edge case for small n
+
+        vector<bool> isPrime(n, true);  // Step 1: Create array, assume all are prime
+        isPrime[0] = isPrime[1] = false;  // Mark 0 and 1 as not prime
+
+        for (int i = 2; i * i < n; i++) {  // Step 2: Iterate through possible primes
+            if (isPrime[i]) {  // If current number is prime
+                for (int j = i * i; j < n; j += i) {  // Mark multiples as not prime
+                    isPrime[j] = false;
+                }
+            }
+        }
+
+        int count = 0;  // Step 3: Count primes
+        for (int i = 2; i < n; i++) {
+            if (isPrime[i]) count++;  // Increment for every prime
+        }
+
+        return count;  // Step 4: Return the total count of primes
+    }
+};
+```
+
+---
+
+#### **Step-by-Step Execution**
+
+Let’s take **\( n = 10 \)** as an example.
+
+---
+
+##### **1. Initialize `isPrime` Array:**
+```cpp
+vector<bool> isPrime(n, true);
+```
+This creates an array where all numbers are initially marked as `true` (assumed to be prime):
+
+```
+Index:   0    1    2    3    4    5    6    7    8    9
+Value: false false true true true true true true true true
+```
+- Mark \( isPrime[0] = false \) and \( isPrime[1] = false \), since \( 0 \) and \( 1 \) are not prime.
+
+---
+
+##### **2. Sieve of Eratosthenes (Outer Loop):**
+```cpp
+for (int i = 2; i * i < n; i++) {
+    if (isPrime[i]) {
+        for (int j = i * i; j < n; j += i) {
+            isPrime[j] = false;
+        }
+    }
+}
+```
+
+Let’s go **iteration by iteration**:
+
+---
+
+**Iteration 1:** \( i = 2 \)  
+- \( isPrime[2] = true \), so \( 2 \) is prime.
+- Mark multiples of \( 2 \) as not prime:
+  - \( j = 2 * 2 = 4 \) → \( isPrime[4] = false \)
+  - \( j = 2 * 3 = 6 \) → \( isPrime[6] = false \)
+  - \( j = 2 * 4 = 8 \) → \( isPrime[8] = false \)
+
+Updated array:
+```
+Index:   0    1    2    3    4    5    6    7    8    9
+Value: false false true true false true false true false true
+```
+
+---
+
+**Iteration 2:** \( i = 3 \)  
+- \( isPrime[3] = true \), so \( 3 \) is prime.
+- Mark multiples of \( 3 \) as not prime:
+  - \( j = 3 * 3 = 9 \) → \( isPrime[9] = false \)
+
+Updated array:
+```
+Index:   0    1    2    3    4    5    6    7    8    9
+Value: false false true true false true false true false false
+```
+
+---
+
+**Iteration 3:** \( i = 4 \)  
+- \( isPrime[4] = false \), so skip this number.
+
+---
+
+##### **3. Count Primes:**
+```cpp
+for (int i = 2; i < n; i++) {
+    if (isPrime[i]) count++;
+}
+```
+
+- Start counting all numbers marked as `true`:
+  - \( i = 2 \): \( isPrime[2] = true \) → count = \( 1 \)
+  - \( i = 3 \): \( isPrime[3] = true \) → count = \( 2 \)
+  - \( i = 4 \): \( isPrime[4] = false \) → skip
+  - \( i = 5 \): \( isPrime[5] = true \) → count = \( 3 \)
+  - \( i = 6 \): \( isPrime[6] = false \) → skip
+  - \( i = 7 \): \( isPrime[7] = true \) → count = \( 4 \)
+  - \( i = 8 \): \( isPrime[8] = false \) → skip
+  - \( i = 9 \): \( isPrime[9] = false \) → skip
+
+Final count = \( 4 \).
+
+---
+
+#### **Output:**  
+The output is \( 4 \), as the prime numbers less than \( 10 \) are \( 2, 3, 5, 7 \).
+
+---
+
+### **How Numbers Are Executing in the Code**
+
+1. **Initialization:**
+   - Create an `isPrime` array to keep track of which numbers are prime.
+
+2. **Outer Loop (\( i \)):**
+   - Starts with \( i = 2 \), the smallest prime.
+   - For each \( i \), marks all multiples of \( i \) as `false` (not prime).
+
+3. **Inner Loop (\( j \)):**
+   - \( j = i * i \), starts marking multiples of \( i \).
+   - Moves in steps of \( i \) (\( j += i \)).
+
+4. **Counting Primes:**
+   - At the end, iterate over `isPrime` and count all `true` values.
+
+---
+
+### **Visualization**
+
+| **Index** | 0   | 1   | 2   | 3   | 4   | 5   | 6   | 7   | 8   | 9   |
+|-----------|------|------|------|------|------|------|------|------|------|------|
+| **Initial** | false | false | true | true | true | true | true | true | true | true |
+| After \( i = 2 \) | false | false | true | true | false | true | false | true | false | true |
+| After \( i = 3 \) | false | false | true | true | false | true | false | true | false | false |
+
+Count primes = \( 4 \).
+
+---
+
+### **Key Points to Remember**
+1. \( i \) iterates over possible primes.
+2. \( j \) marks all multiples of \( i \) as not prime.
+3. At the end, just count the remaining `true` values.
+
+Let me know if you want more clarification! 😊
