@@ -1,0 +1,246 @@
+#########################  CODE  #################################
+
+// Stack class.
+class Stack {
+private:
+    int *arr;         // Pointer to store the stack array.
+    int capacity;     // Maximum capacity of the stack.
+    int topIndex;     // Index of the top element in the stack.
+
+public:
+    // Constructor to initialize the stack with a given capacity.
+    Stack(int capacity) {
+        this->capacity = capacity;      // Set the stack capacity.
+        arr = new int[capacity];        // Dynamically allocate memory for the array.
+        topIndex = -1;                  // Initialize top index to -1 (stack is empty).
+    }
+
+    // Function to push an element into the stack.
+    void push(int num) {
+        if (topIndex < capacity - 1) {  // Check if stack is not full.
+            topIndex++;                 // Increment the top index.
+            arr[topIndex] = num;        // Add the number at the top index.
+        }
+    }
+
+    // Function to pop the top element from the stack.
+    int pop() {
+        if (topIndex >= 0) {            // Check if stack is not empty.
+            int poppedElement = arr[topIndex]; // Get the top element.
+            topIndex--;                 // Decrease the top index.
+            return poppedElement;       // Return the popped element.
+        }
+        return -1;                      // Return -1 if the stack is empty.
+    }
+
+    // Function to return the top element of the stack.
+    int top() {
+        if (topIndex >= 0) {            // Check if stack is not empty.
+            return arr[topIndex];       // Return the top element.
+        }
+        return -1;                      // Return -1 if the stack is empty.
+    }
+
+    // Function to check if the stack is empty.
+    int isEmpty() {
+        return (topIndex == -1) ? 1 : 0; // Return 1 if stack is empty, otherwise 0.
+    }
+
+    // Function to check if the stack is full.
+    int isFull() {
+        return (topIndex == capacity - 1) ? 1 : 0; // Return 1 if stack is full, otherwise 0.
+    }
+};
+
+
+
+#############################  EXPLAINATION  ################################
+
+Here's the complete explanation of the **Stack Implementation Using Array** for better understanding:
+
+---
+
+### **Class Overview**
+- **Purpose**: The `Stack` class implements a stack data structure using an array.
+- **Features**:
+  1. **Push**: Add an element to the top of the stack.
+  2. **Pop**: Remove and return the top element of the stack.
+  3. **Top**: View the top element without removing it.
+  4. **isEmpty**: Check if the stack is empty.
+  5. **isFull**: Check if the stack is full.
+
+---
+
+### **Code Breakdown**
+
+#### **1. Private Members**
+```cpp
+int *arr;         // Pointer to store the stack array.
+int capacity;     // Maximum capacity of the stack.
+int topIndex;     // Index of the top element in the stack.
+```
+- **`arr`**: Dynamically allocated array to store stack elements.
+- **`capacity`**: The maximum size of the stack, provided when the stack is initialized.
+- **`topIndex`**: Tracks the index of the top element. 
+  - Starts at `-1` (empty stack).
+  - Increments when an element is pushed.
+  - Decrements when an element is popped.
+
+---
+
+#### **2. Constructor**
+```cpp
+Stack(int capacity) {
+    this->capacity = capacity;      // Set the stack capacity.
+    arr = new int[capacity];        // Dynamically allocate memory for the array.
+    topIndex = -1;                  // Initialize top index to -1 (stack is empty).
+}
+```
+- **Purpose**: Initializes the stack with a fixed capacity.
+- **Steps**:
+  1. Use `this->capacity = capacity` to assign the user-provided capacity to the class variable.
+  2. Allocate memory for the stack array using `new int[capacity]`.
+  3. Set `topIndex = -1` to indicate the stack is empty.
+
+---
+
+#### **3. `push` Function**
+```cpp
+void push(int num) {
+    if (topIndex < capacity - 1) {  // Check if stack is not full.
+        topIndex++;                 // Increment the top index.
+        arr[topIndex] = num;        // Add the number at the top index.
+    }
+}
+```
+- **Purpose**: Adds an element to the top of the stack.
+- **Steps**:
+  1. Check if the stack is full (`topIndex < capacity - 1`).
+  2. If not full:
+     - Increment `topIndex` to point to the next position.
+     - Store the new element (`num`) at `arr[topIndex]`.
+- **Example**:
+  - Stack: `[10, 20]`, `topIndex = 1`, capacity = 3.
+  - Call `push(30)`.
+  - `topIndex` becomes 2, and `arr[2] = 30`.
+  - New stack: `[10, 20, 30]`.
+
+---
+
+#### **4. `pop` Function**
+```cpp
+int pop() {
+    if (topIndex >= 0) {            // Check if stack is not empty.
+        int poppedElement = arr[topIndex]; // Get the top element.
+        topIndex--;                 // Decrease the top index.
+        return poppedElement;       // Return the popped element.
+    }
+    return -1;                      // Return -1 if the stack is empty.
+}
+```
+- **Purpose**: Removes and returns the top element of the stack.
+- **Steps**:
+  1. Check if the stack is empty (`topIndex >= 0`).
+  2. If not empty:
+     - Store the top element (`arr[topIndex]`) in a variable (`poppedElement`).
+     - Decrement `topIndex` to "remove" the element from the stack.
+     - Return the stored `poppedElement`.
+  3. If empty, return `-1`.
+- **Example**:
+  - Stack: `[10, 20, 30]`, `topIndex = 2`.
+  - Call `pop()`.
+  - `poppedElement = arr[2] = 30`.
+  - `topIndex` becomes 1.
+  - New stack: `[10, 20]`.
+
+---
+
+#### **5. `top` Function**
+```cpp
+int top() {
+    if (topIndex >= 0) {            // Check if stack is not empty.
+        return arr[topIndex];       // Return the top element.
+    }
+    return -1;                      // Return -1 if the stack is empty.
+}
+```
+- **Purpose**: Returns the top element without removing it.
+- **Steps**:
+  1. Check if the stack is empty (`topIndex >= 0`).
+  2. If not empty, return `arr[topIndex]` (the top element).
+  3. If empty, return `-1`.
+- **Example**:
+  - Stack: `[10, 20, 30]`, `topIndex = 2`.
+  - Call `top()`.
+  - Returns `arr[2] = 30`.
+
+---
+
+#### **6. `isEmpty` Function**
+```cpp
+int isEmpty() {
+    return (topIndex == -1) ? 1 : 0; // Return 1 if stack is empty, otherwise 0.
+}
+```
+- **Purpose**: Checks if the stack is empty.
+- **Steps**:
+  1. If `topIndex == -1`, the stack is empty. Return `1`.
+  2. Otherwise, return `0`.
+- **Example**:
+  - Stack: `[10, 20]`, `topIndex = 1`.
+  - Call `isEmpty()`.
+  - Returns `0`.
+
+---
+
+#### **7. `isFull` Function**
+```cpp
+int isFull() {
+    return (topIndex == capacity - 1) ? 1 : 0; // Return 1 if stack is full, otherwise 0.
+}
+```
+- **Purpose**: Checks if the stack is full.
+- **Steps**:
+  1. If `topIndex == capacity - 1`, the stack is full. Return `1`.
+  2. Otherwise, return `0`.
+- **Example**:
+  - Stack: `[10, 20, 30]`, `topIndex = 2`, capacity = 3.
+  - Call `isFull()`.
+  - Returns `1`.
+
+---
+
+### **Example: Dry Run**
+
+#### Input:
+```cpp
+Stack s(3); // Create a stack with capacity 3.
+s.push(10);
+s.push(20);
+s.push(30);
+cout << s.pop() << endl;    // Output: 30
+cout << s.top() << endl;    // Output: 20
+cout << s.isEmpty() << endl; // Output: 0
+cout << s.isFull() << endl;  // Output: 1
+```
+
+#### Dry Run:
+1. **Create Stack**: `[ ]`, `capacity = 3`, `topIndex = -1`.
+2. **Push(10)**:
+   - Stack: `[10]`, `topIndex = 0`.
+3. **Push(20)**:
+   - Stack: `[10, 20]`, `topIndex = 1`.
+4. **Push(30)**:
+   - Stack: `[10, 20, 30]`, `topIndex = 2`.
+5. **Pop()**:
+   - Returns `30`, Stack becomes `[10, 20]`, `topIndex = 1`.
+6. **Top()**:
+   - Returns `20`.
+7. **isEmpty()**:
+   - Returns `0` (stack is not empty).
+8. **isFull()**:
+   - Returns `1` (stack is full).
+
+---
+
+Let me know if you have more questions! 😊
