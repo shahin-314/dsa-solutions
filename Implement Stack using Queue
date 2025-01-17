@@ -1,0 +1,220 @@
+########################  CODE  #####################
+
+#include <bits/stdc++.h>
+using namespace std;
+
+class Stack {
+    // Define the data members
+    queue<int> q1, q2;
+
+public:
+    Stack() {
+        // Constructor
+    }
+
+    /*----------------- Public Functions of Stack -----------------*/
+
+    int getSize() {
+        // Return the size of q1
+        return q1.size();
+    }
+
+    bool isEmpty() {
+        // Return true if q1 is empty, false otherwise
+        return q1.empty();
+    }
+
+    void push(int element) {
+        // Push the element into q2
+        q2.push(element);
+
+        // Move all elements from q1 to q2
+        while (!q1.empty()) {
+            q2.push(q1.front());
+            q1.pop();
+        }
+
+        // Swap q1 and q2
+        swap(q1, q2);
+    }
+
+    int pop() {
+        // Check if the stack is empty
+        if (q1.empty()) {
+            return -1;
+        }
+
+        // Get the front element of q1
+        int poppedElement = q1.front();
+        q1.pop();
+        return poppedElement;
+    }
+
+    int top() {
+        // Check if the stack is empty
+        if (q1.empty()) {
+            return -1;
+        }
+
+        // Return the front element of q1
+        return q1.front();
+    }
+};
+
+
+
+##############  EXPLAINATION  ################
+
+Let's go step by step and **diagrammatically represent how `q1` and `q2` interact** when pushing values into the stack. This will help you visualize how the values flow between `q1` and `q2` and understand the corresponding code at each step.
+
+---
+
+### **Code Overview**
+We are simulating a **stack** using two queues (`q1` and `q2`):
+1. `q1`: Main queue holding the stack elements in correct order.
+2. `q2`: Temporary queue used for rearranging the stack elements during `push`.
+
+**Logic in `push(int element)`**:
+- Add the new element to `q2`.
+- Move all elements from `q1` to `q2` (to keep the "last added" element at the front of `q2`).
+- Swap the contents of `q1` and `q2` (so `q1` becomes the main stack-like queue).
+
+---
+
+### **Step-by-Step Execution with Diagrams**
+
+#### **Step 1: Start**
+Both queues are initially **empty**:
+```
+q1: []  
+q2: []
+```
+
+---
+
+#### **Operation 1: `push(10)`**
+
+**Code Execution:**
+1. Add `10` to `q2`:  
+   `q2.push(10);`
+   ```
+   q1: []  
+   q2: [10]
+   ```
+
+2. Move all elements from `q1` to `q2`:  
+   Since `q1` is empty, nothing is moved.
+
+3. Swap `q1` and `q2`:  
+   `swap(q1, q2);`
+   ```
+   q1: [10]  
+   q2: []
+   ```
+
+**Stack Representation:**  
+The stack now contains:  
+`[10]` (top is at the front of `q1`).
+
+---
+
+#### **Operation 2: `push(20)`**
+
+**Code Execution:**
+1. Add `20` to `q2`:  
+   `q2.push(20);`
+   ```
+   q1: [10]  
+   q2: [20]
+   ```
+
+2. Move all elements from `q1` to `q2`:  
+   - Take the front element of `q1` (10) and push it to `q2`.  
+     `q2.push(q1.front()); q1.pop();`
+     ```
+     q1: []  
+     q2: [20, 10]
+     ```
+
+3. Swap `q1` and `q2`:  
+   `swap(q1, q2);`
+   ```
+   q1: [20, 10]  
+   q2: []
+   ```
+
+**Stack Representation:**  
+The stack now contains:  
+`[20, 10]` (top is `20`, bottom is `10`).
+
+---
+
+#### **Operation 3: `push(30)`**
+
+**Code Execution:**
+1. Add `30` to `q2`:  
+   `q2.push(30);`
+   ```
+   q1: [20, 10]  
+   q2: [30]
+   ```
+
+2. Move all elements from `q1` to `q2`:  
+   - Take the front element of `q1` (20) and push it to `q2`.  
+     `q2.push(q1.front()); q1.pop();`
+     ```
+     q1: [10]  
+     q2: [30, 20]
+     ```
+
+   - Take the front element of `q1` (10) and push it to `q2`.  
+     `q2.push(q1.front()); q1.pop();`
+     ```
+     q1: []  
+     q2: [30, 20, 10]
+     ```
+
+3. Swap `q1` and `q2`:  
+   `swap(q1, q2);`
+   ```
+   q1: [30, 20, 10]  
+   q2: []
+   ```
+
+**Stack Representation:**  
+The stack now contains:  
+`[30, 20, 10]` (top is `30`, bottom is `10`).
+
+---
+
+#### **Final State After 3 Push Operations**
+At this point:  
+```
+q1: [30, 20, 10]  
+q2: []
+```
+
+The stack behaves as:  
+```
+Stack (Top → Bottom): [30, 20, 10]
+```
+
+---
+
+### **Diagrammatic View**
+
+| Operation       | `q1` (Main Stack Queue)     | `q2` (Temporary Queue) | Description                                                   |
+|------------------|-----------------------------|-------------------------|---------------------------------------------------------------|
+| Initial          | `[]`                       | `[]`                   | Both queues are empty.                                        |
+| `push(10)`       | `[10]`                     | `[]`                   | `10` added to `q2`, then swapped into `q1`.                  |
+| `push(20)`       | `[20, 10]`                 | `[]`                   | `20` added to `q2`, then `10` moved from `q1` to `q2`, swapped. |
+| `push(30)`       | `[30, 20, 10]`             | `[]`                   | `30` added to `q2`, then `20` and `10` moved from `q1` to `q2`, swapped. |
+
+---
+
+### **How `push()` Works – Simplified**
+1. The new element is always added to `q2`.
+2. `q2` becomes the new "stack" temporarily by appending the older elements from `q1`.
+3. The queues are swapped so that `q1` continues to behave like the stack.
+
+Let me know if you need further clarification!
