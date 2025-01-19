@@ -1,0 +1,199 @@
+Got it! I will explain everything step by step, considering you as a beginner, using an Indian English style. I'll make it simple and give detailed examples with diagrams, dry runs, and code flow. Let's get started!
+
+---
+
+### **Understanding the Question**
+
+You are tasked with implementing a **queue** using two stacks. A queue works on the **FIFO** (First In, First Out) principle, meaning the first element added will be the first one to be removed.
+
+- **Queue operations:**
+  - `enQueue(int val)`: Add an element to the back of the queue.
+  - `deQueue()`: Remove and return the element from the front of the queue.
+  - `peek()`: See (but do not remove) the element at the front of the queue.
+  - `isEmpty()`: Check if the queue is empty.
+
+- **Stack operations allowed:**
+  - `push(x)`: Add an element to the top of the stack.
+  - `pop()`: Remove the top element of the stack.
+  - `top()`: Return the top element of the stack.
+  - `empty()`: Check if the stack is empty.
+
+The challenge is to use **two stacks** to achieve these operations while maintaining the behavior of a queue.
+
+---
+
+### **Code Explanation**
+
+Here is the code, explained line by line with comments.
+
+```cpp
+class Queue {
+    // Define two stacks
+    stack<int> stackip; // Stack for enqueue operations
+    stack<int> stackop; // Stack for dequeue and peek operations
+    
+public:
+    Queue() {
+        // Constructor: Initializes the stacks (empty by default)
+    }
+
+    void enQueue(int val) {
+        // Push the value into the input stack
+        stackip.push(val); 
+        // Example: If you enQueue(10), stackip becomes {10}
+    }
+
+    int deQueue() {
+        // If output stack is empty, transfer elements from input stack
+        if (stackop.empty()) {
+            while (!stackip.empty()) {
+                stackop.push(stackip.top());
+                stackip.pop();
+            }
+        }
+
+        // If output stack is still empty, return -1 (queue is empty)
+        if (stackop.empty()) return -1;
+
+        // Pop and return the top element of the output stack
+        int frontElement = stackop.top();
+        stackop.pop();
+        return frontElement;
+    }
+
+    int peek() {
+        // If output stack is empty, transfer elements from input stack
+        if (stackop.empty()) {
+            while (!stackip.empty()) {
+                stackop.push(stackip.top());
+                stackip.pop();
+            }
+        }
+
+        // If output stack is empty, return -1 (queue is empty)
+        if (stackop.empty()) return -1;
+
+        // Return the top element of the output stack
+        return stackop.top();
+    }
+
+    bool isEmpty() {
+        // If both stacks are empty, queue is empty
+        return stackip.empty() && stackop.empty();
+    }
+};
+```
+
+---
+
+### **How the Code Works with Example**
+
+Let's take an example and dry run it step by step.
+
+#### **Example Operations**
+```cpp
+Queue q;
+q.enQueue(10);  // Add 10
+q.enQueue(20);  // Add 20
+q.enQueue(30);  // Add 30
+cout << q.deQueue();  // Remove and return the first element (10)
+cout << q.peek();     // See the next element (20)
+cout << q.isEmpty();  // Check if the queue is empty
+```
+
+---
+
+### **Dry Run Step by Step**
+
+#### **Step 1: enQueue(10)**
+- We push `10` into `stackip`.
+- `stackip = {10}`  
+- `stackop = {}`
+
+#### **Step 2: enQueue(20)**
+- Push `20` into `stackip`.
+- `stackip = {10, 20}`  
+- `stackop = {}`
+
+#### **Step 3: enQueue(30)**
+- Push `30` into `stackip`.
+- `stackip = {10, 20, 30}`  
+- `stackop = {}`
+
+#### **Step 4: deQueue()**
+1. Since `stackop` is empty, transfer all elements from `stackip` to `stackop`:
+   - Move `30`: `stackip = {10, 20}`, `stackop = {30}`
+   - Move `20`: `stackip = {10}`, `stackop = {30, 20}`
+   - Move `10`: `stackip = {}`, `stackop = {30, 20, 10}`
+2. Pop the top element of `stackop` (10).
+   - `stackop = {30, 20}`
+   - Output: `10`
+
+#### **Step 5: peek()**
+1. `stackop` is not empty, so return the top element (20).
+   - Output: `20`
+
+#### **Step 6: isEmpty()**
+1. Check if both stacks are empty:
+   - `stackip = {}` and `stackop = {30, 20}`
+   - Output: `false`
+
+---
+
+### **Flow of Data in the Code**
+
+1. **enQueue:** Elements are always added to `stackip` in the order they arrive.
+2. **deQueue/peek:**
+   - If `stackop` is empty, all elements are moved from `stackip` to `stackop`. This reverses the order, so the oldest element is now on top of `stackop`.
+   - The top element of `stackop` is either returned (for peek) or removed (for deQueue).
+
+---
+
+### **Diagram for Dry Run**
+
+1. **Before `deQueue`:**
+   ```
+   stackip: [10, 20, 30]
+   stackop: []
+   ```
+
+2. **After transferring elements:**
+   ```
+   stackip: []
+   stackop: [30, 20, 10]
+   ```
+
+3. **After `deQueue`:**
+   ```
+   stackip: []
+   stackop: [30, 20]
+   ```
+
+---
+
+### **Handling Edge Cases**
+
+1. **Empty Queue:**
+   - If both `stackip` and `stackop` are empty, `deQueue` and `peek` return `-1`.
+
+2. **Multiple enQueue and deQueue:**
+   - The stacks handle the transfer logic seamlessly, ensuring FIFO behavior.
+
+---
+
+### **Output for Example**
+```cpp
+10  // Output of deQueue()
+20  // Output of peek()
+false  // Output of isEmpty()
+```
+
+---
+
+### **Simple Summary**
+
+1. Use `stackip` to push elements.
+2. When dequeueing or peeking, transfer all elements from `stackip` to `stackop` if `stackop` is empty.
+3. `stackop` holds the elements in reversed order, so the oldest element is always at the top.
+
+Let me know if you need further clarification! 😊
