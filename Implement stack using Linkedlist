@@ -1,0 +1,155 @@
+Here’s the implementation of the `Stack` class using a singly linked list in C++:
+
+### Implementation
+
+```cpp
+/****************************************************************
+
+    Following is the class structure of the Node class:
+
+        class Node
+        {
+        public:
+            int data;
+            Node *next;
+            Node()
+            {
+                this->data = 0;
+                next = NULL;
+            }
+            Node(int data)
+            {
+                this->data = data;
+                this->next = NULL;
+            }
+            Node(int data, Node* next)
+            {
+                this->data = data;
+                this->next = next;
+            }
+        };
+
+
+*****************************************************************/
+
+class Stack
+{
+private:
+    Node* head;  // Pointer to the top of the stack
+    int size;    // Current size of the stack
+
+public:
+    Stack()
+    {
+        head = NULL;  // Initialize the stack as empty
+        size = 0;     // Size is 0 initially
+    }
+
+    int getSize()
+    {
+        return size;  // Return the current size of the stack
+    }
+
+    bool isEmpty()
+    {
+        return size == 0;  // Return true if the stack is empty
+    }
+
+    void push(int data)
+    {
+        Node* newNode = new Node(data);  // Create a new node
+        newNode->next = head;           // Link the new node to the current top
+        head = newNode;                 // Update the top to the new node
+        size++;                         // Increment the size
+    }
+
+    void pop()
+    {
+        if (isEmpty()) return;          // If the stack is empty, do nothing
+        Node* temp = head;              // Store the current top
+        head = head->next;              // Update the top to the next node
+        delete temp;                    // Delete the old top node
+        size--;                         // Decrement the size
+    }
+
+    int getTop()
+    {
+        if (isEmpty()) return -1;       // If the stack is empty, return -1
+        return head->data;              // Return the data at the top
+    }
+};
+```
+
+---
+
+### Explanation of Functions
+
+1. **`Stack()`**:
+   - Initializes the stack with `head = NULL` and `size = 0`.
+
+2. **`getSize()`**:
+   - Returns the current size of the stack.
+
+3. **`isEmpty()`**:
+   - Checks whether the stack is empty by verifying if the `size` is 0.
+
+4. **`push(int data)`**:
+   - Creates a new `Node` with the given `data`.
+   - Links the new node to the current top (`head`).
+   - Updates the `head` pointer to point to the new node.
+   - Increments the `size` by 1.
+
+5. **`pop()`**:
+   - If the stack is empty, does nothing.
+   - Otherwise, removes the top node by updating the `head` pointer to `head->next`.
+   - Deletes the old top node and decrements the `size`.
+
+6. **`getTop()`**:
+   - If the stack is empty, returns `-1`.
+   - Otherwise, returns the `data` of the node at the top (`head`).
+
+---
+
+### Example Walkthrough
+
+#### Input:
+```plaintext
+["Stack", "push", "push", "getSize", "getTop", "pop", "getTop", "isEmpty"]
+[[], [10], [20], [], [], [], [], []]
+```
+
+#### Execution:
+
+1. **Initialize Stack**: `head = NULL`, `size = 0`.
+
+2. **Push 10**:
+   - Create a new node with `data = 10`.
+   - `head` now points to this new node, and `size = 1`.
+
+   Stack: [10]
+
+3. **Push 20**:
+   - Create a new node with `data = 20`.
+   - Link it to the current `head` (node with `data = 10`).
+   - Update `head` to the new node, and `size = 2`.
+
+   Stack: [20 -> 10]
+
+4. **getSize**: Returns `2`.
+
+5. **getTop**: Returns `20` (data of the `head` node).
+
+6. **pop**:
+   - Remove the node with `data = 20`.
+   - Update `head` to point to the next node (`data = 10`).
+   - Decrement `size` to `1`.
+
+   Stack: [10]
+
+7. **getTop**: Returns `10` (data of the `head` node).
+
+8. **isEmpty**: Returns `false` (stack is not empty).
+
+---
+
+This implementation is efficient with all operations (`push`, `pop`, `getTop`, `isEmpty`, `getSize`) in **O(1)** time.
