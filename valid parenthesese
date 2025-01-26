@@ -1,0 +1,190 @@
+######################  CODE  #####################
+
+class Solution {
+public:
+    bool isValid(string s) {
+        // Stack to keep track of opening brackets
+        stack<char> st;
+
+        // Loop through each character in the string
+        for (char c : s) {
+            // If the character is an opening bracket, push it onto the stack
+            if (c == '(' || c == '{' || c == '[') {
+                st.push(c);
+            }
+            // If the character is a closing bracket
+            else {
+                // If the stack is empty, the string is invalid
+                if (st.empty()) return false;
+
+                // Check if the top of the stack matches the closing bracket
+                char top = st.top();
+                if ((c == ')' && top == '(') || 
+                    (c == '}' && top == '{') || 
+                    (c == ']' && top == '[')) {
+                    st.pop(); // Remove the matching opening bracket
+                } else {
+                    return false; // Mismatch, so the string is invalid
+                }
+            }
+        }
+
+        // If the stack is empty, all brackets matched correctly
+        return st.empty();
+    }
+};
+
+
+
+
+####################  EXPLAINATION  ###########################
+
+Alright, let me explain this step-by-step, as if we're building the solution together. Don’t worry—we’ll keep it super simple.
+
+---
+
+### 1. What is a Stack?  
+A **stack** is like a stack of plates:  
+- **Last In, First Out (LIFO)**: The last plate you place on top is the first one you take off.
+
+In programming:
+- You can **push** things onto the stack (like adding a plate to the top).
+- You can **pop** things off the stack (like removing the top plate).
+- You can **peek** (or check) what’s on top without removing it using `st.top()`.
+
+---
+
+### 2. Problem Breakdown  
+
+We need to check if the string of brackets (like `()[]{}`) is valid.  
+- Opening brackets (`(`, `{`, `[`) are like "plates" we **push** onto the stack.
+- Closing brackets (`)`, `}`, `]`) need to match the last opening bracket.  
+  If they match, we **pop** the last "plate" off the stack.  
+
+---
+
+### 3. How the Code Works  
+
+We loop through the string one character at a time.
+
+#### a. For **Opening Brackets** (`(`, `{`, `[`):
+- We **push** them onto the stack.  
+
+#### b. For **Closing Brackets** (`)`, `}`, `]`):
+1. Check the **top** of the stack.  
+   `char top = st.top();`  
+   - This gives us the most recent opening bracket.
+
+2. Compare the closing bracket (`c`) with the `top`.  
+   ```cpp
+   if ((c == ')' && top == '(') || 
+       (c == '}' && top == '{') || 
+       (c == ']' && top == '[')) {
+   ```
+
+   - **If they match**, we remove the top opening bracket (we **pop** it).  
+     `st.pop();`  
+
+3. **If they don’t match** (or the stack is empty), it’s invalid.
+
+---
+
+### 4. Example Walkthrough
+
+Let’s check if the string `s = "({[]})"` is valid.  
+
+**Initial Setup**:  
+We have an **empty stack** at the start.  
+`stack: []`
+
+---
+
+#### Step 1: `(` (Opening Bracket)  
+- Push it onto the stack.  
+  `stack: [`(`]`
+
+---
+
+#### Step 2: `{` (Opening Bracket)  
+- Push it onto the stack.  
+  `stack: [`(`, `{`]`
+
+---
+
+#### Step 3: `[` (Opening Bracket)  
+- Push it onto the stack.  
+  `stack: [`(`, `{`, `[`]`
+
+---
+
+#### Step 4: `]` (Closing Bracket)  
+1. Look at the top of the stack: `[`  
+   - Does `]` match `[`? Yes!  
+2. Pop `[` from the stack.  
+   `stack: [`(`, `{`]`
+
+---
+
+#### Step 5: `}` (Closing Bracket)  
+1. Look at the top of the stack: `{`  
+   - Does `}` match `{`? Yes!  
+2. Pop `{` from the stack.  
+   `stack: [`(`]`
+
+---
+
+#### Step 6: `)` (Closing Bracket)  
+1. Look at the top of the stack: `(`  
+   - Does `)` match `(`? Yes!  
+2. Pop `(` from the stack.  
+   `stack: []`
+
+---
+
+### 5. Final Check  
+
+- The stack is empty, meaning all brackets matched correctly.  
+- **Output**: `true`
+
+---
+
+### What If They Don’t Match?  
+
+Let’s try `s = "(]"`:  
+
+1. Push `(` onto the stack.  
+   `stack: [`(`]`
+
+2. Now `]` comes:  
+   - Look at the top: `(`  
+   - Does `]` match `(`? **No!**  
+
+We immediately know it’s invalid, and we return `false`.
+
+---
+
+### 6. Why `st.pop()` is Important  
+
+Whenever we pop, we remove the last unmatched opening bracket.  
+This ensures the stack always tracks what’s still "waiting" to be matched.  
+
+- If the stack is empty at the end, **everything matched perfectly**.  
+- If the stack isn’t empty, some opening brackets didn’t get matched.
+
+---
+
+### Easy Analogy  
+
+Think of the stack as a backpack:  
+1. Whenever you see an opening bracket, you **put it in the backpack**.  
+2. When you see a closing bracket, you **check the top item in the backpack**:  
+   - If it matches, you **remove it** (pop).  
+   - If it doesn’t match, the backpack is invalid.  
+
+At the end:  
+- If the backpack is empty, you packed and unpacked perfectly.  
+- If there’s something left in the backpack, it’s invalid.
+
+---
+
+Let me know if anything is still unclear! 😊
