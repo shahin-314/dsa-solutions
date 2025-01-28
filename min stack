@@ -1,0 +1,119 @@
+To efficiently implement a `MinStack` class that supports `push`, `pop`, `top`, and `getMin` operations in \(O(1)\) time complexity, we can use two stacks:
+1. **Main Stack**: To store all elements.
+2. **Min Stack**: To store the minimum value at each stage.
+
+---
+
+### **Explanation**
+
+1. **Push Operation**:
+   - Push the value onto the main stack.
+   - If the min stack is empty or the value is less than or equal to the current minimum, push the value onto the min stack.
+
+2. **Pop Operation**:
+   - Remove the top element from the main stack.
+   - If the popped element matches the top of the min stack, pop it from the min stack as well (since it is no longer part of the main stack).
+
+3. **Top Operation**:
+   - Simply return the top of the main stack.
+
+4. **GetMin Operation**:
+   - Return the top of the min stack, as it always holds the current minimum value.
+
+---
+
+### **Code Implementation**
+
+```cpp
+class MinStack {
+private:
+    stack<int> mainStack; // Stack to store all elements
+    stack<int> minStack;  // Stack to store the minimum values
+
+public:
+    // Constructor
+    MinStack() {}
+
+    // Push a value onto the stack
+    void push(int val) {
+        mainStack.push(val);
+        // If minStack is empty or val is smaller than the current minimum, push val to minStack
+        if (minStack.empty() || val <= minStack.top()) {
+            minStack.push(val);
+        }
+    }
+
+    // Remove the top element
+    void pop() {
+        if (!mainStack.empty()) {
+            // If the top of mainStack matches the top of minStack, pop from minStack as well
+            if (mainStack.top() == minStack.top()) {
+                minStack.pop();
+            }
+            mainStack.pop();
+        }
+    }
+
+    // Get the top element
+    int top() {
+        return mainStack.top();
+    }
+
+    // Retrieve the minimum element
+    int getMin() {
+        return minStack.top();
+    }
+};
+```
+
+---
+
+### **How the Code Works**
+
+#### Example Input:
+```text
+["MinStack", "push", "push", "push", "getMin", "pop", "top", "getMin"]
+[[], [-2], [0], [-3], [], [], [], []]
+```
+
+#### Execution:
+1. `MinStack()`:
+   - Initialize two empty stacks: `mainStack` and `minStack`.
+
+2. `push(-2)`:
+   - Push `-2` onto `mainStack`: `mainStack = [-2]`.
+   - Since `minStack` is empty, also push `-2` onto `minStack`: `minStack = [-2]`.
+
+3. `push(0)`:
+   - Push `0` onto `mainStack`: `mainStack = [-2, 0]`.
+   - Compare `0` with the top of `minStack` (`-2`). Since `0 > -2`, do not push onto `minStack`.
+
+4. `push(-3)`:
+   - Push `-3` onto `mainStack`: `mainStack = [-2, 0, -3]`.
+   - Compare `-3` with the top of `minStack` (`-2`). Since `-3 <= -2`, push `-3` onto `minStack`: `minStack = [-2, -3]`.
+
+5. `getMin()`:
+   - Return the top of `minStack`, which is `-3`.
+
+6. `pop()`:
+   - Remove `-3` from `mainStack`: `mainStack = [-2, 0]`.
+   - Since `-3` is the top of `minStack`, also pop it from `minStack`: `minStack = [-2]`.
+
+7. `top()`:
+   - Return the top of `mainStack`, which is `0`.
+
+8. `getMin()`:
+   - Return the top of `minStack`, which is `-2`.
+
+---
+
+### **Complexity Analysis**
+
+- **Time Complexity**:
+  - `push`, `pop`, `top`, and `getMin`: \(O(1)\).
+- **Space Complexity**:
+  - Both stacks combined require \(O(N)\) space, where \(N\) is the number of elements pushed.
+
+---
+
+Let me know if you'd like further clarification! 😊
