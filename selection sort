@@ -1,0 +1,150 @@
+### **Selection Sort Explained (Step-by-Step with Example)**
+
+---
+
+### **What is Selection Sort?**
+
+Selection Sort is a simple sorting algorithm.  
+It works by **repeatedly finding the smallest (or largest) element** from the **unsorted part** of the array and **putting it at the correct position** in the sorted part.  
+
+Think of it like **selecting the smallest card** from a pile and placing it at the start.
+
+---
+
+### **Code for Selection Sort (with Comments):**
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+void selectionSort(vector<int>& arr, int n) {
+    // Loop to move the boundary of the unsorted part of the array
+    for (int i = 0; i < n - 1; i++) {
+        int minIndex = i; // Assume the first element of the unsorted part is the minimum
+
+        // Find the minimum element in the unsorted part
+        for (int j = i + 1; j < n; j++) {
+            if (arr[j] < arr[minIndex]) {
+                minIndex = j; // Update the index of the minimum element
+            }
+        }
+
+        // Swap the found minimum element with the first element of the unsorted part
+        swap(arr[i], arr[minIndex]);
+    }
+}
+```
+
+---
+
+### **Step-by-Step Example:**
+
+Let's sort this array:  
+**arr = [29, 10, 14, 37, 13]**
+
+- **n = 5** (since there are 5 elements)
+
+---
+
+### **Step 1: First Iteration (i = 0)**
+
+- The unsorted part: **[29, 10, 14, 37, 13]**  
+- Assume **29** (at index `0`) is the minimum.
+
+Now we compare 29 with the other elements:  
+- Compare **29** with **10** → 10 is smaller, so update **minIndex = 1**  
+- Compare **10** with **14** → 10 is still smaller  
+- Compare **10** with **37** → 10 is still smaller  
+- Compare **10** with **13** → 10 is still smaller  
+
+**Result:** The smallest element is **10**.  
+**Swap 29 and 10.**
+
+**Array after Step 1:** **[10, 29, 14, 37, 13]**
+
+---
+
+### **Step 2: Second Iteration (i = 1)**
+
+- The unsorted part: **[29, 14, 37, 13]**  
+- Assume **29** (at index `1`) is the minimum.
+
+Now we compare 29 with the other elements:  
+- Compare **29** with **14** → 14 is smaller, update **minIndex = 2**  
+- Compare **14** with **37** → 14 is still smaller  
+- Compare **14** with **13** → **13** is smaller, update **minIndex = 4**  
+
+**Result:** The smallest element is **13**.  
+**Swap 29 and 13.**
+
+**Array after Step 2:** **[10, 13, 14, 37, 29]**
+
+---
+
+### **Step 3: Third Iteration (i = 2)**
+
+- The unsorted part: **[14, 37, 29]**  
+- Assume **14** (at index `2`) is the minimum.
+
+Compare 14 with the other elements:  
+- Compare **14** with **37** → 14 is smaller  
+- Compare **14** with **29** → 14 is still smaller  
+
+Since **14** is already the smallest, **no swap needed**.
+
+**Array after Step 3:** **[10, 13, 14, 37, 29]**
+
+---
+
+### **Step 4: Fourth Iteration (i = 3)**
+
+- The unsorted part: **[37, 29]**  
+- Assume **37** (at index `3`) is the minimum.
+
+Compare 37 with 29:  
+- **29** is smaller, update **minIndex = 4**
+
+**Result:** The smallest element is **29**.  
+**Swap 37 and 29.**
+
+**Array after Step 4:** **[10, 13, 14, 29, 37]**
+
+---
+
+### **Final Sorted Array:**
+
+**[10, 13, 14, 29, 37]**
+
+---
+
+### **Diagram Representation:**
+
+```
+Initial:     [29, 10, 14, 37, 13]
+Step 1:     [10, 29, 14, 37, 13]   ← 10 swapped with 29
+Step 2:     [10, 13, 14, 37, 29]   ← 13 swapped with 29
+Step 3:     [10, 13, 14, 37, 29]   ← 14 already in place (no swap)
+Step 4:     [10, 13, 14, 29, 37]   ← 29 swapped with 37
+```
+
+---
+
+### **Time Complexity:**
+
+- **Best, Average, Worst Case:** **O(n²)**  
+- **Why?** Because there are two nested loops: one for selecting the element, and one for finding the minimum.  
+
+### **Space Complexity:** **O(1)**  
+- Only a few variables are used for swapping.
+
+---
+
+### **Key Points to Remember:**
+
+1. **Selection Sort** always performs the same number of comparisons, no matter what the input is.  
+2. It is **not efficient for large datasets**, but good for learning sorting concepts.  
+3. **Simple to understand** and easy to implement.
+
+---
+
+Did this explanation help you? Let me know if you need more clarification!
