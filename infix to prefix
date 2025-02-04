@@ -1,0 +1,98 @@
+Here's the **complete C++ code** for converting an **infix expression to prefix** using a stack, with detailed comments. This will help you understand the code even if you revisit it later. 😊  
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+// Function to define precedence of operators
+int precedence(char op) {
+    if (op == '^') return 3;       // Exponent has the highest precedence
+    else if (op == '*' || op == '/') return 2;  // Multiplication/Division
+    else if (op == '+' || op == '-') return 1;  // Addition/Subtraction
+    else return -1;                // For non-operators
+}
+
+// Function to reverse the expression and handle parentheses swapping
+string reverseExpression(const string &exp) {
+    string reversedExp = exp;
+    reverse(reversedExp.begin(), reversedExp.end());  // Reverse the whole string
+    
+    // Swap '(' with ')' and vice versa
+    for (char &c : reversedExp) {
+        if (c == '(') c = ')';
+        else if (c == ')') c = '(';
+    }
+    return reversedExp;
+}
+
+// Main function to convert Infix to Prefix
+string infixToPrefix(string exp) {
+    // Step 1: Reverse the expression and swap parentheses
+    exp = reverseExpression(exp);
+
+    stack<char> st;    // Stack to hold operators and parentheses
+    string result;     // Final Prefix result (currently Postfix format)
+
+    // Step 2: Process each character in the reversed expression
+    for (char c : exp) {
+        if (isalnum(c)) {           // If operand (A-Z, a-z, 0-9), add directly to result
+            result += c;
+        }
+        else if (c == '(') {        // Push '(' onto the stack
+            st.push(c);
+        }
+        else if (c == ')') {        // Pop operators until '(' is found
+            while (!st.empty() && st.top() != '(') {
+                result += st.top();
+                st.pop();
+            }
+            st.pop();               // Remove the '(' from the stack
+        }
+        else {                      // If it's an operator (+, -, *, /, ^)
+            while (!st.empty() && precedence(st.top()) >= precedence(c)) {
+                result += st.top(); // Pop operators with higher or equal precedence
+                st.pop();
+            }
+            st.push(c);             // Push the current operator onto the stack
+        }
+    }
+
+    // Step 3: Pop any remaining operators from the stack
+    while (!st.empty()) {
+        result += st.top();
+        st.pop();
+    }
+
+    // Step 4: Reverse the result to get the final Prefix expression
+    reverse(result.begin(), result.end());
+
+    return result;
+}
+```
+
+---
+
+### 📌 **Quick Recap of the Code Structure:**
+
+1. **`precedence()` Function:**  
+   - Defines priority for operators (`^` > `*`, `/` > `+`, `-`).
+
+2. **`reverseExpression()` Function:**  
+   - Reverses the infix expression and swaps parentheses to handle the reversed logic.
+
+3. **`infixToPrefix()` Function:**  
+   - Processes the reversed expression using a stack.
+   - Handles operands, operators, and parentheses separately.
+   - Pops remaining operators from the stack at the end.
+   - Reverses the intermediate result to get the final prefix expression.
+
+---
+
+### ⚡ **Example:**  
+For the expression: `A + B * C`  
+
+- **Reversed Expression:** `C * B + A`  
+- **Processed Result:** `CB*A+` (postfix format)  
+- **Final Prefix:** `+A*BC` ✅  
+
+Now, whenever you revisit the code, the comments will guide you through it like a roadmap. 🚀
