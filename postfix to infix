@@ -1,0 +1,124 @@
+### 🔹 **Understanding the Code in Detail (Indian English Style)**
+Let's break it down properly, so even if you see this later, you will **understand everything clearly**. 💡
+
+---
+
+### **What is `c` in the Code?**
+- `c` is just a **character variable** that stores **each character** of the given postfix expression **one by one** as we loop through it.
+- It helps us **check whether a character is an operand (A-Z, a-z, 0-9) or an operator (`+`, `-`, `*`, `/`)**.
+
+Example:
+```cpp
+for (char c : postfix) {  
+    // 'c' takes one character at a time from postfix expression
+}
+```
+
+If **postfix = `"ab+c+"`**, the loop runs like this:
+| Iteration | `c` (current character) |
+|-----------|--------------------------|
+| 1st       | `'a'` |
+| 2nd       | `'b'` |
+| 3rd       | `'+'` |
+| 4th       | `'c'` |
+| 5th       | `'+'` |
+
+---
+
+### **What is `string operand(1, c);` Doing?**
+```cpp
+string operand(1, c);
+```
+- This line **converts the single character `c` into a string** and stores it in `operand`.
+- The `string` constructor **string(n, c)** creates a string with `n` copies of character `c`.
+- **Here, `n = 1`**, so it makes a **single-character string** from `c`.
+
+💡 **Example:**
+```cpp
+char c = 'a';
+string operand(1, c);  // Creates "a"
+```
+📌 **Without this, `c` would just be a character, but we need a string because we are working with expressions.**  
+
+---
+
+### **Why `operand2` is Taken First?**
+These lines:
+```cpp
+string operand2 = st.top(); st.pop(); 
+string operand1 = st.top(); st.pop();
+```
+- First, we **pop the topmost element** (`operand2`).
+- Then, we **pop the second element** (`operand1`).
+- **Order matters** because **in postfix notation, the operator applies to the last two operands pushed**.
+
+💡 **Example:**  
+Let’s say the stack contains:
+```
+["a", "b", "c"]
+```
+Now, we get `+` (addition operator). The last two elements (`b` and `c`) should be combined first:
+1. `operand2 = c`
+2. `operand1 = b`
+3. New expression: `(b+c)`
+
+📌 **So, `operand2` is taken first because it was pushed later in the stack (LIFO - Last In First Out).**
+
+---
+
+### ✅ **Final Code with Detailed Comments**
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+string postToInfix(string postfix) {
+    stack<string> st;  // Stack to store intermediate infix expressions
+
+    for (char c : postfix) { // Loop through each character in the postfix expression
+        if (isalnum(c)) {  // If it's an operand (a-z, A-Z, 0-9), push it as a string
+            string operand(1, c);  // Convert character to string
+            st.push(operand);
+        } 
+        else {  // If it's an operator, pop two operands from the stack
+            string operand2 = st.top(); st.pop();  // Get last operand
+            string operand1 = st.top(); st.pop();  // Get second last operand
+
+            // Form new infix expression by placing operator between operands
+            string newExpr = "(" + operand1 + c + operand2 + ")";
+            st.push(newExpr);  // Push the new expression back into the stack
+        }
+    }
+
+    return st.top();  // The final infix expression is the last item in stack
+}
+```
+
+---
+
+### **🔹 Dry Run with Example**
+📌 **Input:** `"ab+c+"`  
+📌 **Stack Step-by-Step Execution**  
+
+| Step | `c` | Stack State |
+|------|-----|------------|
+| 1st  | `'a'` | `["a"]` |
+| 2nd  | `'b'` | `["a", "b"]` |
+| 3rd  | `'+'` | `["(a+b)"]` |
+| 4th  | `'c'` | `["(a+b)", "c"]` |
+| 5th  | `'+'` | `["((a+b)+c)"]` |
+
+📌 **Output:** `"((a+b)+c)"` ✅  
+
+---
+
+### **💡 Summary**
+1. **`c` stores one character at a time** while looping.
+2. **`string operand(1, c);` converts a single character into a string** so we can push it into the stack.
+3. **Stack follows LIFO (Last In, First Out), so operand2 is popped first, then operand1**.
+4. **Operators pop two operands, combine them into an infix expression, and push back**.
+5. **Final expression in the stack is the result.**
+
+---
+
+Now you have **full clarity** about the **flow of values** and how the **conversion works**! 🚀  
+Hope this explanation feels like a **friend teaching you**. If anything is still confusing, feel free to ask! 😊
