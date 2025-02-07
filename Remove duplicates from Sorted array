@@ -1,0 +1,163 @@
+### **Explanation of the STL-Based Solution**
+```cpp
+int removeDuplicates(vector<int>& arr, int n) {
+    return distance(arr.begin(), unique(arr.begin(), arr.end()));
+}
+```
+
+This solution uses two STL functions:
+1. **`unique()`** → Modifies the array in-place and moves duplicate elements to the end.
+2. **`distance()`** → Calculates the length of the unique elements in the modified array.
+
+---
+
+## **1️⃣ Understanding `unique()`**
+### **Function Signature**
+```cpp
+ForwardIterator unique(ForwardIterator first, ForwardIterator last);
+```
+- **What it does:**  
+  - Removes **consecutive** duplicate elements.
+  - **Modifies the input array in-place** but does **not shrink its size**.
+  - Returns an iterator to the new logical end of the unique array.
+
+### **How `unique()` Works**
+Let's take an **example**:
+```cpp
+vector<int> arr = {1, 1, 2, 2, 3, 3, 3, 4, 5, 5};
+auto it = unique(arr.begin(), arr.end());
+```
+
+**Step-by-step execution**:
+
+| Step | `arr` before `unique()` | Unique Elements Found | `arr` after `unique()` |
+|------|-------------------------|----------------------|-------------------------|
+| 1 | `{1, 1, 2, 2, 3, 3, 3, 4, 5, 5}` | `{1}` | `{1, _, 2, 2, 3, 3, 3, 4, 5, 5}` |
+| 2 | `{1, _, 2, 2, 3, 3, 3, 4, 5, 5}` | `{1, 2}` | `{1, 2, _, 2, 3, 3, 3, 4, 5, 5}` |
+| 3 | `{1, 2, _, 2, 3, 3, 3, 4, 5, 5}` | `{1, 2, 3}` | `{1, 2, 3, _, 3, 3, 4, 5, 5}` |
+| 4 | `{1, 2, 3, _, 3, 3, 4, 5, 5}` | `{1, 2, 3, 4}` | `{1, 2, 3, 4, _, 3, 5, 5}` |
+| 5 | `{1, 2, 3, 4, _, 3, 5, 5}` | `{1, 2, 3, 4, 5}` | `{1, 2, 3, 4, 5, _, _, _}` |
+
+🚀 **The unique elements are placed in the beginning, but the extra spaces still exist.**
+
+👉 `unique()` **returns an iterator to the new logical end of unique elements**.  
+In this case, `it = arr.begin() + 5`.
+
+---
+
+## **2️⃣ Understanding `distance()`**
+### **Function Signature**
+```cpp
+distance(InputIterator first, InputIterator last);
+```
+- **What it does:**  
+  - Returns the number of elements between `first` and `last`.
+
+### **How `distance()` Works**
+```cpp
+int new_size = distance(arr.begin(), it);
+```
+- `arr.begin()` → Points to the first element.
+- `it` → Points to the new logical end of the unique array.
+
+For our example:
+```cpp
+new_size = distance(arr.begin(), arr.begin() + 5) = 5
+```
+👉 **Returns the number of unique elements**.
+
+---
+
+## **📌 Final Output**
+### **Modified `arr` (After `unique()`)**
+```cpp
+arr = {1, 2, 3, 4, 5, _, _, _};
+```
+✅ **Output:** `5` (Number of unique elements)
+
+---
+
+## **Complete Working Code**
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int removeDuplicates(vector<int>& arr, int n) {
+    return distance(arr.begin(), unique(arr.begin(), arr.end()));
+}
+
+int main() {
+    vector<int> arr = {1, 1, 2, 2, 3, 3, 3, 4, 5, 5};
+    int new_size = removeDuplicates(arr, arr.size());
+
+    cout << "Unique Elements Count: " << new_size << endl;
+    cout << "Modified Array: ";
+    for (int i = 0; i < new_size; i++) {
+        cout << arr[i] << " ";
+    }
+    return 0;
+}
+```
+
+---
+
+## **⏳ Time & Space Complexity**
+- **Time Complexity:** `O(N)` → Single pass
+- **Space Complexity:** `O(1)` → No extra space used
+
+---
+
+# **🔥 More STL Approaches**
+## **1️⃣ Using `set` (Extra Space)**
+The **`set` container** automatically removes duplicates.
+```cpp
+int removeDuplicates(vector<int>& arr, int n) {
+    set<int> s(arr.begin(), arr.end());  // Store only unique elements
+    arr.assign(s.begin(), s.end());  // Copy back to original array
+    return s.size();
+}
+```
+✅ **Pros**:
+- Clean and easy to understand.
+- Works for **unsorted** arrays too.
+
+❌ **Cons**:
+- Uses `O(N)` extra space.
+- Changes the **order** of elements.
+
+---
+
+## **2️⃣ Using `erase()` with `unique()`**
+```cpp
+int removeDuplicates(vector<int>& arr, int n) {
+    arr.erase(unique(arr.begin(), arr.end()), arr.end());
+    return arr.size();
+}
+```
+- `erase()` **removes** extra elements after `unique()`.
+- **Modifies the original vector to remove extra spaces.**
+
+✔ **Best if you want a clean, compact result.**
+
+---
+
+## **🎯 Summary Table**
+| Approach | Time Complexity | Space Complexity | Notes |
+|----------|---------------|----------------|--------|
+| **Two-pointer (Optimal)** ✅ | `O(N)` | `O(1)` | Best for in-place modifications |
+| **STL `unique() + distance()`** ✅ | `O(N)` | `O(1)` | Shortest STL solution |
+| **`unique() + erase()`** | `O(N)` | `O(1)` | Fully cleans up the vector |
+| **Using `set`** ❌ | `O(N log N)` | `O(N)` | Not in-place, changes order |
+
+👉 **For Leetcode-style problems:** Use **`unique() + erase()`** or **Two-pointer approach**.
+
+---
+
+# **🚀 Final Recommendation**
+- If **extra space** is allowed: `set<int>` is easy.
+- If **O(1) space** is required: **Use `unique() + erase()`** for best results.
+- If you need **full control** over the array: **Use the two-pointer approach**.
+
+---
+
+Would you like me to explain this with **diagrams**? 😊
