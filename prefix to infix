@@ -1,0 +1,93 @@
+### **💡 Approach for Prefix to Infix Conversion**
+We will use a **stack-based approach** to convert a **prefix expression** to an **infix expression** efficiently.  
+
+---
+### **📝 Steps to Solve the Problem**
+1. **Start from the end of the prefix expression** and move towards the beginning.
+2. **Use a stack** to store intermediate expressions.
+3. If the current character is **an operand (a-z)**, **push it onto the stack**.
+4. If the current character is **an operator (+, -, *, /)**:
+   - **Pop the top two elements from the stack**.
+   - **Combine them with the operator in infix format**: `(operand1 operator operand2)`.
+   - **Push the newly formed expression back onto the stack**.
+5. At the end, **the stack will contain the final infix expression**.
+
+---
+### **✅ Optimized C++ Code**
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+string prefixToInfixConversion(string &s) {
+    stack<string> st; // Stack to store intermediate expressions
+    int n = s.length(); // Get the length of the input string
+
+    // Traverse the prefix expression from right to left
+    for (int i = n - 1; i >= 0; i--) {
+        char ch = s[i]; // Current character
+
+        // If the character is an operand (a-z), push it onto the stack
+        if (islower(ch)) {
+            string operand(1, ch); // Convert character to string
+            st.push(operand);
+        } 
+        // If the character is an operator (+, -, *, /)
+        else {
+            // Pop two operands from the stack
+            string op1 = st.top(); st.pop();
+            string op2 = st.top(); st.pop();
+
+            // Form the infix expression by placing operator between operands
+            string infix = "(" + op1 + ch + op2 + ")";
+
+            // Push the newly formed expression back onto the stack
+            st.push(infix);
+        }
+    }
+
+    // The final result is stored at the top of the stack
+    return st.top();
+}
+```
+
+---
+### **📌 Explanation of Code (Step-by-Step)**
+Let's take the **input**:  
+**`*-a/bc-/dkl`**  
+(Meaning: `* - a / b c - / d k l` in prefix form)
+
+#### **🚀 Step-by-Step Execution**
+| Step | Character | Action | Stack Content |
+|------|----------|--------|--------------|
+| 1 | `l` | Push operand | `["l"]` |
+| 2 | `k` | Push operand | `["l", "k"]` |
+| 3 | `/` | Operator → Pop `k, l` → Form `(k/l)` → Push | `["(k/l)"]` |
+| 4 | `d` | Push operand | `["(k/l)", "d"]` |
+| 5 | `-` | Operator → Pop `d, (k/l)` → Form `(d/(k/l))` → Push | `["(d/(k/l))"]` |
+| 6 | `c` | Push operand | `["(d/(k/l))", "c"]` |
+| 7 | `b` | Push operand | `["(d/(k/l))", "c", "b"]` |
+| 8 | `/` | Operator → Pop `b, c` → Form `(b/c)` → Push | `["(d/(k/l))", "(b/c)"]` |
+| 9 | `a` | Push operand | `["(d/(k/l))", "(b/c)", "a"]` |
+| 10 | `-` | Operator → Pop `a, (b/c)` → Form `(a-(b/c))` → Push | `["(d/(k/l))", "(a-(b/c))"]` |
+| 11 | `*` | Operator → Pop `(a-(b/c)), (d/(k/l))` → Form `((a-(b/c))*(d/(k/l)))` → Push | `["((a-(b/c))*(d/(k/l)))"]` |
+
+✅ **Final Expression in Stack**:  
+👉 **Output: `((a-(b/c))*((d/k)-l))`** 🎯
+
+---
+### **🔹 Time Complexity Analysis**
+- We traverse the input **once** → **O(n)**
+- Each stack operation is **O(1)**
+- Overall, **O(n) time complexity** ✅  
+- **O(n) space complexity** due to stack usage ✅
+
+---
+### **💡 Key Takeaways**
+1. **Stack is the best approach for Prefix to Infix conversion**.
+2. **Processing from right to left** is important.
+3. **Operands are pushed directly, while operators combine top two stack elements**.
+4. **Time complexity is O(n), making it efficient even for n = 500**.
+
+---
+🚀 **Now you can easily understand this code later when revisiting it!**  
+Let me know if you need further clarifications! 😊
