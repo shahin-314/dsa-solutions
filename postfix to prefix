@@ -1,0 +1,42 @@
+#include <bits/stdc++.h> // Includes all standard C++ libraries (useful for competitive programming)
+using namespace std;
+
+/**
+ * Function to convert a given postfix expression to a prefix expression.
+ * 
+ * @param s The input string containing a valid postfix expression.
+ * @return The equivalent prefix expression.
+ */
+string postfixToPrefix(string &s) {
+    stack<string> st; // Stack to store intermediate prefix expressions.
+
+    // Traverse the postfix expression character by character.
+    for (char ch : s) {  
+        if (isalpha(ch)) {  
+            // ✅ If the character is an operand (a-z), push it onto the stack.
+            // Convert character to string and push to stack.
+            string operand(1, ch); // Convert single character to string
+            st.push(operand);
+        } else {  
+            // ✅ If the character is an operator (+, -, *, /), process the last two operands.
+            
+            // Step 1: Pop the top element from the stack → This is the second operand.
+            string op2 = st.top();  
+            st.pop();
+            
+            // Step 2: Pop the next top element → This is the first operand.
+            string op1 = st.top();  
+            st.pop();
+            
+            // Step 3: Form the new prefix expression in the format: 
+            // "operator + operand1 + operand2"
+            string prefixExp = ch + op1 + op2;
+
+            // Step 4: Push the new prefix expression back onto the stack.
+            st.push(prefixExp);
+        }
+    }
+    
+    // ✅ The final prefix expression will be the only element left in the stack.
+    return st.top();
+}
