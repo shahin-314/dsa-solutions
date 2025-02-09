@@ -1,0 +1,33 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+string preToPost(string s) {
+    stack<string> st; // Stack to store intermediate postfix expressions
+    int n = s.length(); // Length of input string
+
+    // Traversing the prefix expression from right to left
+    for (int i = n - 1; i >= 0; i--) {
+        // If the current character is an operand (A-Z), push it into the stack
+        if (isalpha(s[i])) { 
+            string operand(1, s[i]); // Convert character to string
+            st.push(operand);
+        } 
+        // If the current character is an operator (+, -, *, /)
+        else {
+            // Pop the top two elements from the stack
+            string op1 = st.top();
+            st.pop();
+            string op2 = st.top();
+            st.pop();
+
+            // Create a new postfix expression (operand1 + operand2 + operator)
+            string postfixExpr = op1 + op2 + s[i];
+
+            // Push the new postfix expression back to the stack
+            st.push(postfixExpr);
+        }
+    }
+
+    // The final expression in the stack is the required postfix expression
+    return st.top();
+}
