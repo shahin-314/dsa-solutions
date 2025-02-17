@@ -1,0 +1,114 @@
+Sure! I'll explain this **Next Greater Element (NGE)** code in a very **easy manner** with **detailed comments** and step-by-step execution so that even if you see it later, you can easily understand it. 😊  
+
+---
+
+## ✅ **Understanding the Problem Statement**
+We need to **find the next greater element** for each element in the given array.  
+- The **next greater element** is the **first element on the right** which is **greater** than the current element.  
+- If no such element exists, we store **-1**.  
+
+### **Example 1:**
+```cpp
+Input: arr = [4, 5, 2, 25]
+Output: nge = [5, 25, 25, -1]
+```
+- **4 →** Next greater element is **5**.  
+- **5 →** Next greater element is **25**.  
+- **2 →** Next greater element is **25**.  
+- **25 →** No greater element, so store **-1**.  
+
+---
+
+## ✅ **Optimized Approach - Using Stack**
+This **efficient approach** uses a **stack** and works in **O(N) time**.
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<int> nextGreaterElement(vector<int>& arr, int n) {
+    vector<int> nge(n, -1);  // Step 1: Initialize the NGE array with -1 for all elements.
+    stack<int> st;  // Step 2: Create a stack to store indices of elements.
+
+    // Step 3: Traverse the array
+    for (int i = 0; i < n; i++) {
+        // Step 4: While stack is not empty and the current element is greater than top of stack
+        while (!st.empty() && arr[i] > arr[st.top()]) {
+            nge[st.top()] = arr[i];  // Step 5: Update the NGE of top element of stack
+            st.pop();  // Step 6: Remove the element from stack
+        }
+        st.push(i);  // Step 7: Push the current index into stack
+    }
+    
+    return nge; // Step 8: Return the final result
+}
+```
+
+---
+
+## ✅ **Step-by-Step Execution**
+Let's take an example:  
+```cpp
+Input: arr = [4, 5, 2, 25]
+```
+| Index | Element (arr[i]) | Stack (Index) | Stack (Values) | NGE Array |
+|--------|--------------|-----------------|---------------|------------|
+| 0      | 4            | `[0]`           | `[4]`         | `[-1, -1, -1, -1]` |
+| 1      | 5            | `[ ]`           | `[ ]`         | `[5, -1, -1, -1]` |
+| 2      | 2            | `[2]`           | `[2]`         | `[5, -1, -1, -1]` |
+| 3      | 25           | `[ ]`           | `[ ]`         | `[5, 25, 25, -1]` |
+
+**Detailed Execution for each step:**
+### **1️⃣ First iteration (i = 0, arr[i] = 4)**
+- The stack is **empty** initially.
+- Push **index 0** into the stack.
+- Stack → `[0]` (Values `[4]`)
+  
+### **2️⃣ Second iteration (i = 1, arr[i] = 5)**
+- `arr[i] (5) > arr[st.top()] (4)`, so `NGE[0] = 5`
+- Pop index `0` from the stack.
+- Push **index 1** into the stack.
+- Stack → `[1]` (Values `[5]`)
+  
+### **3️⃣ Third iteration (i = 2, arr[i] = 2)**
+- `arr[i] (2) < arr[st.top()] (5)`, so we **push index 2 into stack**.
+- Stack → `[1, 2]` (Values `[5, 2]`)
+  
+### **4️⃣ Fourth iteration (i = 3, arr[i] = 25)**
+- `arr[i] (25) > arr[st.top()] (2)`, so `NGE[2] = 25`
+- Pop index `2` from the stack.
+- `arr[i] (25) > arr[st.top()] (5)`, so `NGE[1] = 25`
+- Pop index `1` from the stack.
+- Push **index 3** into the stack.
+- Stack → `[3]` (Values `[25]`)
+
+### **End of loop**
+- No element remains in the stack, so **NGE[3] remains -1**.
+
+### **Final Output**
+```cpp
+NGE = [5, 25, 25, -1]
+```
+
+---
+
+## ✅ **Why is this approach efficient?**
+- Each **element is pushed and popped once**, so **O(N)** time complexity.
+- Uses a **stack**, so space complexity is **O(N)** in the worst case.
+
+---
+
+## ✅ **Summary**
+| Approach  | Time Complexity | Space Complexity | Best for Large Inputs? |
+|-----------|---------------|----------------|------------------|
+| **Brute Force (Nested Loops)** | **O(N²)** | **O(1)** | ❌ **Not good** for large `N` |
+| **Stack-Based (Optimized)** | **O(N)** | **O(N)** | ✅ **Best approach** |
+
+---
+
+## ✅ **Final Thoughts**
+- This method is **fast and efficient**.
+- **Use stack** to **track indices**.
+- If you **understand the dry run**, you'll find it **easy to remember**.
+
+Hope this helps! If you have any **doubts**, feel free to ask. 😊🚀
