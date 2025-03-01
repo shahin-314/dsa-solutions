@@ -1,0 +1,225 @@
+Bhai, no problem! Let’s go through the code **line by line** and understand how it works. I’ll use an example matrix to explain the flow of values and the output after each step.
+
+---
+
+### **Example Matrix**:
+Let’s take the following matrix for explanation:
+```cpp
+vector<vector<int>> mat = {
+    {1, 2, 3, 4},
+    {5, 6, 7, 8},
+    {9, 10, 11, 12},
+    {13, 14, 15, 16}
+};
+```
+Here, `n = 4` (number of rows) and `m = 4` (number of columns).
+
+---
+
+### **Code with Line-by-Line Explanation**:
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+void rotateMatrix(vector<vector<int>> &mat, int n, int m) {
+    if (n == 1 || m == 1) return;  // If only one row or column, no rotation needed
+
+    int top = 0, bottom = n - 1, left = 0, right = m - 1;
+    
+    while (top < bottom && left < right) {
+        int prev = mat[top + 1][left]; // Store first element of next row (for rotation)
+
+        // Move elements of top row (Right Shift)
+        for (int i = left; i <= right; i++) {
+            swap(mat[top][i], prev);
+        }
+        top++;
+
+        // Move elements of right column (Down Shift)
+        for (int i = top; i <= bottom; i++) {
+            swap(mat[i][right], prev);
+        }
+        right--;
+
+        // Move elements of bottom row (Left Shift)
+        if (top <= bottom) {
+            for (int i = right; i >= left; i--) {
+                swap(mat[bottom][i], prev);
+            }
+            bottom--;
+        }
+
+        // Move elements of left column (Up Shift)
+        if (left <= right) {
+            for (int i = bottom; i >= top; i--) {
+                swap(mat[i][left], prev);
+            }
+            left++;
+        }
+    }
+}
+```
+
+---
+
+### **Step-by-Step Walkthrough**:
+
+#### **Initial State**:
+```
+Matrix:
+1  2  3  4
+5  6  7  8
+9 10 11 12
+13 14 15 16
+```
+
+---
+
+#### **Line 5**: `if (n == 1 || m == 1) return;`
+- This line checks if the matrix has only **one row** or **one column**. If so, no rotation is needed.
+- In our case, `n = 4` and `m = 4`, so this condition is **false**. We proceed to the next line.
+
+---
+
+#### **Line 7**: `int top = 0, bottom = n - 1, left = 0, right = m - 1;`
+- Initialize boundaries for the matrix:
+  - `top = 0` (first row)
+  - `bottom = 3` (last row)
+  - `left = 0` (first column)
+  - `right = 3` (last column)
+
+---
+
+#### **Line 9**: `while (top < bottom && left < right)`
+- This loop runs as long as the boundaries are valid (i.e., `top < bottom` and `left < right`).
+- In our case, `top = 0`, `bottom = 3`, `left = 0`, `right = 3` → The loop runs.
+
+---
+
+#### **Line 10**: `int prev = mat[top + 1][left];`
+- Store the first element of the next row (`mat[1][0] = 5`) in `prev`.
+- `prev = 5`.
+
+---
+
+#### **Lines 12-15**: Move elements of top row (Right Shift)
+```cpp
+for (int i = left; i <= right; i++) {
+    swap(mat[top][i], prev);
+}
+top++;
+```
+- This loop shifts elements of the **top row** to the **right**.
+- `i` runs from `left = 0` to `right = 3`.
+
+| Iteration | `i` | `mat[top][i]` | `prev` | Swap `mat[top][i]` and `prev` | Updated Matrix |
+|-----------|-----|---------------|--------|-------------------------------|----------------|
+| 1         | 0   | `1`           | `5`    | Swap `1` and `5`               | `5 2 3 4`      |
+| 2         | 1   | `2`           | `1`    | Swap `2` and `1`               | `5 1 3 4`      |
+| 3         | 2   | `3`           | `2`    | Swap `3` and `2`               | `5 1 2 4`      |
+| 4         | 3   | `4`           | `3`    | Swap `4` and `3`               | `5 1 2 3`      |
+
+- After the loop, `top` is incremented to `1`.
+
+---
+
+#### **Lines 17-20**: Move elements of right column (Down Shift)
+```cpp
+for (int i = top; i <= bottom; i++) {
+    swap(mat[i][right], prev);
+}
+right--;
+```
+- This loop shifts elements of the **right column** **down**.
+- `i` runs from `top = 1` to `bottom = 3`.
+
+| Iteration | `i` | `mat[i][right]` | `prev` | Swap `mat[i][right]` and `prev` | Updated Matrix |
+|-----------|-----|-----------------|--------|---------------------------------|----------------|
+| 1         | 1   | `8`             | `4`    | Swap `8` and `4`                | `5 1 2 3`      |
+| 2         | 2   | `12`            | `8`    | Swap `12` and `8`               | `5 1 2 3`      |
+| 3         | 3   | `16`            | `12`   | Swap `16` and `12`              | `5 1 2 3`      |
+
+- After the loop, `right` is decremented to `2`.
+
+---
+
+#### **Lines 22-26**: Move elements of bottom row (Left Shift)
+```cpp
+if (top <= bottom) {
+    for (int i = right; i >= left; i--) {
+        swap(mat[bottom][i], prev);
+    }
+    bottom--;
+}
+```
+- This loop shifts elements of the **bottom row** to the **left**.
+- `i` runs from `right = 2` to `left = 0`.
+
+| Iteration | `i` | `mat[bottom][i]` | `prev` | Swap `mat[bottom][i]` and `prev` | Updated Matrix |
+|-----------|-----|------------------|--------|----------------------------------|----------------|
+| 1         | 2   | `15`             | `16`   | Swap `15` and `16`               | `5 1 2 3`      |
+| 2         | 1   | `14`             | `15`   | Swap `14` and `15`               | `5 1 2 3`      |
+| 3         | 0   | `13`             | `14`   | Swap `13` and `14`               | `5 1 2 3`      |
+
+- After the loop, `bottom` is decremented to `2`.
+
+---
+
+#### **Lines 28-32**: Move elements of left column (Up Shift)
+```cpp
+if (left <= right) {
+    for (int i = bottom; i >= top; i--) {
+        swap(mat[i][left], prev);
+    }
+    left++;
+}
+```
+- This loop shifts elements of the **left column** **up**.
+- `i` runs from `bottom = 2` to `top = 1`.
+
+| Iteration | `i` | `mat[i][left]` | `prev` | Swap `mat[i][left]` and `prev` | Updated Matrix |
+|-----------|-----|----------------|--------|--------------------------------|----------------|
+| 1         | 2   | `9`            | `13`   | Swap `9` and `13`              | `5 1 2 3`      |
+| 2         | 1   | `5`            | `9`    | Swap `5` and `9`               | `5 1 2 3`      |
+
+- After the loop, `left` is incremented to `1`.
+
+---
+
+#### **End of First Iteration**:
+- After the first iteration of the `while` loop, the matrix looks like this:
+```
+5  1  2  3
+9  6  7  4
+13 10 11 8
+14 15 16 12
+```
+
+---
+
+#### **Second Iteration**:
+- The `while` loop runs again because `top = 1`, `bottom = 2`, `left = 1`, `right = 2` → `top < bottom` and `left < right`.
+- The same steps are repeated for the inner layer of the matrix.
+
+---
+
+#### **Final Output**:
+After all iterations, the matrix is rotated by 90 degrees:
+```
+5  1  2  3
+9  6  7  4
+13 10 11 8
+14 15 16 12
+```
+
+---
+
+### **Key Points**:
+1. The code rotates the matrix **layer by layer** (outer layer first, then inner layers).
+2. It uses **boundary variables** (`top`, `bottom`, `left`, `right`) to track the current layer.
+3. The `prev` variable is used to store the value being shifted.
+
+---
+
+I hope this step-by-step explanation makes it clear, bhai! Let me know if you have more questions. 😊
