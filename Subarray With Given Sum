@@ -1,0 +1,194 @@
+
+### Problem Ko Simple Samajh
+Bro, yeh problem mein ek array diya hai (jaise `[1, 3, 2, 4]`) aur ek target sum `S` diya hai (jaise `5`). Humko yeh check karna hai ki koi subarray (continuous part) hai ya nahi jiska sum `S` ke barabar ho. Agar hai, toh uska starting index aur ending index (0-based) return karo. Agar nahi hai, toh `[-1, -1]` return karo.
+
+**Kya Karna Hai?**
+- Array ke continuous parts dekho.
+- Kisi bhi ek subarray ka sum `S` ke barabar hona chahiye.
+- Agar milta hai, toh start aur end index do, warna -1, -1.
+
+**Example:**
+- `arr = [1, 3, 2, 4]`, `S = 5`.
+- Subarray: `[3, 2]` (sum = 5).
+- Output: `[1, 2]`.
+
+---
+
+### Problem: Kyu Fail Ho Raha Hai Tera Code?
+Bro, tera code sliding window use karta hai, jo kaam karta hai jab array mein numbers positive hai. Lekin yeh problem mein constraints dekh:
+- `-10^9 <= arr[i] <= 10^9` → Matlab numbers negative bhi ho sakte hai.
+- Jab negative numbers aate hai, sliding window ka logic fail ho jata hai kyuki `currSum > sum` wala check kaam nahi karta—negative numbers se sum chhota ho sakta hai chahe kitne bhi elements kyu na ho.
+
+**Example Jaha Fail Hoga:**
+- `arr = [1, -2, 3]`, `S = 2`.
+- Tera code sochta hai ki sum bada ho gaya toh chhota karo, lekin negative numbers ke wajah se sum kabhi bhi `S` ke barabar nahi ban pa raha.
+
+---
+
+### Nayi Approach: Prefix Sum with Hash Map
+Bro, hum isko prefix sum aur hash map se solve karenge—yeh approach sab cases handle karegi (positive, negative, aur zero). Logic yeh hai:
+- Har index tak ka sum (prefix sum) rakho.
+- Ek map mein store karo ki har sum kitni baar aaya.
+- Agar `currSum - S` pehle aaya hai, toh matlab ek subarray mila jiska sum `S` hai.
+- Starting aur ending index nikal lo.
+
+---
+
+### Code with Super Easy Comments
+```cpp
+#include <bits/stdc++.h> 
+vector<int> subarraySum(vector<int> &arr, long long sum) {
+    // Ek notebook jisme har prefix sum aur uska pehla index rakhte hai
+    unordered_map<long long, int> prefixSum;
+    
+    // Shuru mein sum 0 ko index -1 pe daalo (empty subarray ke liye)
+    prefixSum[0] = -1;
+    
+    // Abhi tak ka prefix sum
+    long long currSum = 0;
+    
+    // Har index pe dekho
+    for (int right = 0; right < arr.size(); right++) {
+        // Current number ko sum mein jodo
+        currSum += arr[right];
+        
+        // Agar (currSum - sum) pehle aaya hai, toh subarray mil gaya
+        if (prefixSum.find(currSum - sum) != prefixSum.end()) {
+            // Starting index nikal lo (jo pehle sum ka index tha + 1)
+            int start = prefixSum[currSum - sum] + 1;
+            // Ending index hai current right
+            int end = right;
+            return {start, end};
+        }
+        
+        // Agar yeh sum pehle nahi aaya, toh isko map mein daalo
+        if (prefixSum.find(currSum) == prefixSum.end()) {
+            prefixSum[currSum] = right;
+        }
+    }
+    
+    // Agar koi subarray nahi mila, toh -1, -1 return karo
+    return {-1, -1};
+}
+```
+
+---
+
+### Dry Run: `arr = [1, 3, 2, 4]`, `sum = 5`
+#### Initial Setup
+- `prefixSum = {0: -1}`, `currSum = 0`.
+- **Diagram:**
+  ```
+  arr: [1, 3, 2, 4]
+  Index: 0  1  2  3
+  right: 0
+  prefixSum: {0: -1}
+  currSum: 0
+  ```
+
+#### Step 1: `right = 0`
+- `currSum += arr[0]` → `currSum = 0 + 1 = 1`.
+- `currSum - sum = 1 - 5 = -4`.
+- `prefixSum.find(-4)` → Nahi mila → `if` mein nahi jata.
+- `prefixSum[1] = 0` (pehli baar 1 aaya).
+- **Diagram:**
+  ```
+  arr: [1, 3, 2, 4]
+         R
+  prefixSum: {0: -1, 1: 0}
+  currSum: 1
+  ```
+
+#### Step 2: `right = 1`
+- `currSum += arr[1]` → `currSum = 1 + 3 = 4`.
+- `currSum - sum = 4 - 5 = -1`.
+- `prefixSum.find(-1)` → Nahi mila.
+- `prefixSum[4] = 1`.
+- **Diagram:**
+  ```
+  arr: [1, 3, 2, 4]
+            R
+  prefixSum: {0: -1, 1: 0, 4: 1}
+  currSum: 4
+  ```
+
+#### Step 3: `right = 2`
+- `currSum += arr[2]` → `currSum = 4 + 2 = 6`.
+- `currSum - sum = 6 - 5 = 1`.
+- `prefixSum.find(1)` → Mila! `prefixSum[1] = 0`.
+- `start = prefixSum[1] + 1 = 0 + 1 = 1`.
+- `end = right = 2`.
+- `return {1, 2}`.
+- **Diagram:**
+  ```
+  arr: [1, 3, 2, 4]
+               R
+  prefixSum: {0: -1, 1: 0, 4: 1}
+  currSum: 6
+  ```
+
+#### Output:
+- `[1, 2]` (subarray `[3, 2]` ka sum 5 hai).
+
+---
+
+### Dry Run: `arr = [1, -2, 3]`, `sum = 2` (Negative Case)
+#### Initial:
+- `prefixSum = {0: -1}`, `currSum = 0`.
+
+#### Step 1: `right = 0`
+- `currSum = 1`.
+- `1 - 2 = -1` → Nahi mila.
+- `prefixSum[1] = 0`.
+
+#### Step 2: `right = 1`
+- `currSum = 1 + (-2) = -1`.
+- `-1 - 2 = -3` → Nahi mila.
+- `prefixSum[-1] = 1`.
+
+#### Step 3: `right = 2`
+- `currSum = -1 + 3 = 2`.
+- `2 - 2 = 0` → Mila! `prefixSum[0] = -1`.
+- `start = -1 + 1 = 0`, `end = 2`.
+- Output: `[0, 2]` (subarray `[1, -2, 3]` ka sum 2 hai).
+
+---
+
+### Flow Diagram
+```
+arr = [1, 3, 2, 4], sum = 5
+  |
+right = 0: currSum = 1, find(-4) not found, prefixSum = {0: -1, 1: 0}
+  |
+right = 1: currSum = 4, find(-1) not found, prefixSum = {0: -1, 1: 0, 4: 1}
+  |
+right = 2: currSum = 6, find(1) found, start = 1, end = 2
+  |
+Return: [1, 2]
+```
+
+---
+
+### All Possible Examples
+1. **`arr = [1, 2, 3, 4]`, `sum = 7`**
+   - Output: `[1, 3]` (subarray `[2, 3, 4]`).
+
+2. **`arr = [1, 2, 3]`, `sum = 10`**
+   - Output: `[-1, -1]`.
+
+3. **`arr = [0]`, `sum = 0`**
+   - Output: `[0, 0]`.
+
+4. **`arr = [1, -2, 3]`, `sum = 2`**
+   - Output: `[0, 2]`.
+
+---
+
+### Kyu Optimized Hai?
+- Time Complexity: O(n) → Har element ek baar dekha.
+- Space Complexity: O(n) → Map ke liye space.
+- Yeh negative, positive, aur zero sab handle karta hai.
+
+---
+
+Ab samajh aaya na, bro? Yeh prefix sum ka magic hai—negative numbers ke liye bhi kaam karta hai. Baad mein dekhe toh sab yaad rahega! Koi doubt ho toh bol, main aur simple tareeke se samjha doonga! Kya bolta hai?
