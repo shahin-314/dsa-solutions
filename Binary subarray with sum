@@ -1,0 +1,233 @@
+Haanji, bro! Bilkul sahi pakda tune—`find(0) != end()` ka matlab hai "element mila hai," aur agar `end()` tak jata hai toh matlab nahi mila. Ab tera yeh concept clear ho gaya, toh chalo aage badhte hai! Main ab pura code ekdum simple tareeke se samjhaunga, Indian English accent mein, jaise tu beginner hai. Har line ko break karunga, initialization clear karunga, dry run doonga, aur aisa explain karunga ki tu baad mein dekhe toh sab yaad aa jaye. Plus, tera suggestion bhi add karunga—`find(0) != end()` ka matlab likh doonga taaki future mein confusion na ho. Chalo shuru karte hai!
+
+---
+
+### Problem: "Subarrays with Sum Equals K"
+#### Simple Samajh
+Bro, isme ek array hai (jaise `[1, 1, 1]`), aur ek `goal` hai (jaise `2`). Humko yeh nikalna hai ki kitne chhote parts (subarrays) ka sum `goal` ke barabar hai. Subarray matlab ek line mein continuous numbers—like `[1, 1]` ya `[1]`.
+
+**Kya Karna Hai?**
+- Array ke har ek subarray ko dekho.
+- Jinka sum `goal` ke barabar ho, unka count karo.
+- Answer mein total count wapas do.
+
+**Example:**
+- `nums = [1, 1, 1]`, `goal = 2`.
+- Subarrays: `[1, 1]` (0-1), `[1, 1]` (1-2) → Total 2.
+
+---
+
+### Code with Super Easy Comments
+```cpp
+class Solution {
+public:
+    int numSubarraysWithSum(vector<int>& nums, int goal) {
+        // Ek khali notebook banaya jisme har sum aur uska count rakhte hai
+        unordered_map<int, int> prefixSum; 
+        
+        // Shuru mein sum 0 ko ek baar count karo (empty subarray ke liye)
+        prefixSum[0] = 1; 
+        
+        int sum = 0;   // Abhi tak ka total sum
+        int count = 0; // Kitne subarrays ka sum goal ke barabar hai
+        
+        // Har number ko ek-ek karke dekho
+        for (int right = 0; right < nums.size(); right++) {
+            sum += nums[right]; // Current number ko sum mein jodo
+            
+            // Check karo ki (sum - goal) pehle aaya hai ya nahi
+            // find(0) != end() ka matlab hai "0 mila hai" (kyuki end() nahi aaya)
+            if (prefixSum.find(sum - goal) != prefixSum.end()) {
+                // Agar mila, toh uske count ko total mein jodo
+                count += prefixSum[sum - goal];
+            }
+            
+            // Current sum ko notebook mein daalo ya uska count badhao
+            prefixSum[sum]++;
+        }
+        
+        // Total subarrays ka count wapas do
+        return count;
+    }
+};
+```
+
+---
+
+### Tera Doubt: Initialization Kaise Hua?
+#### `unordered_map<int, int> prefixSum;`
+- **Kya Hai?**
+  - Yeh ek khali notebook hai jisme hum do cheezein rakhte hai:
+    - Pehla `int`: Sum (jaise 0, 1, 2).
+    - Doosra `int`: Us sum ka count (kitni baar aaya).
+  - Example: `{0: 1, 1: 2}` → 0 ek baar aaya, 1 do baar aaya.
+
+- **Kyu Khali Shuru Kiya?**
+  - Shuru mein koi sum nahi hai, toh hum ek khali map banate hai.
+  - `{}` curly braces optional hai—`unordered_map` by default khali hota hai.
+
+#### `prefixSum[0] = 1;`
+- **Kyu Kiya?**
+  - Shuru mein sum 0 ko ek baar count karte hai kyuki empty subarray ka sum 0 hota hai.
+  - Agar `goal = 0` hota, toh empty subarray bhi count hota—toh base case ke liye yeh zaroori hai.
+
+- **Kyu `[]` Use Kiya, `{}` Nahi?**
+  - `[]` bracket map mein ek key (jaise 0) ko value (jaise 1) assign karta hai.
+  - `{0: 1}` curly braces tab use hota jab hum pura map ek saath initialize karte, jaise:
+    ```cpp
+    unordered_map<int, int> prefixSum = {{0, 1}};
+    ```
+  - Lekin yaha hum ek-ek karke value daal rahe hai, toh `prefixSum[0] = 1` sahi hai.
+
+- **Diagram:**
+  ```
+  Before: prefixSum = {}
+  After:  prefixSum = {0: 1}
+  ```
+
+---
+
+### Pura Code Ka Flow Samajhte Hai
+#### Kaise Kaam Karta Hai?
+- Har step pe hum `sum` banate hai (prefix sum).
+- `sum - goal` check karte hai—agar yeh pehle map mein hai, toh matlab ek subarray ban sakta hai.
+- `prefixSum` mein har sum ka count rakhte hai taaki baad mein use kar sake.
+
+#### Dry Run: `nums = [1, 1, 1]`, `goal = 2`
+##### Initial:
+- `prefixSum = {0: 1}`, `sum = 0`, `count = 0`.
+- **Diagram:**
+  ```
+  nums: [1, 1, 1]
+  Index: 0  1  2
+  right: - (shuru)
+  prefixSum: {0: 1}
+  sum: 0
+  count: 0
+  ```
+
+##### Step 1: `right = 0`, `nums[0] = 1`
+1. **`sum += nums[right]`**
+   - `sum = 0 + 1 = 1`.
+2. **`if (prefixSum.find(sum - goal) != prefixSum.end())`**
+   - `sum - goal = 1 - 2 = -1`.
+   - `prefixSum.find(-1)` → `{0: 1}` mein -1 nahi hai → `find(-1) == end()`.
+   - `!= end()` → False (kyuki `end()` hai).
+   - `if` mein nahi jata.
+3. **`prefixSum[sum]++`**
+   - `sum = 1`, `prefixSum[1] = 1`.
+- **Diagram:**
+  ```
+  nums: [1, 1, 1]
+         R
+  prefixSum: {0: 1, 1: 1}
+  sum: 1
+  count: 0
+  ```
+
+##### Step 2: `right = 1`, `nums[1] = 1`
+1. **`sum += nums[right]`**
+   - `sum = 1 + 1 = 2`.
+2. **`if (prefixSum.find(sum - goal) != prefixSum.end())`**
+   - `sum - goal = 2 - 2 = 0`.
+   - `prefixSum.find(0)` → `{0: 1, 1: 1}` mein 0 hai → `find(0) != end()` (true, kyuki 0 mila hai).
+   - `count += prefixSum[0]` → `count = 0 + 1 = 1`.
+   - **Subarray:** `[1, 1]` (0-1).
+3. **`prefixSum[sum]++`**
+   - `sum = 2`, `prefixSum[2] = 1`.
+- **Diagram:**
+  ```
+  nums: [1, 1, 1]
+            R
+  prefixSum: {0: 1, 1: 1, 2: 1}
+  sum: 2
+  count: 1
+  ```
+
+##### Step 3: `right = 2`, `nums[2] = 1`
+1. **`sum += nums[right]`**
+   - `sum = 2 + 1 = 3`.
+2. **`if (prefixSum.find(sum - goal) != prefixSum.end())`**
+   - `sum - goal = 3 - 2 = 1`.
+   - `prefixSum.find(1)` → `{0: 1, 1: 1, 2: 1}` mein 1 hai → `find(1) != end()` (true).
+   - `count += prefixSum[1]` → `count = 1 + 1 = 2`.
+   - **Subarray:** `[1, 1]` (1-2).
+3. **`prefixSum[sum]++`**
+   - `sum = 3`, `prefixSum[3] = 1`.
+- **Diagram:**
+  ```
+  nums: [1, 1, 1]
+               R
+  prefixSum: {0: 1, 1: 1, 2: 1, 3: 1}
+  sum: 3
+  count: 2
+  ```
+
+##### Output:
+- `return count` → `2`.
+
+---
+
+### Flow Diagram
+```
+nums = [1, 1, 1], goal = 2
+  |
+right = 0: sum = 1, find(-1) == end(), count = 0, prefixSum = {0: 1, 1: 1}
+  |
+right = 1: sum = 2, find(0) != end(), count = 1, prefixSum = {0: 1, 1: 1, 2: 1}
+  |
+right = 2: sum = 3, find(1) != end(), count = 2, prefixSum = {0: 1, 1: 1, 2: 1, 3: 1}
+  |
+Return: 2
+```
+
+---
+
+### Har Line Mein Values Kaise Travel Karti Hai
+1. **`sum += nums[right]`**
+   - `right = 0`: `0 + 1 = 1`.
+   - `right = 1`: `1 + 1 = 2`.
+   - `right = 2`: `2 + 1 = 3`.
+
+2. **`if (prefixSum.find(sum - goal) != prefixSum.end())`**
+   - `right = 0`: `1 - 2 = -1` → `find(-1) == end()` → False.
+   - `right = 1`: `2 - 2 = 0` → `find(0) != end()` → True.
+   - `right = 2`: `3 - 2 = 1` → `find(1) != end()` → True.
+
+3. **`count += prefixSum[sum - goal]`**
+   - `right = 1`: `prefixSum[0] = 1` → `count = 0 + 1 = 1`.
+   - `right = 2`: `prefixSum[1] = 1` → `count = 1 + 1 = 2`.
+
+4. **`prefixSum[sum]++`**
+   - `right = 0`: `prefixSum[1] = 1`.
+   - `right = 1`: `prefixSum[2] = 1`.
+   - `right = 2`: `prefixSum[3] = 1`.
+
+---
+
+### All Possible Examples
+1. **`nums = [1, 0, 1]`, `goal = 1`**
+   - `right = 0`: `sum = 1`, `find(0)` → `count = 1`, `prefixSum = {0: 1, 1: 1}`.
+   - `right = 1`: `sum = 1`, `find(0)` → `count = 2`, `prefixSum = {0: 1, 1: 2}`.
+   - `right = 2`: `sum = 2`, `find(1)` → `count = 4`, `prefixSum = {0: 1, 1: 2, 2: 1}`.
+   - Output: `4` (subarrays: `[1]`, `[1, 0]`, `[0, 1]`, `[1]`).
+
+2. **`nums = [0]`, `goal = 0`**
+   - `right = 0`: `sum = 0`, `find(0)` → `count = 1`, `prefixSum = {0: 2}`.
+   - Output: `1`.
+
+3. **`nums = [1, 2]`, `goal = 3`**
+   - `right = 0`: `sum = 1`, `find(-2)` → `count = 0`, `prefixSum = {0: 1, 1: 1}`.
+   - `right = 1`: `sum = 3`, `find(0)` → `count = 1`, `prefixSum = {0: 1, 1: 1, 3: 1}`.
+   - Output: `1` (subarray: `[1, 2]`).
+
+---
+
+### Output Kaise Banta Hai?
+- Jab `sum - goal` map mein milta hai, matlab ek subarray ban sakta hai.
+- `prefixSum[sum - goal]` batata hai ki kitne subarrays us point tak possible hai.
+- `count` har match pe badhta hai.
+
+---
+
+Ab samajh aaya na, bro? Yeh code prefix sum ka game hai—har sum ko track karke subarrays count karta hai. `find(0) != end()` ka matlab "mila hai" hai, aur initialization base case ke liye hai. Baad mein padhe toh sab yaad rahega! Koi doubt ho toh bol, main aur simple tareeke se samjha doonga! Kya bolta hai?
