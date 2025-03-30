@@ -1,0 +1,112 @@
+Alright, let's go through this code line-by-line, explaining it as if you're a beginner:
+
+**1. Include Header File:**
+
+```cpp
+#include <bits/stdc++.h> 
+```
+
+* **`#include`:** This is a directive that tells the compiler to include code from another file.
+* **`<bits/stdc++.h>`:** This is a special header file in C++ that includes almost all the standard library headers. It's often used for convenience, especially in competitive programming, but it's generally better to include only the headers you need for clarity and faster compilation.
+* **In Simple Terms:** "Include all the useful tools from the C++ library so we can use them in our code."
+
+**2. Use Namespace:**
+
+```cpp
+using namespace std;
+```
+
+* **`using namespace std;`:** This line tells the compiler that we want to use names from the standard namespace (`std`). The standard namespace contains many commonly used functions and classes (like `vector`, `sort`, `cout`, etc.).
+* **In Simple Terms:** "Let us use common C++ tools without typing `std::` before them every time."
+
+**3. Define the Function:**
+
+```cpp
+void sortOddEven(vector<int>& nums) {
+    // ... function body ...
+}
+```
+
+* **`void sortOddEven(...)`:** This declares a function named `sortOddEven`.
+* **`void`:** This means the function doesn't return any value. It will modify the input directly.
+* **`vector<int>& nums`:** This is the function's parameter.
+    * **`vector<int>`:** This indicates that the parameter is a vector (a dynamic array) of integers.
+    * **`&`:** This is a *reference*. It means that when we modify `nums` inside the function, we're modifying the *original* vector that was passed to the function, not a copy.
+* **In Simple Terms:** "We're creating a function named `sortOddEven` that takes a list of numbers as input and changes that list directly."
+
+**4. Create Vectors:**
+
+```cpp
+vector<int> odd;
+vector<int> even;
+vector<int> result;
+```
+
+* **`vector<int> odd;`**, **`vector<int> even;`**, **`vector<int> result;`:** These lines create three empty vectors of integers.
+    * `odd` will store odd numbers.
+    * `even` will store even numbers.
+    * `result` will store the final sorted list.
+* **In Simple Terms:** "We're creating three empty lists to hold our numbers."
+
+**5. Separate Odd and Even Numbers:**
+
+```cpp
+for (int num : nums) {
+    if (num % 2 != 0) {
+        odd.push_back(num);
+    } else {
+        even.push_back(num);
+    }
+}
+```
+
+* **`for (int num : nums)`:** This is a *range-based for loop*. It iterates over each element in the `nums` vector.
+    * `num` will take on the value of each element in `nums` one by one.
+* **`if (num % 2 != 0)`:** This checks if the current number `num` is odd.
+    * `%` is the *modulo operator*. `num % 2` gives the remainder when `num` is divided by 2. If the remainder is not 0, the number is odd.
+* **`odd.push_back(num)`:** If `num` is odd, this adds it to the end of the `odd` vector.
+* **`even.push_back(num)`:** If `num` is even, this adds it to the end of the `even` vector.
+* **In Simple Terms:** "Go through each number in the original list. If the number is odd, put it in the `odd` list. If it's even, put it in the `even` list."
+
+**6. Sort Odd Numbers (Descending):**
+
+```cpp
+sort(odd.begin(), odd.end(), greater<int>());
+```
+
+* **`sort(...)`:** Sorts the elements in the `odd` vector.
+* **`odd.begin()`, `odd.end()`:** Specify the range to sort.
+* **`greater<int>()`:** Sorts the numbers in descending order (largest to smallest).
+* **In Simple Terms:** "Sort the `odd` list from the biggest number to the smallest number."
+
+**7. Sort Even Numbers (Ascending):**
+
+```cpp
+sort(even.begin(), even.end());
+```
+
+* **`sort(...)`:** Sorts the elements in the `even` vector.
+* **`even.begin()`, `even.end()`:** Specify the range to sort.
+* **No `greater<int>()`:** Sorts in ascending order (smallest to largest) by default.
+* **In Simple Terms:** "Sort the `even` list from the smallest number to the biggest number."
+
+**8. Combine Odd and Even into `result`:**
+
+```cpp
+result.insert(result.end(), odd.begin(), odd.end());
+result.insert(result.end(), even.begin(), even.end());
+```
+
+* **`result.insert(...)`:** Adds elements to the `result` vector.
+* **In Simple Terms:** "First, put all the sorted odd numbers into the `result` list. Then, put all the sorted even numbers after the odd numbers in the `result` list."
+
+**9. Replace Original `nums` with `result`:**
+
+```cpp
+nums = result;
+```
+
+* **`nums = result`:** Copies the contents of the `result` vector into the original `nums` vector.
+* **In Simple Terms:** "Make the original list `nums` the same as the new list `result`."
+
+Let me know if you have any more questions or if anything is still unclear!
