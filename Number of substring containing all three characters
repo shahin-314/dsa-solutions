@@ -1,0 +1,190 @@
+H
+
+### Problem Recap (Thoda Short Mein)
+Bro, hume ek string `s` diya hai, jisme sirf `a`, `b`, aur `c` characters hai—jaise `s = "abbac"`. Hume yeh count karna hai ki kitne substrings hai jisme kam se kam ek `a`, ek `b`, aur ek `c` ho. Substring matlab string ka continuous part—jaise "abbac" mein substrings hote hai: "a", "ab", "abb", "abba", "abbac", etc.
+
+#### Example:
+- `s = "abbac"`:
+  - Valid substrings (jisme `a`, `b`, aur `c` teeno hai): `"abbac"`, `"bbac"`, `"bac"`.
+  - Total = 3.
+- `s = "baac"`:
+  - Valid substring: `"baac"`.
+  - Total = 1.
+
+---
+
+### Code with Detailed Comments
+Main tujhe code mein har line pe comments daal ke samjhaunga taaki ekdum clear ho jaye.
+
+```cpp
+int countSubstring(string s) {
+    // Step 1: String ka size nikal lo
+    // Example: s = "abbac" toh n = 5
+    int n = s.length();
+    
+    // Step 2: Count variable banayein jo valid substrings ka count rakhega
+    // Shuru mein count 0 hai
+    long long count = 0;
+    
+    // Step 3: Har starting point ke liye loop chalayein
+    // start = 0 se n-1 tak jayega
+    // Example: s = "abbac" toh start 0, 1, 2, 3, 4 pe chalega
+    for (int start = 0; start < n; start++) {
+        // Step 4: a, b, c ka count rakho har starting point ke liye
+        // Shuru mein sab 0 hai
+        int countA = 0, countB = 0, countC = 0;
+        
+        // Step 5: End point ko start se shuru karke n-1 tak badhao
+        // Example: start = 0 toh end 0 se 4 tak jayega
+        for (int end = start; end < n; end++) {
+            // Step 6: Current character ka count badhao
+            // Agar character 'a' hai toh countA badhao, 'b' hai toh countB, 'c' hai toh countC
+            if (s[end] == 'a') countA++;
+            if (s[end] == 'b') countB++;
+            if (s[end] == 'c') countC++;
+            
+            // Step 7: Check karo ki kya teeno characters (a, b, c) hai ya nahi
+            // countA, countB, countC sab greater than 0 hona chahiye
+            if (countA > 0 && countB > 0 && countC > 0) {
+                // Step 8: Agar teeno characters mil gaye, toh is starting point se
+                // end tak ke saare substrings valid honge
+                // Example: start = 0, end = 4 pe teeno mil gaye, toh end ke baad ke characters
+                // add karne se bhi valid hi rahega
+                // count += (n - end) matlab end se n-1 tak ke saare substrings add karo
+                count += (n - end);
+                
+                // Step 9: Break karo kyunki is starting point ke liye aage check karne ki
+                // zarurat nahi—teeno characters mil gaye
+                break;
+            }
+        }
+    }
+    
+    // Step 10: Final count return karo
+    return count;
+}
+```
+
+---
+
+### Code Ka Flow Aur Values Kaise Change Hoti Hai
+Ab main tujhe dry run ke saath har line ka flow samjhaunga, values kaise change hoti hai, yeh bhi dekhenge.
+
+#### Dry Run 1: `s = "abbac"`
+- **Step 1:** `int n = s.length();`
+  - `s = "abbac"` → `n = 5`.
+- **Step 2:** `long long count = 0;`
+  - `count = 0` (shuru mein).
+
+#### Outer Loop: `start` Loop
+- **start = 0:**
+  - **Step 4:** `countA = 0`, `countB = 0`, `countC = 0`.
+  - **Inner Loop (end):**
+    - `end = 0`: `s[0] = 'a'` → `countA = 1` → `countA = 1, countB = 0, countC = 0` → Teeno nahi hai.
+    - `end = 1`: `s[1] = 'b'` → `countB = 1` → `countA = 1, countB = 1, countC = 0` → Teeno nahi hai.
+    - `end = 2`: `s[2] = 'b'` → `countB = 2` → `countA = 1, countB = 2, countC = 0` → Teeno nahi hai.
+    - `end = 3`: `s[3] = 'a'` → `countA = 2` → `countA = 2, countB = 2, countC = 0` → Teeno nahi hai.
+    - `end = 4`: `s[4] = 'c'` → `countC = 1` → `countA = 2, countB = 2, countC = 1` → Teeno hai!
+      - `count += (n - end) = 5 - 4 = 1`.
+      - `count = 1`.
+      - Break (aage check karne ki zarurat nahi).
+  - Substring: `"abbac"` → Valid.
+
+- **start = 1:**
+  - **Step 4:** `countA = 0`, `countB = 0`, `countC = 0`.
+  - **Inner Loop (end):**
+    - `end = 1`: `s[1] = 'b'` → `countB = 1` → `countA = 0, countB = 1, countC = 0` → Teeno nahi hai.
+    - `end = 2`: `s[2] = 'b'` → `countB = 2` → `countA = 0, countB = 2, countC = 0` → Teeno nahi hai.
+    - `end = 3`: `s[3] = 'a'` → `countA = 1` → `countA = 1, countB = 2, countC = 0` → Teeno nahi hai.
+    - `end = 4`: `s[4] = 'c'` → `countC = 1` → `countA = 1, countB = 2, countC = 1` → Teeno hai!
+      - `count += (n - end) = 5 - 4 = 1`.
+      - `count = 2`.
+      - Break.
+  - Substring: `"bbac"` → Valid.
+
+- **start = 2:**
+  - **Step 4:** `countA = 0`, `countB = 0`, `countC = 0`.
+  - **Inner Loop (end):**
+    - `end = 2`: `s[2] = 'b'` → `countB = 1` → `countA = 0, countB = 1, countC = 0` → Teeno nahi hai.
+    - `end = 3`: `s[3] = 'a'` → `countA = 1` → `countA = 1, countB = 1, countC = 0` → Teeno nahi hai.
+    - `end = 4`: `s[4] = 'c'` → `countC = 1` → `countA = 1, countB = 1, countC = 1` → Teeno hai!
+      - `count += (n - end) = 5 - 4 = 1`.
+      - `count = 3`.
+      - Break.
+  - Substring: `"bac"` → Valid.
+
+- **start = 3:**
+  - **Step 4:** `countA = 0`, `countB = 0`, `countC = 0`.
+  - **Inner Loop (end):**
+    - `end = 3`: `s[3] = 'a'` → `countA = 1` → `countA = 1, countB = 0, countC = 0` → Teeno nahi hai.
+    - `end = 4`: `s[4] = 'c'` → `countC = 1` → `countA = 1, countB = 0, countC = 1` → Teeno nahi hai.
+  - Koi valid substring nahi mila.
+
+- **start = 4:**
+  - **Step 4:** `countA = 0`, `countB = 0`, `countC = 0`.
+  - **Inner Loop (end):**
+    - `end = 4`: `s[4] = 'c'` → `countC = 1` → `countA = 0, countB = 0, countC = 1` → Teeno nahi hai.
+  - Koi valid substring nahi mila.
+
+- **Final Count:** `count = 3`.
+- **Output:** `3`.
+
+#### Dry Run 2: `s = "baac"`
+- **Step 1:** `n = 4`.
+- **Step 2:** `count = 0`.
+
+- **start = 0:**
+  - `countA = 0`, `countB = 0`, `countC = 0`.
+  - `end = 0`: `s[0] = 'b'` → `countB = 1` → `countA = 0, countB = 1, countC = 0`.
+  - `end = 1`: `s[1] = 'a'` → `countA = 1` → `countA = 1, countB = 1, countC = 0`.
+  - `end = 2`: `s[2] = 'a'` → `countA = 2` → `countA = 2, countB = 1, countC = 0`.
+  - `end = 3`: `s[3] = 'c'` → `countC = 1` → `countA = 2, countB = 1, countC = 1` → Teeno hai!
+    - `count += (n - end) = 4 - 3 = 1`.
+    - `count = 1`.
+    - Break.
+  - Substring: `"baac"`.
+
+- **start = 1:**
+  - `countA = 0`, `countB = 0`, `countC = 0`.
+  - `end = 1`: `s[1] = 'a '` → `countA = 1` → `countA = 1, countB = 0, countC = 0`.
+  - `end = 2`: `s[2] = 'a'` → `countA = 2` → `countA = 2, countB = 0, countC = 0`.
+  - `end = 3`: `s[3] = 'c'` → `countC = 1` → `countA = 2, countB = 0, countC = 1` → Teeno nahi hai (`b` nahi hai).
+  - Koi valid substring nahi mila.
+
+- **start = 2:**
+  - `countA = 0`, `countB = 0`, `countC = 0`.
+  - `end = 2`: `s[2] = 'a'` → `countA = 1` → `countA = 1, countB = 0, countC = 0`.
+  - `end = 3`: `s[3] = 'c'` → `countC = 1` → `countA = 1, countB = 0, countC = 1` → Teeno nahi hai.
+  - Koi valid substring nahi mila.
+
+- **start = 3:**
+  - `countA = 0`, `countB = 0`, `countC = 0`.
+  - `end = 3`: `s[3] = 'c'` → `countC = 1` → `countA = 0, countB = 0, countC = 1` → Teeno nahi hai.
+  - Koi valid substring nahi mila.
+
+- **Final Count:** `count = 1`.
+- **Output:** `1`.
+
+---
+
+### Flow Ka Summary
+- **Outer Loop (`start`):** Yeh har possible starting point ke liye chalega—matlab har character se shuru hone wale substrings check karenge.
+- **Inner Loop (`end`):** Yeh starting point se shuru karke string ke end tak jayega, aur har character ka count rakhega (`countA`, `countB`, `countC`).
+- **Condition (`countA > 0 && countB > 0 && countC > 0`):** Jab teeno characters mil jaye, toh us starting point se `end` tak ke saare substrings valid honge.
+- **Count Update (`count += (n - end)`):** Yeh calculate karta hai ki `end` se string ke end tak kitne characters bache hai—yeh saare substrings valid honge kyunki teeno characters already mil chuke hai.
+- **Break:** Ek baar teeno characters mil jaye, toh aage check karne ki zarurat nahi—kyunki aage ke saare substrings bhi valid hi honge.
+
+---
+
+### Code Analysis
+- **Logic:** Yeh approach sahi hai—har starting point se shuru karke pehla point dhoondho jaha teeno characters milte hai, aur uske baad ke saare substrings count karo.
+- **Time Complexity:** `O(n^2)` → Har starting point ke liye `n` iterations.
+- **Space Complexity:** `O(1)` → Sirf variables use kiye.
+- **Cons:** Yeh approach constraints ke hisaab se slow hai (`n <= 10^5`), kyunki `O(n^2)` time lega. Hume `O(n)` solution chahiye.
+
+#### Optimal Approach (Thoda Idea Doonga)
+Bro, yeh code beginner ke liye samajhna easy hai, lekin slow hai. Ek better approach hai **Sliding Window** use karna, jisme hum ek window banayein aur teeno characters dhoondhein. Jab teeno mil jaye, toh window ko chhota karte jao aur count update karo. Yeh `O(n)` mein kaam karta hai, lekin thoda complex hai. Agar tu chahta hai, toh main yeh bhi samjha sakta hoon!
+
+---
+
+Ab samajh aaya na, bro? Yeh code har starting point se shuru karke teeno characters dhoondhta hai, aur jab teeno mil jaye, toh uske baad ke saare substrings count karta hai. Values ka flow bhi dry run se clear ho gaya hoga. Koi doubt ho toh bol! Kya bolta hai?
