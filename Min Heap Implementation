@@ -1,0 +1,262 @@
+
+### Code with Comments for Better Understanding
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+class minHeap {
+public:
+    vector<int> heap; // Vector to store heap elements
+    int size, capacity; // size: current number of elements, capacity: max elements allowed
+
+    // Constructor for the class.
+    minHeap(int cap) {
+        // Initialize heap with given capacity
+        heap.resize(cap); // Vector ko capacity ke hisaab se size do
+        size = 0; // Current size 0 kyunki abhi koi element nahi
+        capacity = cap; // Capacity set karo jo input mein diya hai
+    }
+
+    // Heapify function to maintain Min Heap property after deletion or extraction
+    void heapify(int i) {
+        int smallest = i; // Current node ko smallest assume karo
+        int li = 2*i + 1, ri = 2*i + 2; // Left child aur right child ke indices
+
+        // Check if left child exists and is smaller than current smallest
+        if(li < size && heap[li] < heap[smallest]) {
+            smallest = li;
+        }
+
+        // Check if right child exists and is smaller than current smallest
+        if(ri < size && heap[ri] < heap[smallest]) {
+            smallest = ri;
+        }
+
+        // Agar smallest current node nahi hai, toh swap karo aur recursively heapify
+        if(i != smallest) {
+            swap(heap[i], heap[smallest]);
+            heapify(smallest);
+        }
+    }
+
+    // Function to remove and return the minimum element (root)
+    int extractMinElement() {
+        // Agar heap khali hai, toh -1 return karo
+        if(size == 0) return -1;
+
+        // Root (minimum element) store karo
+        int ans = heap[0];
+
+        // Last element ko root pe daal do
+        swap(heap[0], heap[size-1]);
+
+        // Size kam karo (last element hata diya)
+        size--;
+
+        // Root se heapify karo taaki Min Heap property maintain ho
+        heapify(0);
+
+        // Minimum element return karo
+        return ans;
+    }
+
+    // Function to delete element at index 'ind'
+    void deleteElement(int ind) {
+        // Agar index invalid hai, toh return karo
+        if(ind >= size) return;
+
+        // Index 'ind' ke element ko last element se swap karo
+        swap(heap[ind], heap[size-1]);
+
+        // Size kam karo (last element hata diya)
+        size--;
+
+        // Index 'ind' se heapify karo taaki Min Heap property maintain ho
+        heapify(ind);
+    }
+
+    // Function to insert 'val' in the heap
+    void insert(int val) {
+        // Agar heap full hai, toh return karo
+        if(size == capacity) return;
+
+        // Naya value heap ke end mein daal do
+        heap[size] = val;
+
+        // Size badhao kyunki naya element add hua
+        size++;
+
+        // Last element ka index
+        int ind = size-1;
+
+        // Parent ke saath compare karo aur upar le jao agar parent bada hai
+        while(ind >= 0) {
+            int parent = (ind-1)/2;
+            if(parent >= 0 && heap[parent] > heap[ind]) { // Parent valid hai aur bada hai
+                swap(heap[parent], heap[ind]);
+                ind = parent; // Ab parent ke index pe jao
+            } else break; // Agar parent chhota hai, toh loop break karo
+        }
+    }
+};
+```
+
+---
+
+### Detailed Dry Run with Flow (Sample Input 1)
+**Input:** `3`, `2 2`, `2 1`, `0`  
+**Output:** `1`
+
+#### Initial State:
+- Constructor: `minHeap(3)` (capacity ke saath initialize hota hai, lekin yeh test case mein depend karta hai)
+- `heap = []` (vector with capacity 3), `size = 0`, `capacity = 3`
+
+#### Operation 1: `insert(2)`
+- **Line:** `if(size == capacity) return;`
+  - `size = 0`, `capacity = 3`, condition false, continue.
+- **Line:** `heap[size] = val;`
+  - `heap[0] = 2`, `heap = [2]`
+- **Line:** `size++;`
+  - `size = 1`
+- **Line:** `int ind = size-1;`
+  - `ind = 0`
+- **Line:** `while(ind >= 0) { ... }`
+  - `ind = 0`, condition true
+  - `parent = (ind-1)/2 = -1/2 = 0` (lekin parent check karne ki zarurat nahi kyunki `ind = 0` pe parent nahi hota)
+  - `ind = 0`, loop break kyunki root pe hai
+- **Heap:** `[2]`
+
+#### Operation 2: `insert(1)`
+- **Line:** `if(size == capacity) return;`
+  - `size = 1`, `capacity = 3`, continue.
+- **Line:** `heap[size] = val;`
+  - `heap[1] = 1`, `heap = [2, 1]`
+- **Line:** `size++;`
+  - `size = 2`
+- **Line:** `int ind = size-1;`
+  - `ind = 1`
+- **Line:** `while(ind >= 0) { ... }`
+  - `ind = 1`, condition true
+  - `parent = (ind-1)/2 = 0`
+  - `heap[parent] = 2`, `heap[ind] = 1`
+  - `2 > 1`, swap: `heap[0] = 1`, `heap[1] = 2`, `heap = [1, 2]`
+  - `ind = parent = 0`
+  - `ind = 0`, loop break kyunki root pe hai
+- **Heap:** `[1, 2]`
+
+#### Operation 3: `extractMinElement()`
+- **Line:** `if(size == 0) return -1;`
+  - `size = 2`, continue.
+- **Line:** `int ans = heap[0];`
+  - `ans = 1`
+- **Line:** `swap(heap[0], heap[size-1]);`
+  - `size-1 = 1`, `heap[0] = 1`, `heap[1] = 2`
+  - Swap: `heap[0] = 2`, `heap[1] = 1`, `heap = [2, 1]`
+- **Line:** `size--;`
+  - `size = 1` (last element logically remove ho gaya)
+- **Line:** `heapify(0);`
+  - `i = 0`, `smallest = 0`
+  - `li = 2*0 + 1 = 1`, `ri = 2*0 + 2 = 2`
+  - `li < size` (1 < 1): false
+  - `ri < size` (2 < 1): false
+  - No children, so no swap, heapify khatam
+- **Heap:** `[2]`
+- **Return:** `1`
+- **Output:** `1`
+
+---
+
+### Detailed Dry Run with Flow (Sample Input 2)
+**Input:** `5`, `2 5`, `2 43`, `2 15`, `1 2`, `0`  
+**Output:** `5`
+
+#### Initial State:
+- `heap = []`, `size = 0`, `capacity = 5`
+
+#### Operation 1: `insert(5)`
+- `heap[0] = 5`, `size = 1`
+- `ind = 0`, loop break (root pe hai)
+- **Heap:** `[5]`
+
+#### Operation 2: `insert(43)`
+- `heap[1] = 43`, `size = 2`, `heap = [5, 43]`
+- `ind = 1`, `parent = 0`
+- `heap[0] = 5`, `heap[1] = 43`, `5 < 43`, break
+- **Heap:** `[5, 43]`
+
+#### Operation 3: `insert(15)`
+- `heap[2] = 15`, `size = 3`, `heap = [5, 43, 15]`
+- `ind = 2`, `parent = (2-1)/2 = 0`
+- `heap[0] = 5`, `heap[2] = 15`, `5 < 15`, break
+- **Heap:** `[5, 43, 15]`
+
+#### Operation 4: `deleteElement(2)`
+- **Line:** `if(ind >= size) return;`
+  - `ind = 2`, `size = 3`, continue
+- **Line:** `swap(heap[ind], heap[size-1]);`
+  - `size-1 = 2`, `heap[2] = 15`, `heap[2] = 15` (same element, no change)
+  - `heap = [5, 43, 15]`
+- **Line:** `size--;`
+  - `size = 2` (last element logically remove ho gaya)
+- **Line:** `heapify(ind);`
+  - `ind = 2`, `size = 2`
+  - `li = 2*2 + 1 = 5`, `ri = 2*2 + 2 = 6`
+  - `li < size` (5 < 2): false
+  - `ri < size` (6 < 2): false
+  - No children, heapify khatam
+- **Heap:** `[5, 43]` (last element logically removed)
+
+#### Operation 5: `extractMinElement()`
+- `size = 2`
+- `ans = heap[0] = 5`
+- `swap(heap[0], heap[1])`: `heap = [43, 5]`
+- `size--`: `size = 1`
+- `heapify(0);`
+  - `i = 0`, `li = 1`, `ri = 2`
+  - `li < size` (1 < 1): false
+  - `ri < size` (2 < 1): false
+  - No children, heapify khatam
+- **Heap:** `[43]`
+- **Return:** `5`
+- **Output:** `5`
+
+---
+
+### Flow Ka Summary
+- **Insert:** Value end mein daal ke upar le jao agar parent bada hai.
+- **Extract-Min:** Root hata ke last element ko root pe daal do, phir heapify.
+- **Delete:** Index pe last element daal do, size kam karo, phir heapify.
+
+#### Values Ka Flow:
+- `heap`: Array mein elements.
+- `size`: Current elements ka count.
+- `capacity`: Max elements allowed.
+
+---
+
+### Comparison: Mere Code vs Yeh Code
+#### Mere Code Mein Kya Problem Thi?
+1. **Format Difference:**
+   - Mere code mein `minHeap` class ke andar functions ka placement aur error handling same tha, lekin Coding Ninjas ke test cases ke liye `capacity` ka concept use nahi kiya tha. Yeh code `capacity` ke saath initialize hota hai, jo problem ke constraints ke hisaab se sahi hai.
+   - Mere code mein `deleteElement` ke liye `INT_MIN` trick use ki thi, jo kaam toh karti hai lekin unnecessary complexity badha rahi thi.
+
+2. **Delete Logic:**
+   - Mere code mein `deleteElement` mein pehle element ko `INT_MIN` banake root pe le jaya tha, phir extract kiya. Yeh approach kaam karti hai, lekin yeh code direct last element ko swap karke heapify karta hai, jo simpler aur faster hai.
+
+3. **Size aur Capacity:**
+   - Mere code mein `capacity` ka concept nahi tha, jabki yeh code capacity ke saath kaam karta hai, jo Coding Ninjas ke problem ke hisaab se expected ho sakta hai.
+
+#### Yeh Code Better Kyun Hai?
+- **Simpler Delete Logic:** Yeh code directly last element se swap karke heapify karta hai, jo straightforward hai.
+- **Capacity Handling:** Yeh code capacity ke saath kaam karta hai, jo constraints ke hisaab se sahi hai.
+- **Compact:** Yeh code mere code se thoda chhota aur simpler hai kyunki unnecessary steps (jaise `INT_MIN`) nahi hai.
+
+---
+
+### Beginner Tips
+- **Min Heap:** Root sabse chhota hota hai.
+- **Heapify:** Up aur down samajh lo—upar jate waqt parent se compare, neeche jate waqt children se.
+- **Practice:** Chhote examples pe dry run karo.
+
+Ab samajh aaya na, bro? Yeh code simpler hai aur Coding Ninjas ke test cases pass karta hai. Dry run se flow bhi clear ho gaya hoga. Koi aur doubt ho toh bol! Kya bolta hai?
