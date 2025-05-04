@@ -1,0 +1,120 @@
+
+### Code Recap
+Pehle code ko thoda yaad karte hai jisme yeh lines hai:
+```cpp
+#include <bits/stdc++.h> 
+vector<int> minHeap(int n, vector<vector<int>>& q) {
+    priority_queue<int, vector<int>, greater<int>> pq; // Min Heap banaya
+    vector<int> ans; // Extracted minimums store karne ke liye
+
+    for(int i = 0; i < n; i++) {
+        if(q[i][0] == 0) { // Query type 0: Insert
+            int val = q[i][1]; // Jo value insert karni hai
+            pq.push(val); // Min Heap mein daal do
+        } else { // Query type 1: Extract Min
+            if(pq.empty()) continue; // Agar heap khali hai, toh skip
+            ans.push_back(pq.top()); // Sabse chhota element lo
+            pq.pop(); // Sabse chhota element nikaal do
+        }
+    }
+    
+    return ans; // Saare extracted minimums return karo
+}
+```
+
+---
+
+### 1. **`int val = q[i][1];` Mein 1 Kya Represent Karta Hai?**
+Bro, yeh line samajhne ke liye pehle yeh yaad kar le ki `q` ek 2D vector hai, matlab ek bada list jisme chhote lists (queries) hote hai. Har query ek operation batati hai.
+
+#### `q[i][1]` Ka Matlab:
+- `q` ek 2D vector hai: `vector<vector<int>>`.
+- `q[i]`: Yeh `i`th query hai, jo ek chhota vector hai (jaise `[0, 2]` ya `[1]`).
+- `q[i][0]`: Yeh `i`th query ka pehla number hai, jo operation type batata hai:
+  - `0` matlab insert operation.
+  - `1` matlab extract minimum operation.
+- `q[i][1]`: Yeh `i`th query ka dusra number hai, jo **insert operation ke liye value** batata hai.
+
+#### `int val = q[i][1];` Ka Matlab:
+- Jab `q[i][0] == 0` hota hai, toh yeh insert operation hai.
+- Insert operation ke liye query ka format hota hai: `[0, X]`, jahan `X` woh value hai jo Min Heap mein daalni hai.
+- `q[i][1]` se hum woh value lete hai jo insert karni hai, aur usko `val` variable mein store karte hai.
+
+#### Example:
+- Agar `q = [[0, 2], [0, 1], [1]]` hai:
+  - `i = 0`: `q[0] = [0, 2]`
+    - `q[0][0] = 0` → Insert operation.
+    - `q[0][1] = 2` → Value jo insert karni hai.
+    - `int val = q[0][1];` → `val = 2`.
+  - `i = 1`: `q[1] = [0, 1]`
+    - `q[1][0] = 0` → Insert operation.
+    - `q[1][1] = 1` → Value jo insert karni hai.
+    - `int val = q[1][1];` → `val = 1`.
+
+#### Toh `1` Kya Represent Karta Hai?
+- `1` yahan index hai jo batata hai ki query ke chhote vector mein dusra element kaun sa hai.
+- Insert operation ke liye query mein dusra element (index 1 pe) woh value hoti hai jo Min Heap mein daalni hai.
+
+#### `pq.push(val);` Ka Matlab:
+- `val` mein jo value hai (jaise `2` ya `1`), usko Min Heap (`pq`) mein daal do.
+- `pq.push(val)` Min Heap mein value insert karta hai, aur Min Heap automatically sabse chhota number top pe rakhta hai.
+
+#### Example Flow:
+- `i = 0`, `q[0] = [0, 2]`:
+  - `q[0][0] = 0` → Insert operation.
+  - `val = q[0][1] = 2` → `val = 2`.
+  - `pq.push(2)` → `pq = [2]`.
+- `i = 1`, `q[1] = [0, 1]`:
+  - `q[1][0] = 0` → Insert operation.
+  - `val = q[1][1] = 1` → `val = 1`.
+  - `pq.push(1)` → `pq = [1, 2]` (Min Heap, 1 top pe).
+
+---
+
+### 2. **Agar Hum Values `val` Mein Push Kar Rahe Hai, Toh `ans` Vector Kyu Return Kar Rahe Hai?**
+Bro, yeh bahut accha question hai! Main tujhe step-by-step samjhaunga.
+
+#### `val` Mein Kya Hai?
+- `val` ek temporary variable hai jo sirf insert operation ke liye use hota hai.
+- Jab query `[0, X]` hoti hai, toh `val = q[i][1]` se hum value (jaise 2, 1) lete hai, aur usko `pq.push(val)` se Min Heap mein daal dete hai.
+- `val` ka kaam sirf yahi hai ki query se value leke Min Heap mein daal do. Iske baad `val` ka use khatam ho jata hai.
+
+#### `pq` Mein Kya Hai?
+- `pq` ek Min Heap hai jisme saari values store hoti hai jo hum insert karte hai.
+- Jab hum `pq.push(val)` karte hai, toh value `pq` mein chali jati hai, aur `pq` automatically Min Heap ka structure maintain karta hai (sabse chhota number top pe).
+
+#### `ans` Vector Mein Kya Hai?
+- `ans` ek vector hai jisme hum woh numbers store karte hai jo extract minimum operation (`[1]`) ke time nikaalte hai.
+- Jab query `[1]` aati hai:
+  - `pq.top()` se sabse chhota number milta hai.
+  - `ans.push_back(pq.top())` se woh number `ans` vector mein daal dete hai.
+  - `pq.pop()` se woh number Min Heap se remove kar dete hai.
+- Problem ke according, hume saare extract minimum operations ke results ek vector mein return karna hai.
+
+#### Kyu `ans` Return Karna Hai?
+- Problem ka output ek `vector<int>` hai jisme saare minimum numbers hone chahiye jo humne extract kiye.
+- `val` aur `pq` mein values temporarily store hoti hai:
+  - `val` sirf ek query ke liye value hold karta hai.
+  - `pq` Min Heap mein values store karta hai, lekin jab hum extract karte hai toh usko remove kar dete hai.
+- Lekin problem mein kaha gaya hai ki jo bhi minimum numbers extract kiye, unko ek list (vector) mein daal ke return karo. Isliye `ans` vector use kiya jata hai.
+
+#### Example:
+- `q = [[0, 2], [0, 1], [1]]`
+- **Query 1: [0, 2]** → `val = 2`, `pq.push(2)` → `pq = [2]`
+- **Query 2: [0, 1]** → `val = 1`, `pq.push(1)` → `pq = [1, 2]`
+- **Query 3: [1]** → `pq.top() = 1`, `ans.push_back(1)` → `ans = [1]`, `pq.pop()` → `pq = [2]`
+- **Return:** `ans = [1]` (kyunki problem ke according extracted minimums return karne hai).
+
+#### Clear Hai?
+- `val` sirf ek helper variable hai jo query se value leke `pq` mein daalta hai.
+- `pq` Min Heap hai jisme values store hoti hai.
+- `ans` final output ke liye hai, jisme extracted minimums store hote hai, aur yahi return hota hai.
+
+---
+
+### Beginner Tips
+- **2D Vector:** Soch ki yeh ek bada dabba hai jisme chhote dabbe (queries) hote hai. `q[i][0]` aur `q[i][1]` se hum chhote dabbe ke numbers nikaal sakte hai.
+- **Min Heap:** Ek dabba jaisa soch jisme sabse chhota number top pe hota hai.
+- **Output:** Jo bhi problem mein return karna kaha hai, uske liye alag vector (`ans`) banate hai.
+
+Ab samajh aaya na, bro? `q[i][1]` se value lete hai insert ke liye, aur `ans` isliye return karte hai kyunki problem ke output mein extracted minimums chahiye. Koi aur doubt ho toh bol! Kya bolta hai?
