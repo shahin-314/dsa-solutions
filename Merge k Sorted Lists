@@ -1,0 +1,238 @@
+
+### Problem Recap: Merge K Sorted Lists
+#### **Kya Karna Hai?**
+- Hume `k` sorted linked lists di gayi hai (har list ascending order mein sorted hai).
+- Hume in saari lists ko merge karke ek single sorted linked list banani hai (ascending order mein).
+- **Output:** Ek sorted linked list return karni hai.
+
+#### **Input:**
+- `lists`: Ek vector jisme `k` linked lists ke pointers hai (`vector<ListNode*>& lists`).
+- Har linked list ke nodes mein ek value (`val`) aur next node ka pointer (`next`) hota hai.
+
+#### **Example 1:**
+- Input: `lists = [[1->4->5], [1->3->4], [2->6]]`
+  ```
+  List 1: 1 -> 4 -> 5
+  List 2: 1 -> 3 -> 4
+  List 3: 2 -> 6
+  ```
+- Output: `[1->1->2->3->4->4->5->6]`
+- Explanation: Saari lists ko merge karke ek sorted list banayi.
+
+#### **Example 2:**
+- Input: `lists = []`
+- Output: `[]` (khali vector, toh khali list return karo)
+
+#### **Example 3:**
+- Input: `lists = [[]]`
+- Output: `[]` (ek khali list hai, toh khali list return karo)
+
+#### **Constraints:**
+- `k` (number of lists) 0 se 10^4 tak ho sakta hai.
+- Har list ka size 0 se 500 tak ho sakta hai.
+- Values -10^4 se 10^4 tak ho sakte hai.
+- Har list already sorted hai (ascending order mein).
+
+---
+
+### Concept: Min-Heap (Priority Queue) Ka Use
+#### **Approach:**
+- Hume saari lists ko merge karke ek sorted list banani hai.
+- Har list sorted hai, toh hume har list ke first element ko compare karna hai, sabse chhota element nikaalna hai, aur uske next element ko compare karna hai.
+- Iske liye hum ek Min-Heap (Priority Queue) ka use karenge:
+  - Min-Heap mein har list ka first node daal do.
+  - Min-Heap se sabse chhota element nikaal ke result list mein daal do.
+  - Nikaale gaye node ke next node ko Min-Heap mein daal do.
+  - Repeat karo jab tak Min-Heap khali na ho jaye.
+
+#### **Kyun Priority Queue?**
+- Priority Queue ek Min-Heap banata hai, jisme sabse chhota element top pe hota hai.
+- Yeh fast hai (`O(log k)` time mein element add/remove karta hai).
+- Hum built-in `priority_queue` ka use karenge taaki code short aur simple ho.
+
+---
+
+### Short aur Easy Code (Using Priority Queue)
+```cpp
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        // Min-Heap banaya (sabse chhota element top pe)
+        priority_queue<pair<int, ListNode*>, vector<pair<int, ListNode*>>, greater<pair<int, ListNode*>>> pq;
+        
+        // Step 1: Har list ke first node ko Min-Heap mein daal do
+        for(int i = 0; i < lists.size(); i++) {
+            if(lists[i] != nullptr) { // Agar list khali nahi hai
+                pq.push({lists[i]->val, lists[i]});
+            }
+        }
+        
+        // Dummy node banaya taaki result list banane mein aasani ho
+        ListNode dummy(0);
+        ListNode* tail = &dummy;
+        
+        // Step 2: Min-Heap se elements nikaal ke result list banaye
+        while(!pq.empty()) {
+            auto [val, node] = pq.top(); // Sabse chhota element lo
+            pq.pop();
+            
+            // Result list mein add karo
+            tail->next = node;
+            tail = tail->next;
+            
+            // Agar node ka next hai, toh Min-Heap mein daal do
+            if(node->next != nullptr) {
+                pq.push({node->next->val, node->next});
+            }
+        }
+        
+        return dummy.next; // Result list return karo
+    }
+};
+```
+
+---
+
+### Code Explanation (Line-by-Line)
+
+#### **Function Signature:**
+- `ListNode* mergeKLists(vector<ListNode*>& lists)`:
+  - `lists`: Vector jisme `k` linked lists ke pointers hai.
+  - `ListNode*`: Output mein ek sorted linked list ka pointer return karna hai.
+
+#### **Line 1: Min-Heap Banaya**
+- `priority_queue<pair<int, ListNode*>, vector<pair<int, ListNode*>>, greater<pair<int, ListNode*>>> pq;`
+  - Yeh ek Min-Heap banata hai.
+  - Min-Heap mein `pair<int, ListNode*>` store hoga:
+    - `int`: Node ka value (`val`), taaki compare kar sake.
+    - `ListNode*`: Node ka pointer, taaki uska next access kar sake.
+  - `greater<pair<int, ListNode*>>`: Min-Heap banane ke liye (sabse chhota value top pe).
+
+#### **Step 1: Har List Ke First Node Ko Min-Heap Mein Daal Do**
+- `for(int i = 0; i < lists.size(); i++)`:
+  - Har list ke first node ko Min-Heap mein daal do.
+- `if(lists[i] != nullptr)`:
+  - Agar list khali nahi hai, toh uska first node daal do.
+- `pq.push({lists[i]->val, lists[i]})`:
+  - Min-Heap mein ek pair daal do: `{value, node}`.
+
+#### **Dummy Node Aur Tail Pointer**
+- `ListNode dummy(0)`:
+  - Ek dummy node banaya taaki result list banane mein aasani ho.
+- `ListNode* tail = &dummy`:
+  - `tail` pointer result list ke end ko track karega.
+
+#### **Step 2: Min-Heap Se Elements Nikaal Ke Result List Banaye**
+- `while(!pq.empty())`:
+  - Jab tak Min-Heap khali nahi hota, loop chalo.
+- `auto [val, node] = pq.top()`:
+  - Min-Heap se sabse chhota element lo (`val` aur `node`).
+- `pq.pop()`:
+  - Element remove kar do.
+- `tail->next = node`:
+  - Node ko result list mein add karo.
+- `tail = tail->next`:
+  - `tail` ko aage badhao.
+- `if(node->next != nullptr)`:
+  - Agar node ka next hai, toh usko Min-Heap mein daal do.
+- `pq.push({node->next->val, node->next})`:
+  - Next node ka value aur pointer Min-Heap mein daal do.
+
+#### **Return:**
+- `return dummy.next`:
+  - Dummy node ke baad wali list return karo (yeh final sorted list hai).
+
+---
+
+### Detailed Dry Run (Example 1)
+**Input:** `lists = [[1->4->5], [1->3->4], [2->6]]`
+- **Step 1: Har List Ke First Node Ko Min-Heap Mein Daal Do**
+  - `lists.size() = 3`
+  - List 0: `1->4->5` → `pq.push({1, node1})`
+  - List 1: `1->3->4` → `pq.push({1, node2})`
+  - List 2: `2->6` → `pq.push({2, node3})`
+  - Min-Heap: `[{1, node1}, {1, node2}, {2, node3}]` (sabse chhota top pe)
+
+- **Step 2: Min-Heap Se Elements Nikaal Ke Result List Banaye**
+  - **Initial:** `dummy -> null`, `tail = dummy`
+  - **Iteration 1:**
+    - `pq.top() = {1, node1}` (node1 = 1->4->5)
+    - `pq.pop()` → `pq = [{1, node2}, {2, node3}]`
+    - `tail->next = node1` → `dummy -> 1`
+    - `tail = node1` (1)
+    - `node1->next = 4->5`, `pq.push({4, node1->next})` → `pq = [{1, node2}, {2, node3}, {4, node1->next}]`
+  - **Iteration 2:**
+    - `pq.top() = {1, node2}` (node2 = 1->3->4)
+    - `pq.pop()` → `pq = [{2, node3}, {4, node1->next}]`
+    - `tail->next = node2` → `dummy -> 1 -> 1`
+    - `tail = node2` (1)
+    - `node2->next = 3->4`, `pq.push({3, node2->next})` → `pq = [{2, node3}, {4, node1->next}, {3, node2->next}]`
+  - **Iteration 3:**
+    - `pq.top() = {2, node3}` (node3 = 2->6)
+    - `pq.pop()` → `pq = [{3, node2->next}, {4, node1->next}]`
+    - `tail->next = node3` → `dummy -> 1 -> 1 -> 2`
+    - `tail = node3` (2)
+    - `node3->next = 6`, `pq.push({6, node3->next})` → `pq = [{3, node2->next}, {4, node1->next}, {6, node3->next}]`
+  - **Iteration 4:**
+    - `pq.top() = {3, node2->next}` (node2->next = 3->4)
+    - `pq.pop()` → `pq = [{4, node1->next}, {6, node3->next}]`
+    - `tail->next = node2->next` → `dummy -> 1 -> 1 -> 2 -> 3`
+    - `tail = node2->next` (3)
+    - `node2->next->next = 4`, `pq.push({4, node2->next->next})` → `pq = [{4, node1->next}, {6, node3->next}, {4, node2->next->next}]`
+  - **Iteration 5:**
+    - `pq.top() = {4, node1->next}` (node1->next = 4->5)
+    - `pq.pop()` → `pq = [{4, node2->next->next}, {6, node3->next}]`
+    - `tail->next = node1->next` → `dummy -> 1 -> 1 -> 2 -> 3 -> 4`
+    - `tail = node1->next` (4)
+    - `node1->next->next = 5`, `pq.push({5, node1->next->next})` → `pq = [{4, node2->next->next}, {6, node3->next}, {5, node1->next->next}]`
+  - **Iteration 6:**
+    - `pq.top() = {4, node2->next->next}` (node2->next->next = 4)
+    - `pq.pop()` → `pq = [{5, node1->next->next}, {6, node3->next}]`
+    - `tail->next = node2->next->next` → `dummy -> 1 -> 1 -> 2 -> 3 -> 4 -> 4`
+    - `tail = node2->next->next` (4)
+    - `node2->next->next->next = nullptr`, no push.
+  - **Iteration 7:**
+    - `pq.top() = {5, node1->next->next}` (node1->next->next = 5)
+    - `pq.pop()` → `pq = [{6, node3->next}]`
+    - `tail->next = node1->next->next` → `dummy -> 1 -> 1 -> 2 -> 3 -> 4 -> 4 -> 5`
+    - `tail = node1->next->next` (5)
+    - `node1->next->next->next = nullptr`, no push.
+  - **Iteration 8:**
+    - `pq.top() = {6, node3->next}` (node3->next = 6)
+    - `pq.pop()` → `pq = []`
+    - `tail->next = node3->next` → `dummy -> 1 -> 1 -> 2 -> 3 -> 4 -> 4 -> 5 -> 6`
+    - `tail = node3->next` (6)
+    - `node3->next->next = nullptr`, no push.
+
+- **Final Output:** `[1->1->2->3->4->4->5->6]`
+
+---
+
+### Code Analysis
+- **Time Complexity:**
+  - Min-Heap ka size max `k` hota hai.
+  - `push` aur `pop` operations `O(log k)` time lete hai.
+  - Total nodes `N` hai (saari lists ke nodes ka sum), toh total time: `O(N log k)`.
+- **Space Complexity:** `O(k)` (Min-Heap ke liye).
+- **Pros:** Short, simple, aur built-in `priority_queue` ka use karta hai.
+- **Cons:** None for this problem.
+
+---
+
+### Beginner Tips
+- **Min-Heap:** Ek dabba jaisa soch jisme sabse chhota number top pe hota hai.
+- **Linked List:** Ek chain jaisa soch jisme har node ke paas ek value aur next node ka pointer hota hai.
+- **Priority Queue:** `priority_queue` ka use karke Min-Heap banaya, jo kaam aasan karta hai.
+- **Practice:** Chhote examples pe try karo (jaise 2 lists ke saath).
+
+Ab samajh aaya na, bro? Yeh code short aur simple hai, aur Priority Queue ka use karke kaam jaldi ho jata hai. Dry run se flow bhi clear ho gaya hoga. Koi aur doubt ho toh bol! Kya bolta hai?
