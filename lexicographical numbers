@@ -1,0 +1,318 @@
+
+### Problem Recap: Lexicographical Numbers
+- Hume ek integer `n` diya hai.
+- Hume 1 se `n` tak ke saare numbers ko **lexicographical order** mein return karna hai.
+- **Lexicographical order** ka matlab hai numbers ko string ki tarah treat karke dictionary order mein sort karna.
+- Example:
+  - Input: `n = 13`
+  - Output: `[1, 10, 11, 12, 13, 2, 3, 4, 5, 6, 7, 8, 9]`
+  - Explanation: Numbers ko string ke roop mein dekho: "1", "10", "11", ..., "2", "3", ..., "9". Dictionary order mein yeh sequence banega.
+
+#### **Lexicographical Order Ka Pattern:**
+- "1" se start hone wale numbers pehle aayenge: 1, 10, 11, 12, ...
+- Phir "2" se: 2, 20, 21, ...
+- Phir "3", "4", ..., "9" tak.
+- Yeh ek tree structure jaisa hai:
+  - 1 ke baad 10, 11, 12, ...
+  - 10 ke baad 100, 101, ... (lekin agar `n` se bada ho jaye toh wapas aao).
+
+---
+
+### Code Recap
+Yeh code iterative approach use karta hai jo O(n) time mein lexicographical order generate karta hai. Chalo line-by-line samajhte hai:
+
+```cpp
+class Solution {
+public:
+    vector<int> lexicalOrder(int n) {
+        vector<int> result;         // Yeh result vector banaye jisme numbers store karenge
+        int curr = 1;               // Shuruat 1 se karo
+        for(int i = 0; i < n; i++) { // n numbers chahiye, toh n baar loop chalao
+            result.push_back(curr);  // Current number ko result mein add karo
+            if(curr * 10 <= n) {     // Agar 10 se multiply karke aage ja sakte hai
+                curr *= 10;          // Aage jao (jaise 1 -> 10)
+            } else {                 // Agar nahi ja sakte
+                // Jab tak last digit 9 hai ya curr + 1 > n, wapas jao
+                while(curr % 10 == 9 || curr + 1 > n) {
+                    curr /= 10;      // Wapas jao (jaise 11 -> 1)
+                }
+                curr++;             // Agla number try karo (jaise 1 -> 2)
+            }
+        }
+        return result;              // Final result return karo
+    }
+};
+```
+
+---
+
+### Detailed Explanation: Line-by-Line
+#### **1. `vector<int> result;`**
+- Ek empty vector banaye jisme hum lexicographical order mein numbers store karenge.
+- Shuru mein: `result = []`
+
+#### **2. `int curr = 1;`**
+- Ek variable `curr` banaye aur isko 1 se initialize karo.
+- `curr` humara current number hai jo hum process kar rahe hai.
+- Shuru mein: `curr = 1`
+
+#### **3. `for(int i = 0; i < n; i++)`**
+- Yeh loop `n` baar chalega kyunki hume exactly `n` numbers chahiye (1 se `n` tak).
+- Har iteration mein ek number generate karenge aur result mein add karenge.
+
+#### **4. `result.push_back(curr);`**
+- Current number (`curr`) ko result vector mein add karo.
+- Example: Agar `curr = 1`, toh `result = [1]`.
+
+#### **5. `if(curr * 10 <= n)`**
+- Check karo ki kya hum `curr` ko 10 se multiply karke aage ja sakte hai, aur yeh number `n` se chhota ya barabar hai.
+- Yeh step depth mein jaane ke liye hai (jaise 1 se 10, 10 se 100).
+- **Kyun?** Lexicographical order mein "1" ke baad "10", "100", "1000", ... aate hai.
+- Agar yeh condition true hai, toh:
+  - `curr *= 10;` (Aage jao, jaise 1 se 10).
+
+#### **6. `else` Block**
+- Agar `curr * 10 > n` hai, toh hum depth mein nahi ja sakte.
+- Ab hume agla number try karna hai (jaise 1 ke baad 2, 10 ke baad 11).
+- Lekin pehle check karo:
+  - `while(curr % 10 == 9 || curr + 1 > n)`
+    - `curr % 10 == 9`: Agar current number ka last digit 9 hai (jaise 19, 29), toh agla number same level pe nahi ban sakta (19 ke baad 20, lekin 20 same prefix "1" nahi hai).
+    - `curr + 1 > n`: Agar agla number `n` se bada ho jata hai (jaise `n = 13` hai aur `curr = 13`, toh 14 > 13).
+  - Agar yeh condition true hai, toh `curr /= 10` (wapas jao, jaise 19 se 1).
+- Phir `curr++` (agle number pe jao, jaise 1 se 2).
+
+#### **7. `return result;`**
+- Final result vector return karo.
+
+---
+
+### Detailed Dry Run (`n = 13`)
+Chalo ab yeh code kaise numbers generate karta hai, step-by-step dekhte hai:
+
+#### **Initial State:**
+- `result = []`
+- `curr = 1`
+- `n = 13`
+
+#### **Iteration 1 (i = 0):**
+- `result.push_back(curr)`: `curr = 1`, toh `result = [1]`
+- `if(curr * 10 <= n)`: `1 * 10 = 10`, `10 <= 13`, true hai.
+- `curr *= 10`: `curr = 10`
+
+#### **Iteration 2 (i = 1):**
+- `result.push_back(curr)`: `curr = 10`, toh `result = [1, 10]`
+- `if(curr * 10 <= n)`: `10 * 10 = 100`, `100 > 13`, false hai.
+- `else` block:
+  - `while(curr % 10 == 9 || curr + 1 > n)`:
+    - `curr % 10 = 10 % 10 = 0`, 0 ≠ 9
+    - `curr + 1 = 11`, `11 <= 13`, false hai
+  - Loop nahi chalega.
+- `curr++`: `curr = 11`
+
+#### **Iteration 3 (i = 2):**
+- `result.push_back(curr)`: `curr = 11`, toh `result = [1, 10, 11]`
+- `if(curr * 10 <= n)`: `11 * 10 = 110`, `110 > 13`, false hai.
+- `else` block:
+  - `while(curr % 10 == 9 || curr + 1 > n)`:
+    - `curr % 10 = 11 % 10 = 1`, 1 ≠ 9
+    - `curr + 1 = 12`, `12 <= 13`, false hai
+  - Loop nahi chalega.
+- `curr++`: `curr = 12`
+
+#### **Iteration 4 (i = 3):**
+- `result.push_back(curr)`: `curr = 12`, toh `result = [1, 10, 11, 12]`
+- `if(curr * 10 <= n)`: `12 * 10 = 120`, `120 > 13`, false hai.
+- `else` block:
+  - `while(curr % 10 == 9 || curr + 1 > n)`:
+    - `curr % 10 = 12 % 10 = 2`, 2 ≠ 9
+    - `curr + 1 = 13`, `13 <= 13`, false hai
+  - Loop nahi chalega.
+- `curr++`: `curr = 13`
+
+#### **Iteration 5 (i = 4):**
+- `result.push_back(curr)`: `curr = 13`, toh `result = [1, 10, 11, 12, 13]`
+- `if(curr * 10 <= n)`: `13 * 10 = 130`, `130 > 13`, false hai.
+- `else` block:
+  - `while(curr % 10 == 9 || curr + 1 > n)`:
+    - `curr % 10 = 13 % 10 = 3`, 3 ≠ 9
+    - `curr + 1 = 14`, `14 > 13`, **true hai**
+  - `curr /= 10`: `curr = 13 / 10 = 1`
+  - Loop phir check karega:
+    - `curr % 10 = 1 % 10 = 1`, 1 ≠ 9
+    - `curr + 1 = 2`, `2 <= 13`, false hai
+  - Loop khatam.
+- `curr++`: `curr = 1 + 1 = 2`
+
+#### **Iteration 6 (i = 5):**
+- `result.push_back(curr)`: `curr = 2`, toh `result = [1, 10, 11, 12, 13, 2]`
+- `if(curr * 10 <= n)`: `2 * 10 = 20`, `20 > 13`, false hai.
+- `else` block:
+  - `while(curr % 10 == 9 || curr + 1 > n)`:
+    - `curr % 10 = 2 % 10 = 2`, 2 ≠ 9
+    - `curr + 1 = 3`, `3 <= 13`, false hai
+  - Loop nahi chalega.
+- `curr++`: `curr = 3`
+
+#### **Iteration 7 (i = 6):**
+- `result.push_back(curr)`: `curr = 3`, toh `result = [1, 10, 11, 12, 13, 2, 3]`
+- `if(curr * 10 <= n)`: `3 * 10 = 30`, `30 > 13`, false hai.
+- `else` block:
+  - `while(curr % 10 == 9 || curr + 1 > n)`:
+    - `curr % 10 = 3 % 10 = 3`, 3 ≠ 9
+    - `curr + 1 = 4`, `4 <= 13`, false hai
+  - Loop nahi chalega.
+- `curr++`: `curr = 4`
+
+#### **Iteration 8 (i = 7):**
+- `result.push_back(curr)`: `curr = 4`, toh `result = [1, 10, 11, 12, 13, 2, 3, 4]`
+- `if(curr * 10 <= n)`: `4 * 10 = 40`, `40 > 13`, false hai.
+- `else` block:
+  - `while(curr % 10 == 9 || curr + 1 > n)`:
+    - `curr % 10 = 4 % 10 = 4`, 4 ≠ 9
+    - `curr + 1 = 5`, `5 <= 13`, false hai
+  - Loop nahi chalega.
+- `curr++`: `curr = 5`
+
+#### **Iteration 9 (i = 8):**
+- `result.push_back(curr)`: `curr = 5`, toh `result = [1, 10, 11, 12, 13, 2, 3, 4, 5]`
+- `if(curr * 10 <= n)`: `5 * 10 = 50`, `50 > 13`, false hai.
+- `else` block:
+  - `while(curr % 10 == 9 || curr + 1 > n)`:
+    - `curr % 10 = 5 % 10 = 5`, 5 ≠ 9
+    - `curr + 1 = 6`, `6 <= 13`, false hai
+  - Loop nahi chalega.
+- `curr++`: `curr = 6`
+
+#### **Iteration 10 (i = 9):**
+- `result.push_back(curr)`: `curr = 6`, toh `result = [1, 10, 11, 12, 13, 2, 3, 4, 5, 6]`
+- `if(curr * 10 <= n)`: `6 * 10 = 60`, `60 > 13`, false hai.
+- `else` block:
+  - `while(curr % 10 == 9 || curr + 1 > n)`:
+    - `curr % 10 = 6 % 10 = 6`, 6 ≠ 9
+    - `curr + 1 = 7`, `7 <= 13`, false hai
+  - Loop nahi chalega.
+- `curr++`: `curr = 7`
+
+#### **Iteration 11 (i = 10):**
+- `result.push_back(curr)`: `curr = 7`, toh `result = [1, 10, 11, 12, 13, 2, 3, 4, 5, 6, 7]`
+- `if(curr * 10 <= n)`: `7 * 10 = 70`, `70 > 13`, false hai.
+- `else` block:
+  - `while(curr % 10 == 9 || curr + 1 > n)`:
+    - `curr % 10 = 7 % 10 = 7`, 7 ≠ 9
+    - `curr + 1 = 8`, `8 <= 13`, false hai
+  - Loop nahi chalega.
+- `curr++`: `curr = 8`
+
+#### **Iteration 12 (i = 11):**
+- `result.push_back(curr)`: `curr = 8`, toh `result = [1, 10, 11, 12, 13, 2, 3, 4, 5, 6, 7, 8]`
+- `if(curr * 10 <= n)`: `8 * 10 = 80`, `80 > 13`, false hai.
+- `else` block:
+  - `while(curr % 10 == 9 || curr + 1 > n)`:
+    - `curr % 10 = 8 % 10 = 8`, 8 ≠ 9
+    - `curr + 1 = 9`, `9 <= 13`, false hai
+  - Loop nahi chalega.
+- `curr++`: `curr = 9`
+
+#### **Iteration 13 (i = 12):**
+- `result.push_back(curr)`: `curr = 9`, toh `result = [1, 10, 11, 12, 13, 2, 3, 4, 5, 6, 7, 8, 9]`
+- `if(curr * 10 <= n)`: `9 * 10 = 90`, `90 > 13`, false hai.
+- `else` block:
+  - `while(curr % 10 == 9 || curr + 1 > n)`:
+    - `curr % 10 = 9 % 10 = 9`, **true hai**
+  - `curr /= 10`: `curr = 9 / 10 = 0`
+  - Loop phir check karega:
+    - `curr % 10 = 0 % 10 = 0`, 0 ≠ 9
+    - `curr + 1 = 1`, `1 <= 13`, false hai
+  - Loop khatam.
+- `curr++`: `curr = 0 + 1 = 1`
+
+#### **Loop Khatam:**
+- `i = 13` ho gaya, loop khatam.
+- Final `result = [1, 10, 11, 12, 13, 2, 3, 4, 5, 6, 7, 8, 9]`
+
+---
+
+### Kyun Yeh Logic Lexicographical Order Deta Hai?
+- Yeh code ek tree traversal jaisa kaam karta hai:
+  - **Depth Mein Jao:** `curr * 10` se hum depth mein jate hai (jaise 1 se 10, 10 se 100).
+  - **Wapas Aao:** Jab `curr * 10 > n` ho jata hai ya last digit 9 ho jata hai, toh wapas aate hai (`curr / 10`).
+  - **Agla Number:** `curr + 1` se agla number try karte hai (jaise 1 ke baad 2).
+- Lexicographical order ka pattern yeh hai:
+  - Pehle "1" se start hone wale saare numbers: 1, 10, 11, 12, 13
+  - Phir "2" se: 2
+  - Phir "3", "4", ..., "9"
+- Yeh code isi pattern ko follow karta hai:
+  - Jab `curr = 1`, yeh pehle 10, 11, 12, 13 tak jata hai.
+  - Jab 13 ke baad aage nahi ja sakta, toh wapas aata hai aur 2 try karta hai.
+
+#### **Tree Structure Socho:**
+- Root: 1
+- 1 ke children: 10, 11, 12, 13
+- 2 ke children: 20 (lekin 20 > 13, toh nahi jayega)
+- 3 ke children: 30 (nahi jayega)
+- Aise hi aage...
+- Yeh code DFS (Depth-First Search) jaisa kaam karta hai, jo lexicographical order ke liye perfect hai.
+
+---
+
+### Numbers Ka Flow Kaise Kaam Karta Hai?
+- **Shuruat:** `curr = 1` se start hota hai.
+- **Depth Mein Jao:** `curr * 10` se hum pehle depth mein jate hai (1 -> 10 -> 100 -> ...).
+  - Agar `curr * 10 <= n` hai, toh hum aage badhte hai.
+- **Boundary Check:** Jab `curr * 10 > n` ho jata hai, toh hum depth mein nahi ja sakte.
+- **Next Number:** `curr + 1` se agla number try karte hai (jaise 10 ke baad 11).
+- **Wapas Jao:** Jab `curr + 1 > n` ya last digit 9 hai, toh wapas jate hai (`curr / 10`).
+  - Example: `curr = 13` pe, `curr + 1 = 14 > 13`, toh `curr = 13 / 10 = 1` ho jata hai, phir `curr = 2`.
+
+#### **Flow Diagram (Simplified):**
+- Start: `curr = 1`
+- 1 -> 10 -> 11 -> 12 -> 13
+- 13 se aage nahi ja sakta, toh wapas 1 pe, phir 2
+- 2 -> (20 > 13, nahi jayega) -> 3
+- 3 -> (30 > 13) -> 4
+- Aise hi aage...
+
+---
+
+### Another Example (`n = 20`):
+#### **Dry Run:**
+1. `curr = 1`: Add 1, `1 * 10 = 10`, `curr = 10`
+2. `curr = 10`: Add 10, `10 * 10 = 100 > 20`, `curr + 1 = 11`, `curr = 11`
+3. `curr = 11`: Add 11, `curr = 12`
+4. `curr = 12`: Add 12, `curr = 13`
+5. `curr = 13`: Add 13, `curr = 14`
+6. `curr = 14`: Add 14, `curr = 15`
+7. `curr = 15`: Add 15, `curr = 16`
+8. `curr = 16`: Add 16, `curr = 17`
+9. `curr = 17`: Add 17, `curr = 18`
+10. `curr = 18`: Add 18, `curr = 19`
+11. `curr = 19`: Add 19, `curr % 10 = 9`, `curr /= 10 = 1`, `curr = 2`
+12. `curr = 2`: Add 2, `2 * 10 = 20`, `curr = 20`
+13. `curr = 20`: Add 20, `curr + 1 = 21 > 20`, `curr /= 10 = 2`, `curr = 3`
+14. `curr = 3`: Add 3, `curr = 4`
+15. Aise hi aage...
+16. Final: `[1, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 2, 20, 3, 4, 5, 6, 7, 8, 9]`
+
+---
+
+### Time and Space Complexity
+- **Time Complexity:** O(n)
+  - Har number ek baar hi generate hota hai.
+- **Space Complexity:** O(1)
+  - Result vector ke alawa koi extra space nahi (constant space).
+
+---
+
+### Kyun Yeh Approach Best Hai?
+- **Efficient:** O(n) time mein saare numbers generate ho jate hai.
+- **No Extra Space:** Sorting ya recursion ki zarurat nahi, toh space bhi kam lagta hai.
+- **Simple Logic:** Ek baar pattern samajh aaye, toh yeh bahut intuitive hai.
+
+---
+
+### Beginner Tips
+- **Lexicographical Order:** Numbers ko string ki tarah socho (1, 10, 11, ..., 2, 3, ...).
+- **Pattern:** Pehle depth mein jao (1 -> 10), phir agla number (1 -> 2).
+- **Practice:** Chhote `n` pe try karo (jaise `n = 5`).
+
+Ab samajh aaya na, bro? Numbers kaise kaam kar rahe hai, aur yeh code kyun lexicographical order deta hai, yeh saara clear ho gaya hoga. Koi aur doubt ho toh bol! Kya bolta hai?
