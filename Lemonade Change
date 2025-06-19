@@ -1,0 +1,193 @@
+
+### Problem Statement Recap: Lemonade Change
+- **Problem:** Tum ek lemonade stand chalate ho jahan har glass ka price 5 rupees hai.
+- **Input:** Ek array `bill` jisme har customer ne kitne rupees diye hai (5, 10, ya 20).
+- **Rule:** 
+  - Har customer ko exact 5 rupees change dena hai agar usne 10 ya 20 rupees diye.
+  - Change ke liye sirf 5 aur 10 rupees ke notes use kar sakte ho (jo customers se collect kiye).
+  - Agar change nahi de sakte, toh false return karo.
+- **Task:** Check karo ki kya sab customers ko change de sakte ho ya nahi. Agar haan, toh true return karo.
+- **Example:**
+  - `bill = [5, 5, 5, 10, 20]`
+  - Output: true
+  - Explanation:
+    - 5: Collect 5, change = 0
+    - 5: Collect 5, change = 0
+    - 5: Collect 5, change = 0
+    - 10: Collect 10, give 5, change = 0
+    - 20: Collect 20, give 10 + 5, change = 0
+    - Sab ho gaya, toh true.
+
+---
+
+### Code Explanation with Comments
+Yeh code greedily change manage karta hai using 5 aur 10 rupees notes.
+
+```cpp
+bool lemonadeChange(vector<int>& bill) 
+{
+    int five = 0; // Count of 5 rupee notes available for change
+    int ten = 0;  // Count of 10 rupee notes available for change
+
+    int n = bill.size(); // Total number of customers
+
+    for(int i = 0; i < n; i++) // Loop through each customer
+    {
+        if(bill[i] == 5) // Customer paid 5 rupees
+        {
+            five++; // Collect 5 rupee note
+        }
+        else if(bill[i] == 10) // Customer paid 10 rupees
+        {
+            if(five > 0) // Check if we have at least one 5 rupee note
+            {
+                five--; // Give 5 rupee note as change
+                ten++;  // Collect 10 rupee note
+            }
+            else return false; // No 5 rupee note, can't give change
+        }
+        else // Customer paid 20 rupees
+        {
+            if(five > 0 && ten > 0) // Prefer 10 + 5 rupees change
+            {
+                five--; // Give 5 rupee note
+                ten--;  // Give 10 rupee note
+            }
+            else if(five >= 3) // Use three 5 rupee notes if 10 not available
+            {
+                five -= 3; // Give 5 + 5 + 5 = 15 rupees change
+            }
+            else return false; // Can't give change (no 5 or 10+5 combo)
+        }
+    }
+    return true; // All customers satisfied, return true
+}
+```
+
+---
+
+### Detailed Explanation: Line-by-Line Flow
+#### **1. `int five = 0; int ten = 0;`**
+- **Kya Hai:** Do variables banaye: `five` 5 rupees notes ki count, `ten` 10 rupees notes ki count.
+- **Kyun:** Yeh track karega ki kitne notes available hai change dene ke liye.
+- **Flow:** Shuru mein 0 hai kyunki abhi koi note collect nahi hua.
+
+#### **2. `int n = bill.size();`**
+- **Kya Hai:** `bill` array ki total length (customers ki sankhya) store kiya.
+- **Kyun:** Yeh batayega ki loop kitni baar chalna hai.
+- **Flow:** `n` mein customers ki total count aa jayegi.
+
+#### **3. `for(int i = 0; i < n; i++)`**
+- **Kya Hai:** Loop har customer ke bill pe chalega (0 se shuru, `n-1` tak).
+- **Kyun:** Har customer ke liye check karna hai ki change de sakte hai ya nahi.
+- **Flow:** `i` har baar ek customer ko represent karega.
+
+#### **4. `if(bill[i] == 5)`**
+- **Kya Hai:** Check karta hai ki current customer ne 5 rupees diya.
+- **Kyun:** Agar 5 diya, toh change nahi dena, sirf collect karna hai.
+- **Flow:** Agar true, toh next line chalegi.
+
+#### **5. `five++;`**
+- **Kya Hai:** 5 rupees note ki count badhadi.
+- **Kyun:** Customer ne 5 diya, toh hum collect kar rahe hai.
+- **Flow:** `five` mein 1 add ho jayega (jaise 0 se 1).
+
+#### **6. `else if(bill[i] == 10)`**
+- **Kya Hai:** Check karta hai ki current customer ne 10 rupees diya.
+- **Kyun:** Agar 10 diya, toh 5 rupees change dena hai.
+- **Flow:** Agar true, toh next block chalega.
+
+#### **7. `if(five > 0)`**
+- **Kya Hai:** Check karta hai ki 5 rupees ka note available hai ya nahi.
+- **Kyun:** 10 ke liye 5 ka note chahiye change mein.
+- **Flow:** Agar 5 hai, toh change de sakte hai.
+
+#### **8. `five--; ten++;`**
+- **Kya Hai:** 5 rupees note use kiya aur 10 rupees collect kiya.
+- **Kyun:** 10 ke liye 5 ka note return kiya, aur 10 collect kiya.
+- **Flow:** `five` kam hoga (jaise 1 se 0), `ten` badhega (jaise 0 se 1).
+
+#### **9. `else return false;`**
+- **Kya Hai:** Agar 5 rupees nahi hai, toh false return karta hai.
+- **Kyun:** Change nahi de sakte, toh transaction fail.
+- **Flow:** Program yahan ruk jayega aur false return hoga.
+
+#### **10. `else` (for 20 rupees)**
+- **Kya Hai:** Agar customer ne 20 rupees diya (kyunki 5 aur 10 nahi hai).
+- **Kyun:** 20 ke liye 15 rupees change dena hai (20 - 5 = 15).
+- **Flow:** Next conditions check hongi.
+
+#### **11. `if(five > 0 && ten > 0)`**
+- **Kya Hai:** Check karta hai ki 5 aur 10 rupees available hai.
+- **Kyun:** Preferable change hai 10 + 5 = 15.
+- **Flow:** Agar true, toh change dega.
+
+#### **12. `five--; ten--;`**
+- **Kya Hai:** 5 aur 10 rupees ka note use kiya.
+- **Kyun:** 15 rupees change ke liye 10 + 5 diya.
+- **Flow:** `five` aur `ten` dono kam honge.
+
+#### **13. `else if(five >= 3)`**
+- **Kya Hai:** Check karta hai ki 3 ya zyada 5 rupees notes hai.
+- **Kyun:** Agar 10 nahi hai, toh 5 + 5 + 5 = 15 use kar sakte hai.
+- **Flow:** Agar true, toh next line chalegi.
+
+#### **14. `five -= 3;`**
+- **Kya Hai:** 3 notes of 5 rupees use kiya.
+- **Kyun:** 15 rupees change ke liye 3 five notes diya.
+- **Flow:** `five` mein 3 kam ho jayega (jaise 3 se 0).
+
+#### **15. `else return false;`**
+- **Kya Hai:** Agar na 10+5 hai na 3 five notes, toh false return karta hai.
+- **Kyun:** Change nahi de sakte.
+- **Flow:** Program ruk jayega.
+
+#### **16. `return true;`**
+- **Kya Hai:** Loop ke baad true return karta hai.
+- **Kyun:** Sab customers ko change de diya, toh success.
+- **Flow:** Yeh final answer hai.
+
+---
+
+### Dry Run (Example: `bill = [5, 5, 5, 10, 20]`)
+- **Step 1: Initialize**
+  - `five = 0`, `ten = 0`, `n = 5`
+- **Step 2: Loop Start**
+  - `i = 0`, `bill[0] = 5`
+    - `five++` → `five = 1`
+  - `i = 1`, `bill[1] = 5`
+    - `five++` → `five = 2`
+  - `i = 2`, `bill[2] = 5`
+    - `five++` → `five = 3`
+  - `i = 3`, `bill[3] = 10`
+    - `five > 0` true → `five--` → `five = 2`, `ten++` → `ten = 1`
+  - `i = 4`, `bill[4] = 20`
+    - `five > 0 && ten > 0` true → `five--` → `five = 1`, `ten--` → `ten = 0`
+- **Step 3: Return**
+  - `return true`
+
+- **Output:** true
+
+#### **Dry Run (Fail Case: `bill = [5, 5, 10, 10]`)**
+- `five = 0`, `ten = 0`, `n = 4`
+- `i = 0`, `bill[0] = 5` → `five = 1`
+- `i = 1`, `bill[1] = 5` → `five = 2`
+- `i = 2`, `bill[2] = 10` → `five > 0` true → `five = 1`, `ten = 1`
+- `i = 3`, `bill[3] = 10` → `five > 0` true → `five = 0`, `ten = 2`
+- **Next 20 nahi hai, lekin agar hota toh fail hota kyunki 5 nahi bacha**
+- **Output:** true (lekin agar 20 aata, toh false)
+
+---
+
+### Time and Space Complexity
+- **Time Complexity:** O(n)
+  - Ek loop `n` baar chalta hai.
+- **Space Complexity:** O(1)
+  - Sirf `five` aur `ten` variables use kiye.
+
+---
+
+### Beginner Tips
+- **Greedy Approach:** Hamesha chhote notes (5) pehle use karo.
+- **Edge Cases:** Check karo ki 5 notes available hai ya nahi.
+- **Practice:** Chhote inputs pe test karo (jaise `[5, 10]`, `[5, 5, 20]`).
