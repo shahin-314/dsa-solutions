@@ -1,0 +1,160 @@
+
+### Problem Recap: Divide a String Into Groups of Size k
+- **Task:** String `s` ko `k` size ke groups mein baantna hai. Last group mein agar characters kam pad jaye, toh `fill` character use karo.
+- **Example:**
+  - `s = "abcdefghi"`, `k = 3`, `fill = 'x'` → Output: `["abc", "def", "ghi"]`
+  - `s = "abcdefghij"`, `k = 3`, `fill = 'x'` → Output: `["abc", "def", "ghi", "jxx"]`
+
+---
+
+### Code with Detailed Comments and Dry Run
+```cpp
+class Solution {
+public:
+    vector<string> divideString(string s, int k, char fill) 
+    {
+        vector<string> result; // This will store all the groups as strings (initially empty)
+        // Dry Run: result = [] (empty vector)
+
+        int n = s.size(); // Get the total length of the input string s
+        // Dry Run: For s = "abcdefghi", n = 9
+
+        int i = 0; // Starting index to track where we are in the string (starts from beginning)
+        // Dry Run: i = 0
+
+        while (i < n) // Loop runs as long as i is less than string length
+        {
+            // Dry Run: i = 0 < 9 (true), i = 3 < 9 (true), i = 6 < 9 (true), i = 9 < 9 (false)
+
+            string group = ""; // Create a new empty string for the current group
+            // Dry Run: group = "" (empty string)
+
+            int count = 0; // Counter to track how many characters are in the current group
+            // Dry Run: count = 0
+
+            while (count < k && i < n) // Inner loop to fill group with up to k characters
+            {
+                // Dry Run: For k = 3, count = 0 < 3 and i = 0 < 9 (true)
+
+                group = group + s[i]; // Add the current character from s to group
+                // Dry Run: s[0] = 'a', group = "a"
+
+                i++; // Move to the next character in the string
+                // Dry Run: i = 1
+
+                count++; // Increase the count of characters added
+                // Dry Run: count = 1
+            }
+            // Dry Run: This loop runs 3 times for "abc" (count = 3, i = 3)
+
+            while (count < k) // Add fill characters if group has less than k characters
+            {
+                // Dry Run: For first 3 groups, count = 3, so this loop won't run
+                // Dry Run: For last group (if s = "abcdefghij"), count = 1 < 3 (true)
+
+                group = group + fill; // Add the fill character to complete the group
+                // Dry Run: group = "j" + 'x' = "jx"
+
+                count++; // Increase the count after adding fill
+                // Dry Run: count = 2
+            }
+            // Dry Run: For "jxx", this loop runs 2 times (count = 3)
+
+            result.push_back(group); // Add the completed group to the result vector
+            // Dry Run: result = ["abc"] then ["abc", "def"] then ["abc", "def", "ghi"]
+
+        }
+        // Dry Run: Loop ends when i = 9 (for "abcdefghi")
+
+        return result; // Return the vector containing all groups
+        // Dry Run: return ["abc", "def", "ghi"]
+    }
+};
+```
+
+---
+
+### Dry Run (Example: `s = "abcdefghi"`, `k = 3`, `fill = 'x'`)
+- **Step 1:** `result = []`, `n = 9`, `i = 0`
+- **First Group (`i = 0`):**
+  - `group = ""`, `count = 0`
+  - Inner loop: `count = 0 < 3`, `i = 0 < 9` → `group = "a"`, `i = 1`, `count = 1`
+  - Inner loop: `count = 1 < 3`, `i = 1 < 9` → `group = "ab"`, `i = 2`, `count = 2`
+  - Inner loop: `count = 2 < 3`, `i = 2 < 9` → `group = "abc"`, `i = 3`, `count = 3`
+  - Fill loop: `count = 3 < 3` (false)
+  - `result.push_back("abc")` → `result = ["abc"]`
+- **Second Group (`i = 3`):**
+  - `group = ""`, `count = 0`
+  - Inner loop: `count = 0 < 3`, `i = 3 < 9` → `group = "d"`, `i = 4`, `count = 1`
+  - Inner loop: `count = 1 < 3`, `i = 4 < 9` → `group = "de"`, `i = 5`, `count = 2`
+  - Inner loop: `count = 2 < 3`, `i = 5 < 9` → `group = "def"`, `i = 6`, `count = 3`
+  - Fill loop: `count = 3 < 3` (false)
+  - `result.push_back("def")` → `result = ["abc", "def"]`
+- **Third Group (`i = 6`):**
+  - `group = ""`, `count = 0`
+  - Inner loop: `count = 0 < 3`, `i = 6 < 9` → `group = "g"`, `i = 7`, `count = 1`
+  - Inner loop: `count = 1 < 3`, `i = 7 < 9` → `group = "gh"`, `i = 8`, `count = 2`
+  - Inner loop: `count = 2 < 3`, `i = 8 < 9` → `group = "ghi"`, `i = 9`, `count = 3`
+  - Fill loop: `count = 3 < 3` (false)
+  - `result.push_back("ghi")` → `result = ["abc", "def", "ghi"]`
+- **Loop Ends:** `i = 9 < 9` (false)
+- **Return:** `return ["abc", "def", "ghi"]`
+- **Output:** `["abc", "def", "ghi"]`
+
+#### **Dry Run (Example: `s = "abcdefghij"`, `k = 3`, `fill = 'x'`)**
+- **First Group (`i = 0`):** `result = ["abc"]`, `i = 3`
+- **Second Group (`i = 3`):** `result = ["abc", "def"]`, `i = 6`
+- **Third Group (`i = 6`):** `result = ["abc", "def", "ghi"]`, `i = 9`
+- **Fourth Group (`i = 9`):**
+  - `group = ""`, `count = 0`
+  - Inner loop: `count = 0 < 3`, `i = 9 < 10` → `group = "j"`, `i = 10`, `count = 1`
+  - Inner loop: `count = 1 < 3`, `i = 10 < 10` (false)
+  - Fill loop: `count = 1 < 3` → `group = "jx"`, `count = 2`
+  - Fill loop: `count = 2 < 3` → `group = "jxx"`, `count = 3`
+  - `result.push_back("jxx")` → `result = ["abc", "def", "ghi", "jxx"]`
+- **Loop Ends:** `i = 10 < 10` (false)
+- **Return:** `return ["abc", "def", "ghi", "jxx"]`
+- **Output:** `["abc", "def", "ghi", "jxx"]`
+
+---
+
+### Time Complexity Explanation
+- **Kya Hai:** Time complexity batata hai ki code kitna time lega input ke size ke hisaab se.
+- **Step-by-Step Breakdown:**
+  1. **`n = s.size();`**: O(1) time, kyunki sirf length nikaalna hai.
+  2. **`while (i < n)`**: Yeh loop maximum `n/k` baar chalega (kyunki har group `k` characters ka hai, aur total `n` characters hai).
+  3. **Inner `while (count < k && i < n)`**: Yeh loop har baar maximum `k` baar chalega, lekin total characters `n` hi process honge, toh overall contribution `n` hai.
+  4. **Inner `while (count < k)`**: Yeh loop last group mein maximum `k-1` baar chal sakta hai (agar 1 character bacha ho), lekin har group ke liye ek baar, toh total `n/k` groups ke liye `k` ka factor add hota hai.
+- **Total Time:** O(n) + O(n) + O(n/k * k) ≈ O(n), kyunki `n/k * k` bhi `n` ke order mein hai jab `k` constant hai relative to `n`.
+- **Simple Samajh:** Code har character ko ek baar process karta hai, toh time `n` ke proportional hai.
+
+---
+
+### Space Complexity Explanation
+- **Kya Hai:** Space complexity batata hai ki code kitna extra memory use karta hai.
+- **Step-by-Step Breakdown:**
+  1. **`vector<string> result;`**: Yeh vector mein groups store honge. Har group mein maximum `k` characters honge, aur total `n/k` groups banenge (round up). Toh space = `n/k * k` ≈ `n` characters.
+  2. **`string group = "";`**: Yeh temporary string hai, maximum `k` size ka ho sakta hai, lekin har iteration ke baad khatam ho jata hai, toh extra space `k` hai (constant).
+  3. **`int count` and `int i`**: Yeh do integers hai, jo constant space (O(1)) lete hai.
+- **Total Space:** O(n) kyunki `result` vector mein `n` characters store ho sakte hai (groups ke roop mein).
+- **Simple Samajh:** Extra memory `result` vector ke liye hai, jo input size `n` ke barabar ho sakta hai.
+
+---
+
+### Summary Table
+| Operation                | Time Complexity | Space Complexity |
+|--------------------------|-----------------|------------------|
+| Initialize Variables     | O(1)            | O(1)             |
+| Outer While Loop         | O(n)            | O(n) (for result)|
+| Inner While (Character)  | O(n)            | O(k) (temporary) |
+| Inner While (Fill)       | O(k) per group  | O(1)             |
+| Total                    | O(n)            | O(n)             |
+
+---
+
+### Beginner Tips
+- **Understand Loops:** Outer loop groups banata hai, inner loop characters add karta hai.
+- **Track Index:** `i` ko dhyan se badhao taaki string khatam na ho jaye.
+- **Practice:** Chhote inputs pe try karo (jaise `"ab"`, `k = 2`).
+
+Ab samajh aaya na, bro? Time aur space complexity, dry run, aur detailed comments ke saath saara clear ho gaya hoga. Koi doubt ho toh bol! Kya bolta hai? (Chai abhi thodi si bachi hai, 08:40 PM IST!)
