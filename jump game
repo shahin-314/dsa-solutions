@@ -1,0 +1,111 @@
+
+### Problem Statement Recap: Can Jump
+- **Problem:** Tumhe ek array `nums` diya gaya hai jisme har index pe ek jump value hai (kitna aage jump kar sakte ho). Tum shuru index (0) se start karte ho, aur check karna hai ki kya last index (n-1) tak pahunch sakte ho ya nahi. Agar haan, toh `true` return karo, warna `false`.
+- **Examples:**
+  - `nums = [2,3,1,1,4]` → Output: `true`
+    - Explanation: 0 se 2 jump (index 1), phir 3 jump (index 4), last tak pahunch sakte hai.
+  - `nums = [3,2,1,0,4]` → Output: `false`
+    - Explanation: 0 se 3 jump (index 1), lekin 1 se aage nahi ja sakte.
+- **Constraints:** Array length aur values problem ke hisaab se define hote hai.
+
+---
+
+### Code with Line-by-Line Explanation, Values, and Dry Run
+```cpp
+class Solution {
+public:
+    bool canJump(vector<int>& nums) 
+    {
+        int n = nums.size(); // Get the total number of elements in the array
+        // Explanation: Yeh array ki length nikaalta hai taaki loop chalane ki limit pata chale.
+        // Dry Run (nums = [2,3,1,1,4]): n = 5
+
+        int maxIndex = 0; // Track the farthest index we can reach, start from 0
+        // Explanation: Yeh batata hai ki ab tak kitna aage tak jump kar sakte hai. Shuru mein 0 hai kyunki abhi starting point pe hai.
+        // Dry Run: maxIndex = 0
+
+        for(int i = 0; i < n; i++) // Loop through each index from 0 to n-1
+        {
+            // Explanation: Yeh loop har index pe check karega ki wahan se kitna aage ja sakte hai.
+            // Dry Run: i = 0 (first iteration)
+
+            if(i > maxIndex) return false; // If current index is beyond max reachable, return false
+            // Explanation: Agar current index `i` maxIndex se aage hai, matlab wahan tak pahunch nahi sakte, toh fail.
+            // Dry Run: i = 0, maxIndex = 0, 0 > 0 (false) -> continue
+
+            maxIndex = max(maxIndex, i + nums[i]); // Update maxIndex to the farthest we can jump from current position
+            // Explanation: `i + nums[i]` batata hai ki current index se kitna aage ja sakte hai, aur maxIndex ko usse update karte hai.
+            // Dry Run: i = 0, nums[0] = 2, i + nums[i] = 0 + 2 = 2, maxIndex = max(0, 2) = 2
+        }
+
+        return true; // If loop completes, we can reach the last index
+        // Explanation: Agar loop khatam ho gaya, matlab last index tak pahunch sakte hai, toh success.
+        // Dry Run: Loop khatam, return true
+    }
+};
+```
+
+---
+
+### Dry Run (Example: `nums = [2,3,1,1,4]`)
+- **Step 1: Initialize**
+  - `n = 5`, `maxIndex = 0`, `i = 0`
+- **Step 2: Loop Start**
+  - **i = 0:**
+    - `if (0 > 0)` → false (continue)
+    - `maxIndex = max(0, 0 + 2) = 2`
+  - **i = 1:**
+    - `if (1 > 2)` → false (continue)
+    - `maxIndex = max(2, 1 + 3) = max(2, 4) = 4`
+  - **i = 2:**
+    - `if (2 > 4)` → false (continue)
+    - `maxIndex = max(4, 2 + 1) = max(4, 3) = 4`
+  - **i = 3:**
+    - `if (3 > 4)` → false (continue)
+    - `maxIndex = max(4, 3 + 1) = max(4, 4) = 4`
+  - **i = 4:**
+    - `if (4 > 4)` → false (continue)
+    - `maxIndex = max(4, 4 + 4) = max(4, 8) = 8` (but n = 5, so last index 4 tak hi check)
+- **Step 3: Return**
+  - Loop khatam hua, `return true`
+- **Output:** `true`
+- **Explanation:** Max index 4 tak pahunch gaya, jo last index hai, toh possible hai.
+
+#### **Dry Run (Example: `nums = [3,2,1,0,4]`)**
+- **Step 1: Initialize**
+  - `n = 5`, `maxIndex = 0`, `i = 0`
+- **Step 2: Loop Start**
+  - **i = 0:**
+    - `if (0 > 0)` → false
+    - `maxIndex = max(0, 0 + 3) = 3`
+  - **i = 1:**
+    - `if (1 > 3)` → false
+    - `maxIndex = max(3, 1 + 2) = max(3, 3) = 3`
+  - **i = 2:**
+    - `if (2 > 3)` → false
+    - `maxIndex = max(3, 2 + 1) = max(3, 3) = 3`
+  - **i = 3:**
+    - `if (3 > 3)` → false
+    - `maxIndex = max(3, 3 + 0) = max(3, 3) = 3`
+  - **i = 4:**
+    - `if (4 > 3)` → true
+    - `return false` (kyunki 4th index tak pahunch nahi sakte)
+- **Output:** `false`
+- **Explanation:** Max index 3 tak hi hai, 4th index tak nahi pahunch sakte.
+
+---
+
+### Time and Space Complexity
+- **Time Complexity: O(n)**
+  - Loop `n` baar chalta hai, aur har step mein constant time operations hai.
+- **Space Complexity: O(1)**
+  - Sirf `n` aur `maxIndex` variables use hue, extra space nahi.
+
+---
+
+### Why This Approach Works?
+- **Greedy Logic:** Har step pe maximum possible jump update karte hai, aur check karte hai ki current index reachable hai ya nahi.
+- **Optimization:** Ek hi pass mein solution mil jata hai.
+
+---
+
