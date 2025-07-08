@@ -1,0 +1,159 @@
+
+
+### Problem Statement Recap: Insert Interval
+- **Problem:** Tumhe ek sorted list of intervals (`intervals`) aur ek naya interval (`newInterval`) diya gaya hai. Tumhe naya interval ko list mein insert karna hai, aur agar overlapping ho toh unko merge karna hai. Har interval ek vector `[start, end]` hai. Result bhi sorted aur merged intervals ka vector hoga.
+- **Examples:**
+  - `intervals = [[1,2],[3,5],[6,7]]`, `newInterval = [4,8]` → Output: `[[1,2],[3,8]]`
+    - `4,8` overlaps with `[3,5]` aur `[6,7]`, toh merge karke `[3,8]` banta hai.
+  - `intervals = [[1,2],[3,5]]`, `newInterval = [6,8]` → Output: `[[1,2],[3,5],[6,8]]`
+    - No overlap, toh seedha add ho jata hai.
+  - `intervals = [[1,5]]`, `newInterval = [2,3]` → Output: `[[1,5]]`
+    - Overlap ho raha hai, toh `[1,5]` mein merge ho jata hai.
+- **Constraints:** Array size aur values problem ke hisaab se define hote hai.
+
+---
+
+### Code with Line-by-Line Explanation, Values, and Dry Run
+```cpp
+class Solution {
+public:
+    vector<vector<int>> insert(vector<vector<int>>& intervals, vector<int>& newInterval) {
+        int n = intervals.size(); // Get the total number of intervals in the input list
+        // Explanation: Yeh batata hai ki intervals vector mein kitne intervals hai.
+        // Dry Run (intervals = [[1,2],[3,5],[6,7]], newInterval = [4,8]): n = 3
+
+        int i = 0; // Index to traverse the intervals list
+        // Explanation: Yeh index hai jo intervals ko ek-ek karke check karega.
+        // Dry Run: i = 0
+
+        vector<vector<int>> res; // Result vector to store the final merged intervals
+        // Explanation: Yeh final answer store karega jahan merged intervals aayenge.
+        // Dry Run: res = []
+
+        // Case 1: No overlapping case before the merge intervals
+        while (i < n && intervals[i][1] < newInterval[0]) {
+            // Explanation: Yeh check karta hai ki current interval ka end point newInterval ke start se pehle hai ya nahi. Agar haan, toh overlap nahi hai, toh seedha add karo.
+            // Dry Run: i = 0, intervals[0][1] = 2, newInterval[0] = 4, 2 < 4 (true)
+            res.push_back(intervals[i]); // Add the non-overlapping interval to result
+            // Dry Run: res = [[1,2]]
+            i++; // Move to the next interval
+            // Dry Run: i = 1
+            // Next: i = 1, intervals[1][1] = 5, 5 < 4 (false) -> exit loop
+        }                           
+
+        // Case 2: Overlapping case and merging of intervals
+        while (i < n && newInterval[1] >= intervals[i][0]) {
+            // Explanation: Yeh check karta hai ki newInterval ka end point current interval ke start se bada ya barabar hai, matlab overlap hai. Agar haan, toh merge karo.
+            // Dry Run: i = 1, newInterval[1] = 8, intervals[1][0] = 3, 8 >= 3 (true)
+            newInterval[0] = min(newInterval[0], intervals[i][0]); // Update start of newInterval to minimum
+            // Dry Run: newInterval[0] = min(4, 3) = 3
+            newInterval[1] = max(newInterval[1], intervals[i][1]); // Update end of newInterval to maximum
+            // Dry Run: newInterval[1] = max(8, 5) = 8
+            i++; // Move to the next interval
+            // Dry Run: i = 2
+            // Next: i = 2, newInterval[1] = 8, intervals[2][0] = 6, 8 >= 6 (true)
+            // newInterval[0] = min(3, 6) = 3
+            // newInterval[1] = max(8, 7) = 8
+            // i = 3
+            // Next: i = 3, 3 < 3 (false) -> exit loop
+        }
+        res.push_back(newInterval); // Add the merged newInterval to result
+        // Dry Run: res = [[1,2], [3,8]]
+
+        // Case 3: No overlapping of intervals after newInterval being merged
+        while (i < n) {
+            // Explanation: Yeh baaki ke non-overlapping intervals ko result mein add karta hai.
+            // Dry Run: i = 3, 3 < 3 (false) -> no more intervals
+            res.push_back(intervals[i]); // Add remaining intervals
+            // Dry Run: Not executed
+            i++; // Move to next interval
+            // Dry Run: Not executed
+        }
+
+        return res; // Return the final list of merged intervals
+        // Explanation: Yeh final sorted aur merged intervals ka vector return karta hai.
+        // Dry Run: return [[1,2],[3,8]]
+    }
+};
+```
+
+---
+
+### Dry Run (Example: `intervals = [[1,2],[3,5],[6,7]]`, `newInterval = [4,8]`)
+- **Step 1: Initialize**
+  - `n = 3`, `i = 0`, `res = []`
+- **Step 2: Case 1 (No Overlap Before)**
+  - **i = 0:**
+    - `intervals[0][1] = 2 < 4` → true
+    - `res = [[1,2]]`
+    - `i = 1`
+  - **i = 1:**
+    - `intervals[1][1] = 5 < 4` → false → exit
+- **Step 3: Case 2 (Overlapping and Merging)**
+  - **i = 1:**
+    - `8 >= 3` → true
+    - `newInterval[0] = min(4, 3) = 3`
+    - `newInterval[1] = max(8, 5) = 8`
+    - `i = 2`
+  - **i = 2:**
+    - `8 >= 6` → true
+    - `newInterval[0] = min(3, 6) = 3`
+    - `newInterval[1] = max(8, 7) = 8`
+    - `i = 3`
+  - **i = 3:**
+    - `3 < 3` → false → exit
+  - `res.push_back([3,8])` → `res = [[1,2],[3,8]]`
+- **Step 4: Case 3 (No Overlap After)**
+  - **i = 3:**
+    - `3 < 3` → false → no action
+- **Step 5: Return**
+  - `return [[1,2],[3,8]]`
+- **Output:** `[[1,2],[3,8]]`
+
+#### **Dry Run (Example: `intervals = [[1,2],[3,5]]`, `newInterval = [6,8]`)**
+- **Step 1:** `n = 2`, `i = 0`, `res = []`
+- **Step 2: Case 1**
+  - **i = 0:** `2 < 6` → true, `res = [[1,2]]`, `i = 1`
+  - **i = 1:** `5 < 6` → true, `res = [[1,2],[3,5]]`, `i = 2`
+  - **i = 2:** `2 < 2` → false → exit
+- **Step 3: Case 2**
+  - **i = 2:** `2 < 2` → false → no merge
+  - `res.push_back([6,8])` → `res = [[1,2],[3,5],[6,8]]`
+- **Step 4: Case 3**
+  - **i = 2:** `2 < 2` → false → no action
+- **Step 5: Return**
+  - `return [[1,2],[3,5],[6,8]]`
+- **Output:** `[[1,2],[3,5],[6,8]]`
+
+#### **Dry Run (Example: `intervals = [[1,5]]`, `newInterval = [2,3]`)**
+- **Step 1:** `n = 1`, `i = 0`, `res = []`
+- **Step 2: Case 1**
+  - **i = 0:** `5 < 2` → false → exit
+- **Step 3: Case 2**
+  - **i = 0:** `3 >= 1` → true
+    - `newInterval[0] = min(2, 1) = 1`
+    - `newInterval[1] = max(3, 5) = 5`
+    - `i = 1`
+  - **i = 1:** `1 < 1` → false → exit
+  - `res.push_back([1,5])` → `res = [[1,5]]`
+- **Step 4: Case 3**
+  - **i = 1:** `1 < 1` → false → no action
+- **Step 5: Return**
+  - `return [[1,5]]`
+- **Output:** `[[1,5]]`
+
+---
+
+### Time and Space Complexity
+- **Time Complexity: O(n)**
+  - Three `while` loops total `n` elements process karte hai, har element ek baar check hota hai.
+- **Space Complexity: O(n)**
+  - `res` vector mein maximum `n+1` intervals store ho sakte hai.
+
+---
+
+### Why This Approach Works?
+- **Greedy Logic:** Har step pe non-overlapping intervals add karta hai, overlapping ko merge karta hai, aur baaki add karta hai.
+- **Optimization:** Ek pass mein sorting aur merging ho jata hai kyunki input sorted hai.
+
+---
