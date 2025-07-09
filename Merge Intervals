@@ -1,0 +1,130 @@
+
+### Problem Statement Recap: Merge Intervals
+- **Problem:** Tumhe ek list of intervals (`intervals`) diya gaya hai, har interval `[start, end]` hai. Tumhe inko sort karna hai aur overlapping intervals ko merge karna hai. Result ek naya vector hoga jisme merged intervals honge.
+- **Examples:**
+  - `intervals = [[1,4],[4,5]]` → Output: `[[1,5]]`
+    - `[1,4]` aur `[4,5]` overlap karte hai, toh merge karke `[1,5]` banta hai.
+  - `intervals = [[1,3],[2,6],[8,10],[15,18]]` → Output: `[[1,6],[8,10],[15,18]]`
+    - `[1,3]` aur `[2,6]` overlap karte hai, toh `[1,6]` banta hai.
+  - `intervals = [[1,4],[2,3]]` → Output: `[[1,4]]`
+    - Sab overlap karte hai, toh ek hi `[1,4]` banta hai.
+- **Constraints:** Array size aur values problem ke hisaab se define hote hai.
+
+---
+
+### Code with Line-by-Line Explanation, Values, and Dry Run
+```cpp
+class Solution {
+public:
+    vector<vector<int>> merge(vector<vector<int>>& intervals) {
+        int n = intervals.size(); // Get the total number of intervals in the input list
+        // Explanation: Yeh batata hai ki intervals vector mein kitne intervals hai.
+        // Dry Run (intervals = [[1,4],[2,6],[8,10],[15,18]], n = 4): n = 4
+
+        vector<vector<int>> ans; // Result vector to store the merged intervals
+        // Explanation: Yeh final answer store karega jahan merged intervals aayenge.
+        // Dry Run: ans = []
+
+        sort(intervals.begin(), intervals.end()); // Sort intervals based on start time
+        // Explanation: Yeh intervals ko start time ke hisaab se sort karta hai taaki overlapping check karna asaan ho.
+        // Dry Run: intervals = [[1,4],[2,6],[8,10],[15,18]] (already sorted in this case)
+
+        for (int i = 0; i < n; i++) // Loop through each interval
+        {
+            // Explanation: Yeh loop har interval ko check karega aur merge karega agar overlap ho.
+            // Dry Run: i = 0 (first iteration)
+
+            if (ans.size() != 0 && ans.back()[1] >= intervals[i][0]) // Check if current interval overlaps with the last merged interval
+            {
+                // Explanation: Agar ans mein kuch hai aur last interval ka end point current interval ke start se bada ya barabar hai, toh overlap hai.
+                // Dry Run: i = 1, ans.size() = 1 (after first iteration), ans.back() = [1,4], intervals[1][0] = 2, 4 >= 2 (true)
+                ans.back()[1] = max(intervals[i][1], ans.back()[1]); // Merge by updating the end to the maximum
+                // Explanation: Last interval ka end point ko current interval ke end se max se update karo.
+                // Dry Run: ans.back()[1] = max(6, 4) = 6, ans = [[1,6]]
+            }
+            else // If no overlap, add the current interval as a new merged interval
+            {
+                // Explanation: Agar overlap nahi hai, toh current interval ko new interval ke roop mein add karo.
+                // Dry Run: i = 0, ans.size() = 0, 0 != 0 (false) -> enter else
+                ans.push_back(intervals[i]); // Add the current interval to result
+                // Dry Run: ans = [[1,4]]
+            }
+            // Dry Run: i = 1 (next iteration)
+        }
+
+        return ans; // Return the final list of merged intervals
+        // Explanation: Yeh final merged aur sorted intervals ka vector return karta hai.
+        // Dry Run: return [[1,6],[8,10],[15,18]]
+    }
+};
+```
+
+---
+
+### Dry Run (Example: `intervals = [[1,4],[2,6],[8,10],[15,18]]`)
+- **Step 1: Initialize**
+  - `n = 4`, `ans = []`
+  - `sort(intervals.begin(), intervals.end())` → Already sorted: `[[1,4],[2,6],[8,10],[15,18]]`
+- **Step 2: Loop Start**
+  - **i = 0:**
+    - `ans.size() = 0 != 0` → false
+    - `ans.push_back([1,4])` → `ans = [[1,4]]`
+  - **i = 1:**
+    - `ans.size() = 1 != 0`, `ans.back()[1] = 4 >= 2` → true
+    - `ans.back()[1] = max(6, 4) = 6` → `ans = [[1,6]]`
+  - **i = 2:**
+    - `ans.size() = 1 != 0`, `ans.back()[1] = 6 >= 8` → false
+    - `ans.push_back([8,10])` → `ans = [[1,6],[8,10]]`
+  - **i = 3:**
+    - `ans.size() = 2 != 0`, `ans.back()[1] = 10 >= 15` → false
+    - `ans.push_back([15,18])` → `ans = [[1,6],[8,10],[15,18]]`
+- **Step 3: Return**
+  - `return [[1,6],[8,10],[15,18]]`
+- **Output:** `[[1,6],[8,10],[15,18]]`
+- **Explanation:** `[1,4]` aur `[2,6]` merge hoke `[1,6]` bane, baaki non-overlapping rahe.
+
+#### **Dry Run (Example: `intervals = [[1,4],[4,5]]`)**
+- **Step 1:** `n = 2`, `ans = []`
+  - `sort(intervals.begin(), intervals.end())` → Already sorted: `[[1,4],[4,5]]`
+- **Step 2: Loop Start**
+  - **i = 0:**
+    - `ans.size() = 0 != 0` → false
+    - `ans.push_back([1,4])` → `ans = [[1,4]]`
+  - **i = 1:**
+    - `ans.size() = 1 != 0`, `ans.back()[1] = 4 >= 4` → true
+    - `ans.back()[1] = max(5, 4) = 5` → `ans = [[1,5]]`
+- **Step 3: Return**
+  - `return [[1,5]]`
+- **Output:** `[[1,5]]`
+- **Explanation:** `[1,4]` aur `[4,5]` merge hoke `[1,5]` bane.
+
+#### **Dry Run (Example: `intervals = [[1,4],[2,3]]`)**
+- **Step 1:** `n = 2`, `ans = []`
+  - `sort(intervals.begin(), intervals.end())` → Already sorted: `[[1,4],[2,3]]`
+- **Step 2: Loop Start**
+  - **i = 0:**
+    - `ans.size() = 0 != 0` → false
+    - `ans.push_back([1,4])` → `ans = [[1,4]]`
+  - **i = 1:**
+    - `ans.size() = 1 != 0`, `ans.back()[1] = 4 >= 2` → true
+    - `ans.back()[1] = max(3, 4) = 4` → `ans = [[1,4]]`
+- **Step 3: Return**
+  - `return [[1,4]]`
+- **Output:** `[[1,4]]`
+- **Explanation:** `[1,4]` aur `[2,3]` already `[1,4]` mein merge ho gaye.
+
+---
+
+### Time and Space Complexity
+- **Time Complexity: O(n log n)**
+  - `sort` ke liye O(n log n) lagta hai, aur loop O(n) hai, toh total O(n log n).
+- **Space Complexity: O(n)**
+  - `ans` vector mein maximum `n` intervals store ho sakte hai.
+
+---
+
+### Why This Approach Works?
+- **Sorting:** Pehle sort karne se overlapping check asaan ho jata hai (hamesha agla interval peeche wale se compare hota hai).
+- **Greedy Logic:** Har step pe last merged interval ke saath overlap check karke merge karte hai.
+
+---
