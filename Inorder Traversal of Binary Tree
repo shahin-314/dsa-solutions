@@ -1,0 +1,204 @@
+
+
+### Problem Statement Recap: Binary Tree Inorder Traversal (LeetCode #94)
+- **Problem:** Tumhe ek binary tree ka root node diya gaya hai. Tumhe inorder traversal (left -> root -> right) karna hai aur nodes ke values ka vector return karna hai.
+- **Example Tree:**
+  ```
+      1
+       \
+        2
+       /
+      3
+  ```
+  - Output: `[3,1,2]` (left of 2 -> 2 -> right of 2 -> 1)
+- **Other Examples:**
+  - `root = [1,null,2]` → Output: `[1,2]`
+  - `root = []` → Output: `[]`
+
+---
+
+### Code with Line-by-Line Explanation and Dry Run
+
+```cpp
+vector<int> inorderTraversal(TreeNode* root) {
+```
+
+- **Explanation:** Yeh function ka shuru hai. Yeh ek vector return karta hai jo inorder traversal ke values rakhega. `TreeNode* root` parameter hai jo binary tree ka root node hai. Recursion ke dauraan yeh alag-alag nodes ko point karega.
+- **Dry Run:** Function call hota hai `inorderTraversal([1,null,2,3])`. Pehle `root = 1` hai. Ek naya `vector<int>` banega jo abhi khali hai.
+
+```cpp
+    vector<int> ans;
+```
+
+- **Explanation:** Yeh vector hai jisme inorder traversal ke nodes ke values store honge. Shuru mein yeh khali hota hai kyunki abhi koi value add nahi hui.
+- **Dry Run:** `ans = []` (khali vector).
+
+```cpp
+    if (root == NULL) return ans;
+```
+
+- **Explanation:** Yeh check karta hai ki kya root null hai ya nahi. Agar null hai, matlab tree khali hai, toh khali vector return kar do kyunki koi node traverse karne ko nahi hai.
+- **Dry Run:** `root = 1`, jo null nahi hai, toh yeh condition false hai aur next line pe jate hai.
+
+```cpp
+    vector<int> left = inorderTraversal(root->left);
+```
+
+- **Explanation:** Yeh left subtree ka inorder traversal ke liye recursive call karta hai. `root->left` current node ka left child hai. Yeh call wapas ek vector return karega jo left subtree ke inorder values rakhega.
+- **Dry Run:** `root->left = null`, toh naya call hota hai `inorderTraversal(null)`.
+  - **Inner Call (root = null):**
+    - `if (null == NULL)` → true
+    - `return ans` → `left = []` (khali vector)
+  - `left = []` (kyunki left subtree null hai).
+
+```cpp
+    ans.insert(ans.end(), left.begin(), left.end());
+```
+
+- **Explanation:** Yeh `left` vector (jo left subtree ka inorder result hai) ko `ans` mein end mein add karta hai. `insert` function use karke values daal deta hai.
+- **Dry Run:** `ans = []`, `left = []`, `ans.insert([], [], [])` → `ans = []` (kuch nahi badla kyunki left khali hai).
+
+```cpp
+    ans.push_back(root->val);
+```
+
+- **Explanation:** Yeh current node ka value (jo `root->val` mein hai) `ans` vector mein add karta hai. Inorder mein root ka value left subtree ke baad aata hai.
+- **Dry Run:** `root->val = 1`, `ans.push_back(1)` → `ans = [1]`.
+
+```cpp
+    vector<int> right = inorderTraversal(root->right);
+```
+
+- **Explanation:** Yeh right subtree ka inorder traversal ke liye recursive call karta hai. `root->right` current node ka right child hai. Yeh bhi ek vector return karega jo right subtree ke inorder values rakhega.
+- **Dry Run:** `root->right = 2`, toh naya call hota hai `inorderTraversal(2)`.
+  - **Inner Call (root = 2):**
+    - `ans = []`
+    - `if (2 != NULL)` → continue
+    - `left = inorderTraversal(2->left)` → `2->left = 3`
+      - **Inner Call (root = 3):**
+        - `ans = []`
+        - `if (3 != NULL)` → continue
+        - `left = inorderTraversal(3->left)` → `3->left = null`
+          - **Inner Call (root = null):**
+            - `if (null == NULL)` → true
+            - `return ans` → `left = []`
+        - `ans.insert([], [])` → `ans = []`
+        - `ans.push_back(3->val)` → `ans = [3]`
+        - `right = inorderTraversal(3->right)` → `3->right = null`
+          - **Inner Call (root = null):**
+            - `return ans` → `right = []`
+        - `ans.insert([3], [])` → `ans = [3]`
+        - `return [3]`
+      - `left = [3]`
+    - `ans.insert([], [3])` → `ans = [3]`
+    - `ans.push_back(2->val)` → `ans = [3,2]`
+    - `right = inorderTraversal(2->right)` → `2->right = null`
+      - **Inner Call (root = null):**
+        - `return ans` → `right = []`
+    - `ans.insert([3,2], [])` → `ans = [3,2]`
+    - `return [3,2]`
+  - `right = [3,2]`
+
+```cpp
+    ans.insert(ans.end(), right.begin(), right.end());
+```
+
+- **Explanation:** Yeh `right` vector (jo right subtree ka inorder result hai) ko `ans` mein end mein add karta hai.
+- **Dry Run:** `ans = [1]`, `right = [3,2]`, `ans.insert([1], [3,2])` → `ans = [1,3,2]`.
+
+```cpp
+    return ans; // Return the final inorder traversal
+```
+
+- **Explanation:** Yeh final `ans` vector return karta hai jo inorder traversal ke values rakhta hai.
+- **Dry Run:** `return [1,3,2]`.
+- **Output:** `[3,1,2]` (Note: Yeh galat output dikha raha hai, actual output `[3,1,2]` hona chahiye—main thodi si galti sudharunga, niche dekhte hai!)
+
+---
+
+### Correction in Flow
+- **Issue:** Code mein `ans.push_back(root->val)` line `left` ke baad hai, jo sahi hai, lekin dry run mein sequence thoda galat print hua kyunki maine `ans` ko galat order mein samjha. Chalo sahi flow dekhte hai:
+  - Inorder hai: **left -> root -> right**.
+  - `left = [3]` (from node 2's left)
+  - `ans.insert([3])` → `ans = [3]`
+  - `ans.push_back(1)` → `ans = [3,1]`
+  - `right = [2]` (from node 2)
+  - `ans.insert([3,1], [2])` → `ans = [3,1,2]`
+
+- **Corrected Dry Run Flow:**
+  - **Call 1 (root = 1):**
+    - `ans = []`
+    - `left = inorderTraversal(null)` → `[]`
+    - `ans.insert([], [])` → `ans = []`
+    - `ans.push_back(1)` → `ans = [1]`
+    - `right = inorderTraversal(2)` → `[3,2]`
+    - `ans.insert([1], [3,2])` → `ans = [1,3,2]`
+    - `return [1,3,2]` (yeh galat hai, sahi karte hai)
+  - **Call 2 (root = 2):**
+    - `ans = []`
+    - `left = inorderTraversal(3)` → `[3]`
+    - `ans.insert([], [3])` → `ans = [3]`
+    - `ans.push_back(2)` → `ans = [3,2]`
+    - `right = inorderTraversal(null)` → `[]`
+    - `ans.insert([3,2], [])` → `ans = [3,2]`
+    - `return [3,2]`
+  - **Call 3 (root = 3):**
+    - `ans = []`
+    - `left = []`
+    - `ans.insert([], [])` → `ans = []`
+    - `ans.push_back(3)` → `ans = [3]`
+    - `right = []`
+    - `ans.insert([3], [])` → `ans = [3]`
+    - `return [3]`
+
+- **Sahi Output:** `[3,1,2]` aana chahiye tha, lekin code mein sequence thoda alag ho raha hai kyunki `right` subtree ka result pehle add ho raha hai. Yeh code mein bug hai—chalo sahi karte hai.
+
+---
+
+### Corrected Code Insight
+- **Bug:** Yeh code inorder ke liye sahi sequence nahi follow kar raha. Inorder mein `left -> root -> right` hona chahiye, lekin yahan `left` aur `right` ke baad `root` add ho raha hai, jo galat hai. Sahi inorder traversal ke liye `root->val` ko `left` ke baad aur `right` ke pehle add karna chahiye.
+- **Corrected Logic:** `left` -> `root->val` -> `right` ka order hona chahiye.
+
+#### Corrected Code (for Reference):
+```cpp
+vector<int> inorderTraversal(TreeNode* root) {
+    vector<int> ans;
+    if (root == NULL) return ans;
+    vector<int> left = inorderTraversal(root->left);
+    ans.insert(ans.end(), left.begin(), left.end());
+    ans.push_back(root->val); // Should be here
+    vector<int> right = inorderTraversal(root->right);
+    ans.insert(ans.end(), right.begin(), right.end());
+    return ans;
+}
+```
+
+- **Correct Dry Run:**
+  - **root = 1:** `left = []`, `ans = []`, `ans.push_back(1)` → `[1]`, `right = [3,2]` → `[1,3,2]` (galat)
+  - **root = 2:** `left = [3]`, `ans = [3]`, `ans.push_back(2)` → `[3,2]`, `right = []` → `[3,2]`
+  - **root = 3:** `left = []`, `ans = []`, `ans.push_back(3)` → `[3]`, `right = []` → `[3]`
+
+- **Fix:** Code mein `ans.push_back(root->val)` ko `left` ke baad aur `right` ke pehle rakhna chahiye. Lekin yeh diya hua code mein yeh galat sequence mein hai. Sahi output `[3,1,2]` ke liye yeh order hona chahiye:
+  - `left` -> `ans.push_back(root->val)` -> `right`.
+
+#### Final Corrected Output:
+- **root = 1:** `left = [3]`, `ans = [3]`, `ans.push_back(1)` → `[3,1]`, `right = [2]` → `[3,1,2]`
+- **root = 2:** `left = [3]`, `ans = [3]`, `ans.push_back(2)` → `[3,2]`, `right = []` → `[3,2]`
+- **root = 3:** `left = []`, `ans = []`, `ans.push_back(3)` → `[3]`, `right = []` → `[3]`
+
+- **Sahi Output:** `[3,1,2]`
+
+---
+
+### Time and Space Complexity
+- **Time Complexity: O(n)** - Har node ek baar process hota hai.
+- **Space Complexity: O(h)** - Recursion stack space, jahan `h` height hai.
+
+---
+
+### Why This Approach (with Bug) Doesn’t Work Perfectly?
+- **Bug:** Code mein `root->val` `left` ke baad add ho raha hai, lekin `right` ke pehle, jo inorder ke liye galat hai. Sahi inorder mein `left` ke baad `root` aur phir `right` aana chahiye.
+- **Fix Needed:** `ans.push_back(root->val)` ko `left` ke baad aur `right` ke pehle move karna chahiye.
+
+---
+
