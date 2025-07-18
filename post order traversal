@@ -1,0 +1,162 @@
+
+
+### Problem Statement Recap: Binary Tree Postorder Traversal (LeetCode #145)
+- **Problem:** Tumhe ek binary tree ka root node diya gaya hai. Tumhe postorder traversal (left -> right -> root) karna hai aur nodes ke values ka vector return karna hai.
+- **Example Tree:**
+  ```
+      1
+       \
+        2
+       /
+      3
+  ```
+  - Output: `[3,2,1]` (left of 2 -> right of 2 -> 2 -> 1)
+- **Other Examples:**
+  - `root = [1,null,2]` → Output: `[2,1]`
+  - `root = []` → Output: `[]`
+
+---
+
+### Code with Line-by-Line Explanation, Dry Run, and Comments
+
+```cpp
+class Solution {
+public:
+    vector<int> postorderTraversal(TreeNode* root) 
+    {
+        vector<int> ans; // Initialize an empty vector to store postorder traversal results
+        // Comment: Yeh vector mein postorder traversal ke nodes ke values store honge. Shuru mein khali hai.
+        // Dry Run (root = [1,null,2,3]): ans = []
+
+        if (root == NULL) return ans; // Check if root is null, return empty vector if true
+        // Comment: Agar tree khali hai (root null hai), toh khali vector return karo kyunki koi node nahi hai.
+        // Dry Run: root = 1 (not NULL), so skip this and move to next line
+
+        vector<int> left = postorderTraversal(root->left); // Recursively traverse left subtree
+        // Comment: Yeh left subtree ka postorder traversal ke liye recursive call hai. root->left current node ka left child hai.
+        // Dry Run: root->left = null, toh call hota hai postorderTraversal(null)
+        //          - Inner Call (root = null): if (null == NULL) true, return ans -> left = []
+
+        ans.insert(ans.end(), left.begin(), left.end()); // Insert left subtree results into ans
+        // Comment: Yeh left subtree ke values ko ans ke end mein add karta hai. Yeh postorder mein left subtree ke baad aata hai.
+        // Dry Run: ans = [], left = [], ans.insert([], []) -> ans = [] (no change)
+
+        vector<int> right = postorderTraversal(root->right); // Recursively traverse right subtree
+        // Comment: Yeh right subtree ka postorder traversal ke liye recursive call hai. root->right current node ka right child hai.
+        // Dry Run: root->right = 2, toh call hota hai postorderTraversal(2)
+        //          - Inner Call (root = 2):
+        //            - ans = []
+        //            - left = postorderTraversal(2->left) -> 2->left = 3
+        //              - Inner Call (root = 3):
+        //                - ans = []
+        //                - left = postorderTraversal(3->left) -> 3->left = null
+        //                  - Inner Call (root = null): return [] -> left = []
+        //                - ans.insert([], []) -> ans = []
+        //                - right = postorderTraversal(3->right) -> 3->right = null
+        //                  - Inner Call (root = null): return [] -> right = []
+        //                - ans.insert([], []) -> ans = []
+        //                - ans.push_back(3->val) -> ans = [3]
+        //                - return [3]
+        //            - left = [3]
+        //            - ans.insert([], [3]) -> ans = [3]
+        //            - right = postorderTraversal(2->right) -> 2->right = null
+        //              - Inner Call (root = null): return [] -> right = []
+        //            - ans.insert([3], []) -> ans = [3]
+        //            - ans.push_back(2->val) -> ans = [3,2]
+        //            - return [3,2]
+        //          - right = [3,2]
+
+        ans.insert(ans.end(), right.begin(), right.end()); // Insert right subtree results into ans
+        // Comment: Yeh right subtree ke values ko ans ke end mein add karta hai. Yeh postorder mein right subtree ke baad aata hai.
+        // Dry Run: ans = [], right = [3,2], ans.insert([], [3,2]) -> ans = [3,2]
+
+        ans.push_back(root->val); // Add current node's value to ans
+        // Comment: Postorder mein left aur right subtree ke baad current node ka value add hota hai.
+        // Dry Run: root->val = 1, ans.push_back(1) -> ans = [3,2,1]
+
+        return ans; // Return the final postorder traversal result
+        // Comment: Yeh final ans vector return karta hai jo postorder traversal ke values rakhta hai.
+        // Dry Run: return [3,2,1]
+    }
+};
+```
+
+---
+
+### Detailed Dry Run with Flow (Example: `root = [1,null,2,3]`)
+
+#### **Call 1: root = 1**
+- `ans = []`
+- `if (1 == NULL)` → false, proceed
+- `left = postorderTraversal(null)`
+  - **Inner Call (root = null):**
+    - `ans = []`
+    - `if (null == NULL)` → true
+    - `return ans` → `left = []`
+- `ans.insert([], [])` → `ans = []`
+- `right = postorderTraversal(2)`
+  - **Inner Call (root = 2):**
+    - `ans = []`
+    - `left = postorderTraversal(2->left)` → `2->left = 3`
+      - **Inner Call (root = 3):**
+        - `ans = []`
+        - `left = postorderTraversal(3->left)` → `3->left = null`
+          - **Inner Call (root = null):**
+            - `return []` → `left = []`
+        - `ans.insert([], [])` → `ans = []`
+        - `right = postorderTraversal(3->right)` → `3->right = null`
+          - **Inner Call (root = null):**
+            - `return []` → `right = []`
+        - `ans.insert([], [])` → `ans = []`
+        - `ans.push_back(3)` → `ans = [3]`
+        - `return [3]`
+      - `left = [3]`
+    - `ans.insert([], [3])` → `ans = [3]`
+    - `right = postorderTraversal(2->right)` → `2->right = null`
+      - **Inner Call (root = null):**
+        - `return []` → `right = []`
+    - `ans.insert([3], [])` → `ans = [3]`
+    - `ans.push_back(2)` → `ans = [3,2]`
+    - `return [3,2]`
+  - `right = [3,2]`
+- `ans.insert([], [3,2])` → `ans = [3,2]`
+- `ans.push_back(1)` → `ans = [3,2,1]`
+- `return [3,2,1]`
+
+---
+
+### Special Explanation of These Lines
+
+```cpp
+ans.insert(ans.end(), left.begin(), left.end());
+```
+
+- **Explanation:** Yeh function `ans` vector ke end mein `left` vector ke saare elements add karta hai. `ans.end()` yeh batata hai ki insertion kahan se shuru hoga (end point pe), aur `left.begin()` se `left.end()` tak ke elements copy hote hai. Yeh postorder mein left subtree ke values ko main result mein daal deta hai.
+- **Dry Run:** Jab `root = 1` ke liye `left = []` hai, toh `ans.insert([], [])` -> `ans = []` (kuch nahi badla). Jab `root = 2` ke liye `left = [3]` hai, toh `ans.insert([], [3])` -> `ans = [3]`.
+
+```cpp
+ans.insert(ans.end(), right.begin(), right.end());
+```
+
+- **Explanation:** Yeh function `ans` vector ke end mein `right` vector ke saare elements add karta hai. `ans.end()` yeh batata hai ki insertion kahan se shuru hoga, aur `right.begin()` se `right.end()` tak ke elements copy hote hai. Yeh postorder mein right subtree ke values ko main result mein daal deta hai.
+- **Dry Run:** Jab `root = 1` ke liye `right = [3,2]` hai, toh `ans.insert([], [3,2])` -> `ans = [3,2]`. Jab `root = 2` ke liye `right = []` hai, toh `ans.insert([3], [])` -> `ans = [3]` (no change).
+
+- **Why These Lines Matter:** Yeh lines postorder traversal ke liye zaroori hai kyunki postorder mein pehle left aur right subtree ke values collect hote hai, phir root ka value add hota hai. `insert` ka use isliye kiya jata hai taaki purane values ke saath naye values efficiently merge ho sake.
+
+---
+
+### Final Output
+- **Output:** `[3,2,1]`
+- **Verification:** Yeh postorder hai kyunki sequence `3 (left of 2) -> 2 (right of 1) -> 1 (root)` hai, jo tree ke structure se match karta hai.
+
+---
+
+### Time and Space Complexity
+- **Time Complexity: O(n)** - Har node ek baar process hota hai.
+- **Space Complexity: O(h)** - Recursion stack space, jahan `h` height hai.
+
+---
+
+### Why This Approach Works?
+- **Postorder Logic:** Har node pe pehle left, phir right, aur last mein root ka value add hota hai, jo postorder ki definition hai.
+- **Recursion:** Har subtree ko recursively handle karta hai.
