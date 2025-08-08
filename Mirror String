@@ -1,0 +1,155 @@
+
+### Problem Statement Recap: Mirror String
+- **Problem:** Tumhe ek uppercase string `S` diya gaya hai. Tumhe check karna hai ki yeh string apne mirror reflection ke barabar hai ya nahi. Mirror reflection mein sirf woh characters "YES" dete hai jo apna mirror image hote hai (jaise "A", "H", "I", "M", "O", "T", "U", "V", "W", "X", "Y"). Agar koi character mirror mein nahi hai ya reverse mein match nahi karta, toh "NO".
+- **Sample Input/Output:**
+  - Input:
+    ```
+    5
+    ABCDEFGHIJKLMNOPQRSTUVWXYZ
+    AHIMOTUVWXYYXWVUTOMIHA
+    UVWXYZZYXWVU
+    ZZZZZZAZZZZZZ
+    AIMIA
+    ```
+  - Desired Output:
+    ```
+    NO
+    YES
+    NO
+    NO
+    YES
+    ```
+
+---
+
+### Code with Line-by-Line Explanation, Dry Run, and Comments
+
+```cpp
+#include <bits/stdc++.h> 
+bool isReflectionEqual(string &s)
+{
+    bool arr[26] = {1,0,0,0,0,0,0,1,1,0,0,0,1,0,1,0,0,0,0,1,1,1,1,1,1,0};
+    // Comment: Yeh ek array hai jisme 26 positions hai (A se Z ke liye).
+    //          Index 0 = 'A', 1 = 'B', ..., 25 = 'Z'.
+    //          1 matlab woh character apna mirror hai, 0 matlab nahi.
+    //          Values: A(0)=1, H(7)=1, I(8)=1, M(12)=1, O(14)=1, T(19)=1, U(20)=1, V(21)=1, W(22)=1, X(23)=1, Y(24)=1.
+    //          Dry Run: arr[0] = 1 (A), arr[25] = 0 (Z), etc.
+
+    int i = 0; // Start pointer from beginning
+    // Comment: Yeh left pointer hai jo string ke shuru se start karega.
+    // Dry Run (s = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"): i = 0
+
+    int j = s.size() - 1; // Start pointer from end
+    // Comment: Yeh right pointer hai jo string ke end se start karega.
+    // Dry Run: s.size() = 26, j = 25
+
+    while (i <= j) // Continue until pointers meet or cross
+    {
+        // Comment: Jab tak i j se chhota ya barabar hai, tab tak check karo.
+        // Dry Run: i = 0, j = 25, condition true
+        if (arr[s[i] - 65] && arr[s[j] - 65] && s[i] == s[j]) {
+            // Comment: Yeh teen conditions check karta hai:
+            //          1. arr[s[i] - 65]: s[i] ka ASCII value se 'A' (65) subtract karke index nikaalte hai, aur dekhte hai ki woh mirror character hai ya nahi.
+            //          2. arr[s[j] - 65]: s[j] ke liye bhi same.
+            //          3. s[i] == s[j]: Reverse mein character match karna chahiye.
+            //          Agar yeh teeno true nahi hai, toh nahi hai mirror equal.
+            // Dry Run: s[0] = 'A' (65), s[25] = 'Z' (90)
+            //          s[0] - 65 = 0, arr[0] = 1 (true)
+            //          s[25] - 65 = 25, arr[25] = 0 (false)
+            //          arr[0] && arr[25] = false, toh if block mein nahi jata, else mein jata hai
+        } else {
+            return false; // If any condition fails, return false
+            // Comment: Agar koi character mirror mein nahi hai ya match nahi karta, toh "NO".
+            // Dry Run: i = 0, j = 25, 'A' aur 'Z' mein arr[25] = 0 hai, toh return false -> "NO"
+        }
+        i++; // Move left pointer forward
+        j--; // Move right pointer backward
+        // Comment: Pointers ko beech mein laate jao agar condition pass ho.
+        // Dry Run: Nahi pahuncha yahan kyunki return ho gaya
+    }
+    return true; // If all match, it's a mirror equal string
+    // Comment: Agar sab match ho gaya, toh "YES".
+    // Dry Run: Nahi pahuncha yahan
+}
+```
+
+---
+
+### Detailed Dry Run for Each Test Case
+
+1. **s = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" (n = 26):**
+   - `i = 0`, `j = 25`
+   - `s[0] = 'A'` (65), `s[25] = 'Z'` (90)
+   - `s[0] - 65 = 0`, `arr[0] = 1`
+   - `s[25] - 65 = 25`, `arr[25] = 0`
+   - `arr[0] && arr[25] = 1 && 0 = false`
+   - `if` condition fail, `else` mein `return false` → `NO` (sahi)
+
+2. **s = "AHIMOTUVWXYYXWVUTOMIHA" (n = 22):**
+   - `i = 0`, `j = 21`
+   - `s[0] = 'A'` (65), `s[21] = 'A'` (65)
+   - `s[0] - 65 = 0`, `arr[0] = 1`
+   - `s[21] - 65 = 0`, `arr[0] = 1`
+   - `arr[0] && arr[0] && 'A' == 'A'` = `1 && 1 && true` → `if` pass
+   - `i = 1`, `j = 20`
+   - `s[1] = 'H'` (72), `s[20] = 'H'` (72)
+   - `s[1] - 65 = 7`, `arr[7] = 1`
+   - `s[20] - 65 = 7`, `arr[7] = 1`
+   - `arr[7] && arr[7] && 'H' == 'H'` = `1 && 1 && true` → `if` pass
+   - ... (continues till `i = 10`, `j = 11`, `s[10] = 'Y'`, `s[11] = 'Y'` → match)
+   - `i = 11`, `j = 10`, `i <= j` → false
+   - `return true` → `YES` (sahi)
+
+3. **s = "UVWXYZZYXWVU" (n = 12):**
+   - `i = 0`, `j = 11`
+   - `s[0] = 'U'` (85), `s[11] = 'U'` (85)
+   - `s[0] - 65 = 20`, `arr[20] = 1`
+   - `s[11] - 65 = 20`, `arr[20] = 1`
+   - `arr[20] && arr[20] && 'U' == 'U'` → `if` pass
+   - `i = 1`, `j = 10`
+   - `s[5] = 'Z'` (90), `s[6] = 'Z'` (90)
+   - `s[5] - 65 = 25`, `arr[25] = 0`
+   - `arr[25] && arr[25] = 0 && 0 = false` → `else`, `return false` → `NO` (sahi)
+
+4. **s = "ZZZZZZAZZZZZZ" (n = 13):**
+   - `i = 0`, `j = 12`
+   - `s[0] = 'Z'` (90), `s[12] = 'Z'` (90)
+   - `s[0] - 65 = 25`, `arr[25] = 0`
+   - `arr[25] && arr[25] = 0 && 0 = false` → `else`, `return false` → `NO` (sahi)
+
+5. **s = "AIMIA" (n = 5):**
+   - `i = 0`, `j = 4`
+   - `s[0] = 'A'` (65), `s[4] = 'A'` (65)
+   - `s[0] - 65 = 0`, `arr[0] = 1`
+   - `s[4] - 65 = 0`, `arr[0] = 1`
+   - `arr[0] && arr[0] && 'A' == 'A'` → `if` pass
+   - `i = 1`, `j = 3`
+   - `s[1] = 'I'` (73), `s[3] = 'I'` (73)
+   - `s[1] - 65 = 8`, `arr[8] = 1`
+   - `s[3] - 65 = 8`, `arr[8] = 1`
+   - `arr[8] && arr[8] && 'I' == 'I'` → `if` pass
+   - `i = 2`, `j = 2`
+   - `i <= j` → false
+   - `return true` → `YES` (sahi)
+
+---
+
+### What is This Code Doing?
+- **Array `arr`:** Yeh 26-size ka boolean array hai jisme har index 'A' se 'Z' ke liye hai (0 se 25). 1 matlab woh character apna mirror hai (A, H, I, M, O, T, U, V, W, X, Y), 0 matlab nahi (B, C, D, etc.).
+- **ASCII Adjustment:** `s[i] - 65` se 'A' (ASCII 65) ko 0 index pe laate hai, taaki array mein check ho sake.
+- **Logic:** Har character ko check karte hai ki woh mirror mein hai ya nahi (`arr[s[i] - 65]`), aur reverse mein match karta hai (`s[i] == s[j]`). Agar koi fail hota hai, toh "NO".
+- **Why It Works:** Yeh strict mirror check ke saath reverse check combine karta hai, jo desired output ke hisaab se perfect hai.
+
+---
+
+### Time and Space Complexity
+- **Time Complexity:** O(n), where n is string length.
+- **Space Complexity:** O(1), array size fixed hai.
+
+---
+
+### Why Previous Codes Failed?
+- **Previous Codes:** Do-pointer ya reverse check sirf palindrome check karte the, lekin mirror characters (jaise "Z" ka nahi hona) nahi dekhte the. Yeh code `arr` se mirror rules add karta hai, isliye kaam kar raha hai.
+
+---
+
