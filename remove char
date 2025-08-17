@@ -1,0 +1,122 @@
+
+## Code (easy comments ke saath)
+
+```cpp
+#include <cstring>  // strlen() use karne ke liye
+
+// input : C-style string (char array) e.g. "banana"
+// c     : jis character ko hatana hai e.g. 'a'
+void removeAllOccurrencesOfChar(char input[], char c) {
+    int n = strlen(input);   // string ki length (null-terminator '\0' se pehle tak)
+    int index = 0;           // yahan "write" karenge next valid character
+
+    // i: "read pointer" — har character ko read karega left->right
+    for (int i = 0; i < n; i++) {
+
+        // agar current character, hatane wale char 'c' ke barabar NHI hai
+        if (input[i] != c) {
+            input[index] = input[i]; // to use "left side" me copy kar do
+            index++;                 // next likhne wali jagah aage badha do
+        }
+        // agar barabar hai, to kuch mat karo (skip) — i aage badh jayega
+    }
+
+    // loop ke baad, jo bhi naya string bana, uska end mark karo
+    input[index] = '\0';   // zaroori! warna garbage print ho sakta hai
+}
+```
+
+**Soch lo:**
+
+* `i` = **read pointer** (har char par chalega)
+* `index` = **write pointer** (sirf valid chars ko compact karke yahin likhenge)
+* **In-place** kaam hota hai: extra array nahi banate.
+
+---
+
+## Dry run #1 — input `"banana"`, c = `'a'`
+
+Initial:
+
+```
+input  = "banana"
+index  = 0
+n = 6  (strlen("banana") == 6)
+```
+
+| i | input\[i] | input\[i] != 'a'? | Action          | index after | input (observable part) |
+| - | --------- | ----------------- | --------------- | ----------- | ----------------------- |
+| 0 | 'b'       | true              | input\[0] = 'b' | 1           | **b**anana              |
+| 1 | 'a'       | false             | (skip)          | 1           | b anana                 |
+| 2 | 'n'       | true              | input\[1] = 'n' | 2           | b**n**nana              |
+| 3 | 'a'       | false             | (skip)          | 2           | bn ana                  |
+| 4 | 'n'       | true              | input\[2] = 'n' | 3           | bn**n**na               |
+| 5 | 'a'       | false             | (skip)          | 3           | bnn a                   |
+
+Loop khatam → `index = 3`
+
+```
+input[index] = '\0';
+```
+
+Final string: `"bnn"`
+(positions 0..2 = `b n n`, then `\0` terminator)
+
+---
+
+## Dry run #2 — input `"hello world"`, c = `'l'`
+
+`"hello world"` me `l` teen baar hai (indexes 2,3,9).
+
+Quick flow:
+
+* copy `h`, `e` → `"he"`
+* skip `l`, `l`
+* copy `o`, space, `w`, `o`, `r`, `d` → `"heo word"`
+* end me `'\0'`
+
+**Result:** `"heo word"`
+
+---
+
+## Dry run #3 — input `"aaaaa"`, c = `'a'`
+
+* har step `input[i] == 'a'` → har baar **skip**
+* `index` kabhi increment nahi hota, end me `input[0] = '\0'`
+* **Result:** `""` (empty string)
+
+---
+
+## Dry run #4 — input `"abc"`, c = `'x'` (present hi nahi)
+
+* `a`,`b`,`c` teeno copy honge: `input[0]='a'`, `input[1]='b'`, `input[2]='c'`
+* `index = 3`, `input[3] = '\0'`
+* **Result:** `"abc"` (no change)
+
+---
+
+## Notes that clear confusion
+
+* **`strlen(input)`**: C-string ki length nikalta hai **jab tak** `'\0'` na mil jaye.
+  Isliye `input` me **null terminator** hona zaroori hai.
+* **`input[index] = '\0'`**: New compacted string ka **proper end** mark karta hai.
+  Agar ye nahi likhoge to print karte waqt purana garbage bhi aa sakta hai.
+* Ye algorithm **in-place** hai: extra array nahi lagta, sirf do integers (`i`, `index`) use hote hain.
+
+---
+
+## Time & Space Complexity
+
+* **Time:** `O(n)` — har character exactly ek baar read hota hai.
+* **Space:** `O(1)` — koi extra array nahi; sirf counters.
+
+---
+
+## Edge cases
+
+* `input` empty (`""`) → `n = 0`, loop skip, result `""`.
+* `c = '\0'` (null): `strlen` null tak hi count karta hai, null khud string ka end hai;
+  is case me function kuch remove nahi karega (aur karna bhi nahi chahiye).
+* Non-ASCII / multibyte UTF-8 characters (e.g. Hindi/Emoji) ko **`char[]`** me handle karna tricky hota hai;
+  ye code **single-byte chars** (ASCII) ke liye perfect hai.
+
