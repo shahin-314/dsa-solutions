@@ -1,0 +1,112 @@
+
+---
+
+### 🔹 Code with Har Line Explanation
+
+```cpp
+char highestOccurringChar(char input[]) {
+    
+    char result = 0;   // final answer store karne ke liye (pehle kuch nhi)
+                       // Example: agar answer 'a' hua to result = 'a'
+    
+    long long highest = 0; // ab tak ka maximum frequency
+                           // Starting me koi character count nhi hua to 0 rakha
+    
+    long long freq[26] = {0}; // ek array banaya 26 size ka
+                              // index 0 -> 'a', index 1 -> 'b', ... index 25 -> 'z'
+                              // sab 0 se initialize hai, means abhi kisi character ka count nhi hua
+
+    int n = strlen(input); // string ki length nikal li
+                           // Example: agar input = "aabcc" -> n = 5
+
+    // ----------------------------------------
+    // Step 1: Har character ka count calculate karna
+    // ----------------------------------------
+    for (int i = 0; i < n; i++) {
+        // Example: input = "aabcc"
+
+        // Suppose i = 0 -> input[0] = 'a'
+        // 'a' - 'a' = 0 -> freq[0]++
+        // freq[0] = 1
+
+        // i = 1 -> input[1] = 'a'
+        // 'a' - 'a' = 0 -> freq[0]++
+        // freq[0] = 2
+
+        // i = 2 -> input[2] = 'b'
+        // 'b' - 'a' = 1 -> freq[1]++
+        // freq[1] = 1
+
+        // i = 3 -> input[3] = 'c'
+        // 'c' - 'a' = 2 -> freq[2]++
+        // freq[2] = 1
+
+        // i = 4 -> input[4] = 'c'
+        // 'c' - 'a' = 2 -> freq[2]++
+        // freq[2] = 2
+
+        freq[input[i] - 'a']++;
+    }
+
+    // Ab freq array me count store hoga:
+    // freq[0] = 2  (means 'a' 2 baar aaya)
+    // freq[1] = 1  (means 'b' 1 baar aaya)
+    // freq[2] = 2  (means 'c' 2 baar aaya)
+    // baaki sab = 0
+
+    // ----------------------------------------
+    // Step 2: Sabse zyada frequency wala character dhundhna
+    // ----------------------------------------
+    for (int i = 0; i < n; i++) {
+        // Har character ke liye uska count check karna
+        // aur highest se compare karna
+
+        // i = 0 -> input[0] = 'a'
+        // freq['a' - 'a'] = freq[0] = 2
+        // 2 > highest(0)? YES
+        // result = 'a', highest = 2
+
+        // i = 1 -> input[1] = 'a'
+        // freq[0] = 2
+        // 2 > highest(2)? NO (skip)
+
+        // i = 2 -> input[2] = 'b'
+        // freq[1] = 1
+        // 1 > highest(2)? NO (skip)
+
+        // i = 3 -> input[3] = 'c'
+        // freq[2] = 2
+        // 2 > highest(2)? NO (skip)
+
+        // i = 4 -> input[4] = 'c'
+        // freq[2] = 2
+        // 2 > highest(2)? NO (skip)
+
+        if (freq[input[i] - 'a'] > highest) {
+            result = input[i];  // jo character hai usko result me daalo
+            highest = freq[input[i] - 'a']; // us character ka count ko highest banado
+        }
+    }
+
+    // Final result me 'a' hoga (kyunki 'a' aur 'c' dono 2 baar aaye the
+    // lekin hum pehle aane wale ko le rahe hai, matlab 'a')
+    return result;
+}
+```
+
+---
+
+### 🔹 Example Dry Run with `"aabcc"`
+
+* `freq = {2, 1, 2, 0, 0, ...}`
+* Highest frequency check karte time:
+
+  * 'a' → highest = 2, result = 'a'
+  * 'c' bhi 2 hai, lekin highest == 2 already, isliye update nhi hoga
+* Final Answer → `'a'`
+
+---
+
+
+
+Bhai ab bol, kya tum chahte ho mai iska **aur optimized version** likhu jisme direct `freq` array pe hi max find karein (dusra loop input pe na chale)?
