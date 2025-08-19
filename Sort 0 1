@@ -1,0 +1,163 @@
+--------------------------- CODE -------------------------------------------
+
+#include <bits/stdc++.h>   // (Note: ye GCC specific hai; std code me <algorithm> kaafi hota hai)
+using namespace std;
+
+void sortZeroesAndOne(int input[], int size) {
+    int left = 0;            // left pointer start se
+    int right = size - 1;    // right pointer end se
+
+    // Jab tak left pointer right se chhota hai, kaam chalta rahe
+    while (left < right) {
+
+        if (input[left] == 0) {
+            // Agar left par 0 hai, to wo already sahi jagah hai (0s left me chahiye)
+            // isliye left ko aage badha do
+            left++;
+        } 
+        else if (input[right] == 1) {
+            // Agar right par 1 hai, to wo already sahi jagah hai (1s right me chahiye)
+            // isliye right ko piche le aao
+            right--;
+        } 
+        else {
+            // Yaha tab aayenge jab:
+            // input[left] == 1  AND  input[right] == 0
+            // Matlab left side me 1 galat hai, right side me 0 galat hai
+            // Dono ko swap karke sahi jagah bhej do
+            swap(input[left], input[right]);
+            // Ab dono pointers ko move karo kyunki dono positions fix ho gayi
+            left++;
+            right--;
+        }
+    }
+}
+
+------------------------------------------------------------------------------
+
+
+Perfect 👍 Let’s take your new example:
+
+`input = [1, 1, 1, 0, 0, 1, 1, 1, 1]`
+
+👉 Total size = **9**
+👉 Start: `left = 0`, `right = 8`
+
+Now let’s **dry run step by step** 👇
+
+---
+
+### Initial Array
+
+```
+[1, 1, 1, 0, 0, 1, 1, 1, 1]
+ left=0                     right=8
+```
+
+---
+
+### Step 1
+
+* `input[left] = 1`
+* `input[right] = 1`
+  ➡️ Condition: `input[right] == 1` → so `right--`
+
+```
+[1, 1, 1, 0, 0, 1, 1, 1, 1]
+ left=0                 right=7
+```
+
+---
+
+### Step 2
+
+* `input[left] = 1`
+* `input[right] = 1`
+  ➡️ Again, `input[right] == 1` → `right--`
+
+```
+[1, 1, 1, 0, 0, 1, 1, 1, 1]
+ left=0             right=6
+```
+
+---
+
+### Step 3
+
+* `input[left] = 1`
+* `input[right] = 1`
+  ➡️ Same case → `right--`
+
+```
+[1, 1, 1, 0, 0, 1, 1, 1, 1]
+ left=0         right=5
+```
+
+---
+
+### Step 4
+
+* `input[left] = 1`
+* `input[right] = 1`
+  ➡️ Same again → `right--`
+
+```
+[1, 1, 1, 0, 0, 1, 1, 1, 1]
+ left=0     right=4
+```
+
+---
+
+### Step 5
+
+* `input[left] = 1`
+* `input[right] = 0`
+  ➡️ Else case → **swap(1, 0)**
+* After swap:
+
+```
+[0, 1, 1, 0, 1, 1, 1, 1, 1]
+ left=1     right=3
+```
+
+---
+
+### Step 6
+
+* `input[left] = 1`
+* `input[right] = 0`
+  ➡️ Else case → **swap(1, 0)**
+* After swap:
+
+```
+[0, 0, 1, 1, 1, 1, 1, 1, 1]
+ left=2     right=2
+```
+
+---
+
+### Step 7
+
+Now `left == right` → loop condition `left < right` fails → **stop** ✅
+
+---
+
+### Final Sorted Array
+
+```
+[0, 0, 1, 1, 1, 1, 1, 1, 1]
+```
+
+---
+
+## 🧠 Key Observation
+
+* Starting me saare right-side ke 1s skip ho gaye (right pointer piche aata raha).
+* Jab `left` par galat 1 aur `right` par galat 0 mila → swap kiya.
+* Swap karte hi dono numbers correct jagah chale gaye.
+* Last me array sorted ban gaya.
+
+---
+
+
+
