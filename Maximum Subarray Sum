@@ -1,0 +1,347 @@
+
+
+## 🔹 Sliding Window Technique Kya Hai?
+
+* Kab use hota hai?
+  Jab hume **array ya string ke andar continuous subarray / substring** pe kuch calculate karna hota hai (sum, max, min, count, etc.).
+* Sliding window ka funda:
+
+  1. Ek fixed size `k` ki window banao (jaise ek glass window jo array ke upar rakhi hai).
+  2. Window ko **slide** karo ek element right side me.
+  3. Har slide ke baad naya result calculate karo.
+
+Isse hume baar-baar puri subarray ka sum nikalna nahi padta. Time complexity **O(n)** hota hai (fast!).
+
+---
+
+## 🔹 Code with Detailed Explanation + Dry Run
+
+```cpp
+#include <bits/stdc++.h>   // header file: sabhi standard libraries include kar deta hai
+using namespace std;
+
+int main() {
+    int n, k;
+    cin >> n >> k;  
+    // n = array ka size
+    // k = window ka size (kitne consecutive elements ka sum chahiye)
+
+    vector<int> arr(n);   // n size ka vector banaya (dynamic array)
+
+    // array input lete hain
+    for (int i = 0; i < n; i++) cin >> arr[i];
+
+    // -----------------------------------------
+    // STEP 1: first 'k' elements ka sum nikaal lo
+    int windowSum = 0;
+    for (int i = 0; i < k; i++) {
+        windowSum += arr[i];   // starting window ka sum
+    }
+
+    int maxSum = windowSum;   // abhi tak ka max sum (pehla window hi max hai)
+
+    // -----------------------------------------
+    // STEP 2: ab window slide karte hain left->right
+    for (int i = k; i < n; i++) {
+        // nayi window ka sum nikalna hai
+        // current window: [i-k+1 ... i]
+        
+        // pehle ke window sum me
+        // arr[i] add karo (naya element)
+        // arr[i - k] minus karo (jo element window se bahar ho gaya)
+        windowSum += arr[i] - arr[i - k];
+
+        // max sum update karo agar naya windowSum bada ho
+        maxSum = max(maxSum, windowSum);
+    }
+
+    // -----------------------------------------
+    cout << maxSum << endl;  // final answer print karo
+    return 0;
+}
+```
+
+---
+
+## 🔹 Dry Run Example
+
+Input:
+
+```
+n = 6, k = 3
+arr = [2, 1, 5, 1, 3, 2]
+```
+
+👉 Step 1: pehle `k = 3` elements ka sum:
+
+```
+windowSum = 2 + 1 + 5 = 8
+maxSum = 8
+```
+
+(Abhi window `[2, 1, 5]` pe hai)
+
+---
+
+👉 Step 2: Slide window (i = 3 → arr\[3] = 1)
+
+```
+windowSum = previous windowSum + arr[i] - arr[i-k]
+           = 8 + arr[3] - arr[0]
+           = 8 + 1 - 2
+           = 7
+
+maxSum = max(8, 7) = 8
+```
+
+Window = `[1, 5, 1]`
+
+---
+
+👉 Step 3: Slide window (i = 4 → arr\[4] = 3)
+
+```
+windowSum = 7 + arr[4] - arr[1]
+           = 7 + 3 - 1
+           = 9
+
+maxSum = max(8, 9) = 9
+```
+
+Window = `[5, 1, 3]`
+
+---
+
+👉 Step 4: Slide window (i = 5 → arr\[5] = 2)
+
+```
+windowSum = 9 + arr[5] - arr[2]
+           = 9 + 2 - 5
+           = 6
+
+maxSum = max(9, 6) = 9
+```
+
+Window = `[1, 3, 2]`
+
+---
+
+👉 Final Answer:
+
+```
+maxSum = 9
+```
+
+(jo subarray `[5, 1, 3]` se mila)
+
+---
+
+## 🔹 Important: `arr[i - k]` Kyun?
+
+Jab window ek step slide hoti hai:
+
+* ek **naya element enter** karta hai → `arr[i]`
+* ek **purana element exit** karta hai → `arr[i - k]`
+
+Agar `arr[i - k]` minus nahi karoge → window ka size **k+1 ho jaayega** (jo galat hai).
+
+Example:
+Window size = 3,
+Old window = `[2, 1, 5]`
+New window = `[1, 5, 1]`
+Isme `2` bahar gaya aur `1` andar aaya.
+So → `+1` (naya) and `-2` (purana).
+
+---
+
+✅ Summary:
+
+* Sliding window → ek technique for continuous subarray problems.
+* `arr[i - k]` = element jo window se bahar nikal gaya.
+* Is technique se O(n) time complexity me problem solve ho jaata hai.
+
+---
+
+------------------------------------ MOST DETAILED --------------------------------------------------------
+
+
+
+### 🔹 Problem:
+
+Given an array of integers aur ek number `k`, humein **k consecutive elements ka maximum sum** nikalna hai.
+
+Example lete hain:
+
+```
+n = 6, k = 3  
+arr = [2, 1, 5, 1, 3, 2]
+```
+
+---
+
+### 🔹 Code Explanation (Line by Line with Example)
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+```
+
+👉 Yeh header file sabhi standard C++ libraries include karti hai.
+`using namespace std;` likhne se humein `std::` bar-bar likhna nahi padta.
+
+---
+
+```cpp
+int main() {
+    int n, k;
+    cin >> n >> k;
+```
+
+👉 Hum user se input lenge:
+
+* `n` = array size
+* `k` = window size
+
+**Example Input:**
+
+```
+6 3
+```
+
+(6 elements, aur humein 3 consecutive elements ka max sum chahiye)
+
+---
+
+```cpp
+    vector<int> arr(n);
+    for (int i = 0; i < n; i++) cin >> arr[i];
+```
+
+👉 Hum array ke elements input karenge.
+
+**Example Input:**
+
+```
+2 1 5 1 3 2
+```
+
+So ab `arr = [2, 1, 5, 1, 3, 2]`
+
+---
+
+```cpp
+    int windowSum = 0;
+    for (int i = 0; i < k; i++) {
+        windowSum += arr[i];
+    }
+```
+
+👉 Ab hum **pehle window ka sum nikalte hain** (first k elements ka sum).
+
+* Initially: `windowSum = 0`
+* Loop chal raha hai `i = 0 to k-1` → `i = 0,1,2`
+
+Steps:
+
+* `i = 0` → windowSum = 0 + arr\[0] = 0 + 2 = **2**
+* `i = 1` → windowSum = 2 + arr\[1] = 2 + 1 = **3**
+* `i = 2` → windowSum = 3 + arr\[2] = 3 + 5 = **8**
+
+So first window (2,1,5) ka sum = **8**
+
+---
+
+```cpp
+    int maxSum = windowSum;
+```
+
+👉 Abhi tak jo best sum mila hai, woh `maxSum` mein daal diya.
+So: `maxSum = 8`
+
+---
+
+```cpp
+    for (int i = k; i < n; i++) {
+        windowSum += arr[i] - arr[i - k];
+        maxSum = max(maxSum, windowSum);
+    }
+```
+
+👉 Yeh hai **Sliding Window** technique ka main part.
+Is loop mein hum **window ko ek element aage slide karte hain**:
+
+#### Dry Run Step by Step:
+
+1. **i = 3**
+
+   * `windowSum += arr[3] - arr[0]`
+   * `windowSum = 8 + 1 - 2 = 7`
+   * Window: (1,5,1), Sum = 7
+   * `maxSum = max(8,7) = 8`
+
+---
+
+2. **i = 4**
+
+   * `windowSum += arr[4] - arr[1]`
+   * `windowSum = 7 + 3 - 1 = 9`
+   * Window: (5,1,3), Sum = 9
+   * `maxSum = max(8,9) = 9`
+
+---
+
+3. **i = 5**
+
+   * `windowSum += arr[5] - arr[2]`
+   * `windowSum = 9 + 2 - 5 = 6`
+   * Window: (1,3,2), Sum = 6
+   * `maxSum = max(9,6) = 9`
+
+---
+
+Loop khatam ✅
+
+---
+
+```cpp
+    cout << maxSum << endl;
+    return 0;
+}
+```
+
+👉 Final answer print kar diya:
+
+```
+9
+```
+
+---
+
+### 🔹 Sliding Window Concept (Easy Explanation)
+
+👉 Sliding Window ek technique hai jisme hum **consecutive elements ka sum ya kuch calculation** karte hain.
+
+Instead of har baar naya sum calculate karne ke (O(n\*k) time), hum ek **window ka sum reuse karte hain**:
+
+* Pehle window ka sum nikal lo.
+* Jab window aage slide kare, tab
+  `newSum = oldSum + newElement - elementJoPeecheChhodDiya`
+
+Isse ek naya sum **O(1)** mein mil jata hai.
+Total time complexity: **O(n)**
+
+---
+
+### 🔹 Example Summary
+
+Array: \[2, 1, 5, 1, 3, 2], k=3
+
+* Window (2,1,5) → sum = 8
+* Window (1,5,1) → sum = 7
+* Window (5,1,3) → sum = 9 ✅ (maximum)
+* Window (1,3,2) → sum = 6
+
+Final Answer = **9**
+
+---
+
