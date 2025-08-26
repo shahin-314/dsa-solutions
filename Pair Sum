@@ -1,0 +1,188 @@
+### Problem Recap: Pair Sum
+- **Kya Hai:** Tumhe ek integer array `arr` aur ek sum `s` diya gaya hai. Tumhe woh saare pairs (do numbers) nikalne hai jo milke `s` banayein. Pairs ko vector<vector<int>> mein return karna hai, aur har pair ascending order mein (chhota pehle, bada baad mein).
+- **Rules:** Ek element ko ek baar hi use karo, pairs duplicate nahi hone chahiye.
+- **Examples:**
+  - Input: `arr = [1, 3, 2, 4]`, `s = 5`
+    - Sorted: [1, 2, 3, 4]
+    - Pairs: 1 + 4 = 5, 2 + 3 = 5
+    - Output: `[[1,4],[2,3]]`
+  - Input: `arr = [2, 7, 11, 13]`, `s = 9`
+    - Sorted: [2, 7, 11, 13]
+    - Pairs: 2 + 7 = 9
+    - Output: `[[2,7]]`
+  - Input: `arr = [1, 2, 3, 4]`, `s = 10`
+    - No pairs, Output: `[]` (lekin agar problem mein -1 -1 chahiye, toh adjust karo)
+
+---
+
+### Code with Detailed Comments
+Yeh code brute force with optimization use karta hai: pehle array sort karo, phir do loops se pairs find karo, aur agar sum > s ho toh break karo kyunki sorted array mein aage sum aur badhega.
+
+```cpp
+#include <bits/stdc++.h>
+
+vector<vector<int>> pairSum(vector<int> &arr, int s){
+   vector<vector<int>> result; // This vector stores the pairs that sum to s (initially empty)
+   // Comment: Yeh result mein saare valid pairs store karega, har pair ek vector<int> hai jisme 2 elements honge.
+
+    sort(arr.begin(), arr.end()); // Sort the input array in ascending order
+    // Comment: Yeh array ko chhote se bade order mein sort karta hai taaki pairs find karna aasan ho aur duplicates skip ho jayein.
+
+    for(int i = 0 ; i < arr.size(); i++) // Outer loop for first element of pair (i from 0 to n-1)
+    {
+        // Comment: Yeh loop har possible first element pe chalega.
+        
+        for(int j = i+1; j < arr.size(); j++) // Inner loop for second element (j from i+1 to n-1, to avoid duplicates)
+        {
+            // Comment: Yeh loop first element ke baad se shuru hota hai taaki same pair do baar na aaye aur i < j rahe.
+
+            if(arr[i] + arr[j] == s) // Check if sum of pair is equal to s
+            {
+                // Comment: Agar pair ka sum s ke barabar hai, toh pair add karo.
+                result.push_back({arr[i], arr[j]}); // Add pair to result
+                // Comment: Pair ko result mein push karo, chhota pehle, bada baad mein (kyunki sorted hai).
+            }
+            
+            else if(arr[i] + arr[j] > s) // If sum is greater than s, break as array is sorted
+            {
+                // Comment: Kyunki array sorted hai, agle elements se sum aur bada hoga, toh loop break karo.
+                break; // Exit inner loop
+                // Comment: Yeh optimization hai taaki unnecessary checks na ho.
+            }
+            
+            else // If sum is less than s, continue to next j
+            {
+                // Comment: Sum chhota hai, toh agla j try karo kyunki sum badh sakta hai.
+                continue; // Continue to next iteration
+                // Comment: Yeh optional hai, kyunki loop waise bhi continue hota hai.
+            }
+        }
+    }
+
+    return result; // Return the vector of pairs
+    // Comment: Yeh final pairs ka vector return karta hai.
+}
+```
+
+---
+
+### Line-by-Line Explanation with Flow
+#### **1. `vector<vector<int>> result;`**
+- **Kya Hai:** Ek 2D vector banaya jisme har element ek pair (vector<int>) hoga.
+- **Flow:** Yeh result store karega, shuru mein khali hai.
+- **Value Example:** `result = []`
+
+#### **2. `sort(arr.begin(), arr.end());`**
+- **Kya Hai:** Array ko ascending order mein sort karta hai.
+- **Kyun:** Sorted array mein pairs find karna aasan ho jata hai, aur sum > s pe break kar sakte hai.
+- **Flow:** Array ke elements ko rearrange karta hai.
+- **Value Example:** `arr = [1, 3, 2, 4]` → `arr = [1, 2, 3, 4]`
+
+#### **3. `for(int i = 0 ; i < arr.size(); i++)`**
+- **Kya Hai:** Outer loop har possible first element ke liye.
+- **Flow:** `i` 0 se n-1 tak chalta hai, first element ko fix karta hai.
+- **Value Example:** `i = 0` (arr[0] = 1)
+
+#### **4. `for(int j = i+1; j < arr.size(); j++)`**
+- **Kya Hai:** Inner loop first element ke baad se second element ke liye.
+- **Flow:** `j = i+1` se n-1 tak chalta hai, taaki duplicate pairs na aaye.
+- **Value Example:** `i = 0`, `j = 1` (arr[1] = 2)
+
+#### **5. `if(arr[i] + arr[j] == s)`**
+- **Kya Hai:** Check karta hai ki current pair ka sum `s` hai ya nahi.
+- **Flow:** Agar true, toh pair add karo.
+- **Value Example:** `i = 0` (1), `j = 3` (4), `1 + 4 = 5`, true
+
+#### **6. `result.push_back({arr[i], arr[j]});`**
+- **Kya Hai:** Pair ko result vector mein add karta hai.
+- **Flow:** `{1, 4}` add hota hai.
+- **Value Example:** `result = [{1,4}]`
+
+#### **7. `else if(arr[i] + arr[j] > s)`**
+- **Kya Hai:** Agar sum `s` se bada hai, toh inner loop break karo.
+- **Flow:** Kyunki array sorted hai, agla j sum aur bada karega, toh ruk jao.
+- **Value Example:** `i = 0` (1), `j = 4` (5), 1 + 5 = 6 > 5, break
+
+#### **8. `break;`**
+- **Kya Hai:** Inner loop ko rokte hai.
+- **Flow:** Agle j pe nahi jate.
+
+#### **9. `else`**
+- **Kya Hai:** Agar sum chhota hai.
+- **Flow:** Continue karo, agla j check karo.
+
+#### **10. `continue;`**
+- **Kya Hai:** Next iteration pe jao.
+- **Flow:** Yeh optional hai, kyunki loop waise bhi continue hota hai.
+
+#### **11. `return result;`**
+- **Kya Hai:** Final pairs ka vector return karo.
+- **Flow:** Function khatam ho jayega.
+
+---
+
+### Full Flow with Example
+Chalo pura flow dekhte hai `arr = [1, 3, 2, 4]`, `s = 5`.
+
+- **Step 1:** `result = []`
+- **Step 2:** `sort(arr)` → `arr = [1, 2, 3, 4]`
+- **Step 3: Outer Loop**
+  - **i = 0 (arr[i] = 1):**
+    - `j = 1 (arr[j] = 2)`: `1 + 2 = 3 < 5` → continue
+    - `j = 2 (arr[j] = 3)`: `1 + 3 = 4 < 5` → continue
+    - `j = 3 (arr[j] = 4)`: `1 + 4 = 5 == 5` → `result.push_back({1,4})` → `result = [{1,4}]`
+- **i = 1 (arr[i] = 2):**
+  - `j = 2 (arr[j] = 3)`: `2 + 3 = 5 == 5` → `result.push_back({2,3})` → `result = [{1,4},{2,3}]`
+  - `j = 3 (arr[j] = 4)`: `2 + 4 = 6 > 5` → break
+- **i = 2 (arr[i] = 3):**
+  - `j = 3 (arr[j] = 4)`: `3 + 4 = 7 > 5` → break
+- **i = 3 (arr[i] = 4):**
+  - `j = 4` (end) → no loop
+- **Return:** `[{1,4},{2,3}]`
+- **Output:** `[[1,4],[2,3]]` (sahi)
+
+#### **Flow Visualization:**
+- Sorted array mein, pehle small i se start karo, j = i+1 se.
+- Sum == s: Add pair
+- Sum > s: Break kyunki agla j sum aur bada karega.
+- Sum < s: Continue, agla j try karo.
+
+---
+
+### Can We Use Built-in Functions?
+- **Yes, STL Use Kar Sakte Hai:**
+  - `sort`: Already use kiya.
+  - `pair`: STL ka `pair<int, int>` use kar sakte hai, but code mein `{arr[i], arr[j]}` already short hai.
+  - `unordered_map`: O(N) approach ke liye use kar sakte hai (pehle samjhaaya tha).
+- **Shortened Code with STL:**
+```cpp
+vector<vector<int>> pairSum(vector<int> &arr, int s){
+    vector<vector<int>> result;
+    sort(arr.begin(), arr.end());
+    for(int i = 0 ; i < arr.size(); i++){
+        for(int j = i+1; j < arr.size(); j++){
+            if(arr[i] + arr[j] == s){
+                result.push_back({arr[i], arr[j]});
+            } else if(arr[i] + arr[j] > s){
+                break;
+            }
+        }
+    }
+    return result;
+}
+```
+
+---
+
+### Time and Space Complexity
+- **Time Complexity:** O(N log N) for sort + O(N^2) worst case for loops, lekin break se better hota hai.
+- **Space Complexity:** O(N) for result.
+
+---
+
+### Beginner Tips
+- **Practice:** `[1, 5, 3, 9, 2]`, `s = 7` pe try karo.
+- **Visualize:** Pairs ko paper pe likh ke dekho.
+- **Debug:** Har loop pe sum check karo.
+
+Ab samajh aaya na, bro? Code ka pura flow, values ka kaise chalna, aur built-in functions ke saath sab clear ho gaya hoga. Koi doubt ho toh bol! Kya bolta hai? (Chai abhi garam hai, 02:25 PM IST!)
