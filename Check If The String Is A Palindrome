@@ -1,0 +1,316 @@
+
+### Step 1: Understanding the Problem (Super Simple Explanation)
+
+- **What is a palindrome?**  
+  A palindrome is a word that’s the same when you read it forward or backward.  
+  Example: "madam" → forward: "madam", backward: "madam" → palindrome.  
+  Example: "cat" → forward: "cat", backward: "tac" → not a palindrome.
+
+- **What’s special here?**  
+  You get a string `S` (e.g., "c1 O$d@eeD o1c"). You need to check if it’s a palindrome, but with rules:  
+  - **Only look at letters (a-z, A-Z) and numbers (0-9)**.  
+  - **Ignore symbols** (like $, @, #) and **spaces**.  
+  - **Ignore capital letters**: Treat 'A' and 'a' as the same (case-insensitive).  
+  - After ignoring symbols/spaces and making letters lowercase, check if the result is a palindrome.  
+  - Return `true` (Yes) if it’s a palindrome, `false` (No) if it’s not.
+
+- **Example**:  
+  - **S = "c1 O$d@eeD o1c"**:  
+    - Step 1: Ignore symbols ($, @) and spaces → Keep "c1OeeDo1c".  
+    - Step 2: Make lowercase → "c1oeedo1c".  
+    - Step 3: Check: "c1oeedo1c" forward = "c1oeedo1c", backward = "c1odeeo1c" (same).  
+    - Palindrome → `true` (Yes).  
+  - **S = "A1b22Ba"**:  
+    - Keep "A1b22Ba" (no symbols/spaces).  
+    - Lowercase → "a1b22ba".  
+    - Check: "a1b22ba" forward ≠ "ab22b1a" backward → `false` (No).
+
+- **Sample Inputs/Outputs**:  
+  - **Input 1**:  
+    - "N2 i&nJA?a& jnI2n" → "n2injaajni2n" → Palindrome → `true` (Yes).  
+    - "A1b22Ba" → "a1b22ba" → Not palindrome → `false` (No).  
+  - **Input 2**:  
+    - "codingninjassajNiNgNidoc" → "codingninjassajningnidoc" → Palindrome → `true` (Yes).  
+    - "5?36@6?35" → "536635" → Palindrome → `true` (Yes).  
+    - "aaBBa@" → "aabba" → Not palindrome → `false` (No).
+
+- **Why tricky?**  
+  - Strings can have random symbols/spaces (e.g., $, @, spaces).  
+  - Uppercase/lowercase letters are treated the same.  
+  - We only care about letters and numbers.  
+  - This makes it harder than just checking "madam".
+
+- **Constraints**:  
+  - String length: 1 to 10^4 (can be long, so code must be fast).  
+  - String can have any characters (letters, numbers, symbols, spaces).  
+  - Time limit: 1 second → O(N) solution is fine.
+
+---
+
+### Step 2: Why Use `isalnum()`?
+Since you’re confused about `isalnum()`, let’s explain it clearly:  
+
+- **What does `isalnum()` do?**  
+  - It’s a function in C++ (from `<cctype>`, included in `<bits/stdc++.h>`) that checks if a character is **alphanumeric**.  
+  - **Alphanumeric** means:  
+    - Letters: a-z or A-Z (e.g., 'a', 'B', 'z').  
+    - Numbers: 0-9 (e.g., '5', '0').  
+  - Returns `true` if the character is a letter or number, `false` otherwise (e.g., for symbols like '$', '@', or spaces).  
+  - Example:  
+    - `isalnum('a')` → `true` (it’s a letter).  
+    - `isalnum('5')` → `true` (it’s a number).  
+    - `isalnum('$')` → `false` (it’s a symbol).  
+    - `isalnum(' ')` → `false` (it’s a space).
+
+- **Why use it here?**  
+  - The problem says: **Ignore symbols and spaces**, only consider letters and numbers.  
+  - `isalnum()` helps us skip unwanted characters (like $, @, spaces) and focus on valid ones (letters/numbers).  
+  - Example: In "c1 O$d", we skip '$' and ' ' because `isalnum('$') = false`, `isalnum(' ') = false`, but keep 'c', '1', 'O' because `isalnum('c') = true`, etc.
+
+- **How it fits?**  
+  - We use `isalnum()` to decide which characters to check in the palindrome.  
+  - If a character is not alphanumeric, we skip it (move the pointer).  
+  - This makes sure we only compare valid characters (letters/numbers).
+
+---
+
+### Step 3: The Code (With Super Clear Comments)
+Here’s the code again with extra-detailed comments for beginners:
+
+```cpp
+#include <bits/stdc++.h> 
+bool checkPalindrome(string s)
+{
+    // Step 1: Set two pointers: l (left) at start, r (right) at end of string.
+    // l starts at index 0, r starts at last index (s.size() - 1).
+    int l = 0, r = s.size() - 1;
+    
+    // Step 2: Keep checking while left pointer is before right pointer.
+    while (l < r) {
+        // Step 3: Skip non-alphanumeric characters (symbols, spaces) from left.
+        // If s[l] is not a letter/number, move l forward.
+        while (l < r && !isalnum(s[l])) l++;
+        
+        // Step 4: Skip non-alphanumeric characters from right.
+        // If s[r] is not a letter/number, move r backward.
+        while (l < r && !isalnum(s[r])) r--;
+        
+        // Step 5: Compare characters at l and r (convert to lowercase first).
+        // s[l++] means: use s[l], then move l forward.
+        // s[r--] means: use s[r], then move r backward.
+        // If lowercase versions don't match, it's not a palindrome, return false.
+        if (tolower(s[l++]) != tolower(s[r--])) return false;
+    }
+    
+    // Step 6: If we finish the loop, all valid characters matched, so it's a palindrome.
+    return true;
+}
+```
+
+---
+
+### Step 4: Explain the Code Line by Line (Super Simple)
+Let’s go through each line like we’re learning together. I’ll assume you know basic C++ (like loops) but struggle with strings.
+
+- **#include <bits/stdc++.h>**  
+  - This includes tools like `string`, `isalnum()` (checks letters/numbers), and `tolower()` (makes letters lowercase).  
+  - Think of it as a toolbox for working with strings.
+
+- **bool checkPalindrome(string s)**  
+  - Takes a string `s` (e.g., "c1 O$d").  
+  - Returns `true` (Yes) if it’s a palindrome after ignoring symbols/spaces and making lowercase, `false` (No) if not.
+
+- **int l = 0, r = s.size() - 1;**  
+  - `l`: Left pointer, starts at the first character (index 0).  
+  - `r`: Right pointer, starts at the last character.  
+  - `s.size()`: Length of the string (e.g., "cat" → 3, so `r = 3 - 1 = 2`).  
+  - Example: For "abc", `l = 0` (points to 'a'), `r = 2` (points to 'c').  
+  - Why pointers? We check palindrome by comparing characters from both ends.
+
+- **while (l < r)**  
+  - Loop runs as long as `l` (left) is before `r` (right).  
+  - Why? We compare characters from both ends, moving inward. If `l` meets or passes `r`, we’ve checked enough.  
+  - Example: For "abc", stop when `l = 1`, `r = 1` (middle character doesn’t need checking).
+
+- **while (l < r && !isalnum(s[l])) l++;**  
+  - This skips **non-alphanumeric** characters (symbols, spaces) from the left.  
+  - `isalnum(s[l])`: Checks if `s[l]` is a letter (a-z, A-Z) or number (0-9).  
+  - `!isalnum(s[l])`: Means `s[l]` is a symbol ($, @) or space.  
+  - If `!isalnum(s[l])` is true, `l++` moves the left pointer forward to skip it.  
+  - `l < r`: Ensures we don’t skip past the right pointer.  
+  - Example: For "c$%", `l = 0` ('c') is alphanumeric, stay. If `l = 1` ('$'), `isalnum('$') = false`, so `l++` → `l = 2`.
+
+- **while (l < r && !isalnum(s[r])) r--;**  
+  - Same as above, but for the right pointer.  
+  - Skips symbols/spaces from the right by moving `r` backward (`r--`).  
+  - Example: For "%$c", `r = 2` ('c') is alphanumeric, stay. If `r = 1` ('$'), skip → `r = 0`.
+
+- **if (tolower(s[l++]) != tolower(s[r--])) return false;**  
+  - This is the tricky line, so let’s break it down extra carefully:  
+  - **What it does**: Compares the characters at `l` and `r` (after making them lowercase). If they don’t match, return `false` (not a palindrome).  
+  - **Parts**:  
+    - `s[l++]`:  
+      - `s[l]`: Gets the character at index `l`.  
+      - `l++`: Moves `l` forward **after** using `s[l]`.  
+      - Example: If `l = 0`, `s[0] = 'A'`, use 'A', then `l = 1`.  
+    - `tolower(s[l++])`: Converts that character to lowercase (e.g., 'A' → 'a', '5' stays '5').  
+    - `s[r--]`: Gets `s[r]`, then moves `r` backward.  
+    - `tolower(s[r--])`: Converts to lowercase.  
+    - `!=`: Checks if the lowercase characters are different.  
+    - If different, `return false` (not a palindrome).  
+  - Example: For "Ab", `l = 0` ('A'), `r = 1` ('b').  
+    - `tolower('A') = 'a'`, `tolower('b') = 'b'`.  
+    - `'a' != 'b'`, so `return false`.  
+  - After comparison, `l++` and `r--` move pointers for the next check.
+
+- **return true;**  
+  - If the loop finishes without returning `false`, all valid characters matched (or we skipped everything), so it’s a palindrome.  
+  - Return `true` (Yes).
+
+---
+
+### Step 5: Extra Focus on `if (tolower(s[l++]) != tolower(s[r--])) return false;`
+Since you’re confused about this line, let’s dive deeper with an example:  
+- String: "A#b".  
+- After skipping non-alphanumeric (we’ll see this in dry run):  
+  - `l = 0` (points to 'A'), `r = 2` (points to 'b').  
+- **Step-by-step**:  
+  - `s[l++]`:  
+    - `l = 0`, `s[0] = 'A'`.  
+    - `tolower('A') = 'a'`.  
+    - `l++` → `l = 1` (happens **after** using `s[0]`).  
+  - `s[r--]`:  
+    - `r = 2`, `s[2] = 'b'`.  
+    - `tolower('b') = 'b'`.  
+    - `r--` → `r = 1` (happens **after** using `s[2]`).  
+  - Compare: `'a' != 'b'` → `true`, so return `false` (not a palindrome).  
+- **Why `l++` and `r--` inside?**  
+  - `l++` means "use `l`, then increment it". It’s like saying: "Check this character, then move to the next one."  
+  - Same for `r--`: Use `r`, then move backward.  
+  - This saves a line of code (instead of writing `l++` and `r--` separately).  
+- **Why `tolower`?**  
+  - Problem says ignore case (e.g., 'A' = 'a').  
+  - `tolower('A') = 'a'`, `tolower('b') = 'b'`, but numbers (e.g., '5') stay the same.  
+- **What if they match?**  
+  - If `tolower(s[l++]) == tolower(s[r--])`, skip the `return false` and continue the loop.
+
+---
+
+### Step 6: Dry Run (Line by Line with Examples)
+Let’s run the code on paper with sample inputs to see how it works.
+
+#### **Example 1: S = "N2 i&nJA?a& jnI2n"**
+Goal: Should return `true` (Yes).
+
+1. **Enter**: `s = "N2 i&nJA?a& jnI2n"`.  
+2. **int l = 0, r = s.size() - 1;**  
+   - `s.size() = 17`, so `r = 17 - 1 = 16`.  
+   - `l = 0` (points to 'N'), `r = 16` (points to 'n').  
+3. **while (l < r)**  
+   - `l = 0`, `r = 16`, `0 < 16`, continue.  
+4. **while (l < r && !isalnum(s[l])) l++;**  
+   - `s[0] = 'N'`, `isalnum('N') = true`, `!isalnum('N') = false`, no skip, `l = 0`.  
+5. **while (l < r && !isalnum(s[r])) r--;**  
+   - `s[16] = 'n'`, `isalnum('n') = true`, no skip, `r = 16`.  
+6. **if (tolower(s[l++]) != tolower(s[r--]))**  
+   - `s[l] = 'N'`, `tolower('N') = 'n'`, `l++` → `l = 1`.  
+   - `s[r] = 'n'`, `tolower('n') = 'n'`, `r--` → `r = 15`.  
+   - `'n' == 'n'`, match, don’t return, continue.  
+7. **while (l < r)**  
+   - `l = 1`, `r = 15`, `1 < 15`.  
+   - `s[1] = '2'`, `isalnum('2') = true`, no skip.  
+   - `s[15] = '2'`, `isalnum('2') = true`, no skip.  
+   - `tolower('2') = '2'`, `tolower('2') = '2'`, match, `l = 2`, `r = 14`.  
+8. **Continue**:  
+   - `l = 2`, `s[2] = ' '`, `!isalnum(' ') = true`, `l++` → `l = 3`, `s[3] = 'i'`, stop.  
+   - `r = 14`, `s[14] = 'I'`, `isalnum('I') = true`.  
+   - `tolower('i') = 'i'`, `tolower('I') = 'i'`, match, `l = 4`, `r = 13`.  
+   - `l = 4`, `s[4] = '&'`, skip → `l = 5`, `s[5] = 'n'`.  
+   - `r = 13`, `s[13] = 'n'`, match, `l = 6`, `r = 12`.  
+   - `l = 6`, `s[6] = 'J'`, `r = 12`, `s[12] = 'j'`, `tolower('J') = 'j'`, `tolower('j') = 'j'`, match, `l = 7`, `r = 11`.  
+   - `l = 7`, `s[7] = 'A'`, `r = 11`, `s[11] = ' '`, skip → `r = 10`, `s[10] = '&'`, skip → `r = 9`, `s[9] = 'a'`.  
+   - `tolower('A') = 'a'`, `tolower('a') = 'a'`, match, `l = 8`, `r = 8`.  
+9. **while (l < r)**  
+   - `l = 8`, `r = 8`, `8 < 8` is false, stop.  
+10. **return true;**  
+    - Output: `true` (prints "Yes").
+
+#### **Example 2: S = "A1b22Ba"**
+Goal: Should return `false` (No).
+
+1. **Enter**: `s = "A1b22Ba"`.  
+2. **l = 0, r = 7 - 1 = 6;**  
+   - `l = 0` ('A'), `r = 6` ('a').  
+3. **while (l < r)**  
+   - `s[0] = 'A'`, `isalnum('A') = true`.  
+   - `s[6] = 'a'`, `isalnum('a') = true`.  
+   - `tolower('A') = 'a'`, `tolower('a') = 'a'`, match, `l = 1`, `r = 5`.  
+4. **while (l < r)**  
+   - `l = 1`, `s[1] = '1'`, `r = 5`, `s[5] = 'B'`.  
+   - `tolower('1') = '1'`, `tolower('B') = 'b'`, `'1' != 'b'`, return `false`.  
+5. **Output**: `false` (prints "No").
+
+#### **Example 3: S = "5?36@6?35"**
+Goal: Should return `true` (Yes).
+
+1. **Enter**: `s = "5?36@6?35"`.  
+2. **l = 0, r = 9 - 1 = 8;**  
+3. **while (l < r)**  
+   - `l = 0`, `s[0] = '5'`, `r = 8`, `s[8] = '5'`, match, `l = 1`, `r = 7`.  
+   - `l = 1`, `s[1] = '?'`, `!isalnum('?') = true`, `l++` → `l = 2`, `s[2] = '3'`.  
+   - `r = 7`, `s[7] = '3'`, match, `l = 3`, `r = 6`.  
+   - `l = 3`, `s[3] = '6'`, `r = 6`, `s[6] = '?'`, skip → `r = 5`, `s[5] = '6'`.  
+   - Match, `l = 4`, `r = 4`.  
+4. **while (l < r)**  
+   - `l = 4`, `r = 4`, stop.  
+5. **return true;**  
+   - Output: `true` (prints "Yes").
+
+---
+
+### Step 7: Why This Code Works
+- **Correctness**:  
+  - `isalnum()` skips symbols/spaces, keeping only letters/numbers.  
+  - `tolower()` ensures case-insensitive comparison.  
+  - Two pointers check palindrome by comparing valid characters from both ends.  
+- **Time**: O(N) (each character visited at most once).  
+- **Space**: O(1) (only uses `l` and `r`).  
+- **Handles Edge Cases**:  
+  - Empty string: Not possible (length ≥ 1).  
+  - All symbols: Skips everything, returns `true` (empty is a palindrome).  
+  - Single character: `l = r`, returns `true`.
+
+---
+
+### Step 8: Tips for Beginners (Especially with Strings)
+- **Strings in C++**:  
+  - A string is like a list of characters (e.g., "cat" is 'c', 'a', 't').  
+  - `s[i]` gets the i-th character (0-based index).  
+  - `s.size()` gives length.  
+- **Struggling with strings?**  
+  - Practice accessing characters: `s[0]`, `s[1]`.  
+  - Try simple loops: `for (int i = 0; i < s.size(); i++) cout << s[i];`.  
+  - Play with `isalnum()` and `tolower()` on small strings.  
+- **Debugging**: Add prints to see what’s happening:  
+  ```cpp
+  if (tolower(s[l++]) != tolower(s[r--])) {
+      cout << "Mismatch: " << s[l-1] << " vs " << s[r+1] << endl;
+      return false;
+  }
+  ```
+- **Practice Cases**:  
+  - "A#a" → "aa" → `true`.  
+  - "@@@" → "" → `true`.  
+  - "A1#b2" → "a1b2" → `false`.  
+- **Test on Coding Ninjas**: Submit the function as-is; the platform handles test cases.
+
+---
+
+### Step 9: Summary
+- **Problem**: Check if a string is a palindrome after ignoring symbols/spaces and making letters lowercase.  
+- **Code**: Uses two pointers, skips non-alphanumeric with `isalnum()`, compares lowercase with `tolower()`.  
+- **`isalnum()`**: Checks if a character is a letter/number, skips symbols/spaces.  
+- **Tricky Line**: `if (tolower(s[l++]) != tolower(s[r--]))` compares lowercase characters and moves pointers.  
+- **Dry Run**: Showed how it processes each example.  
+- **Time**: O(N). **Space**: O(1).  
+
