@@ -1,0 +1,176 @@
+
+## **STEP 1: PROBLEM KO SUPER EASY BANA DETE HAIN** 🍵
+
+### **Kya Karna Hai? (1 Minute Mein Samajh)**
+**Array**: `[2, 0, 4, 1, 3, 0, 28]`  
+**Task**: **Saare 0 ko END mein bhej do**, **baaki numbers ko FRONT mein rakh do** (unka order same rahe!)  
+**Output**: `[2, 4, 1, 3, 28, 0, 0]`  
+
+**Visual**:
+```
+PEHLE:    [2][0][4][1][3][0][28]  ← Mixed (0 everywhere)
+BAAD MEIN: [2][4][1][3][28][0][0]  ← Non-zero front, zero end!
+```
+
+**Analogy**:  
+**Classroom mein 30 students**. **0 = Empty chairs**, **Non-zero = Students**.  
+**Task**: **Saare students ko front benches pe bitha do**, **empty chairs ko last mein**!  
+**Students ka order same rahega**! 
+
+**Easy? YES!** Ab **CODE** samajhte hain! 👇
+
+---
+
+## **STEP 2: COMPLETE CODE WITH EASY COMMENTS** (Har Line Explain)
+
+```cpp
+#include <bits/stdc++.h>  // Saare tools include (swap, vector, etc.)
+using namespace std;
+
+void pushZerosAtEnd(vector<int> &arr) {  // Function: arr ko change karega
+    int n = arr.size();     // LINE 1: Kitne elements? n=7
+    int j = 0;              // LINE 2: Non-zero ka position (counter)
+    
+    // LINE 3: Ek hi baar array scan karo (i=0 se 6 tak)
+    for (int i = 0; i < n; i++) {
+        // LINE 4: Agar i-th position pe NON-ZERO mila?
+        if (arr[i] != 0) {      
+            // LINE 5: Non-zero ko j-th position pe swap kar do
+            swap(arr[i], arr[j]); 
+            // LINE 6: Next non-zero ke liye j badhao
+            j++;                  
+        }
+        // LINE 7: Agar ZERO mila? SKIP! (End mein rahega)
+    }
+    // LINE 8: AUTOMATIC! Zeros already end mein hain!
+}
+```
+
+**EASY?** Bas **2 pointers** (`i`, `j`) aur **swap**! Chal **DRY RUN**! 📝
+
+---
+
+## **STEP 3: LINE-BY-LINE DRY RUN** (Table + Values + Visual)
+
+**INPUT**: `arr = [2, 0, 4, 1, 3, 0, 28]`, `n = 7`
+
+| **LINE** | **CODE** | **EXPLANATION** | **ARRAY BEFORE** | **ARRAY AFTER** | **i** | **j** | **VALUES** |
+|----------|----------|-----------------|------------------|-----------------|-------|-------|------------|
+| **1** | `int n = arr.size();` | **Size nikalo** | `[2,0,4,1,3,0,28]` | Same | - | 0 | **n=7** |
+| **2** | `int j = 0;` | **Non-zero counter = 0** | Same | Same | - | **0** | **j=0** |
+| **LOOP START** | `for (int i=0; i<n; i++)` | **Scan start** | Same | Same | **0** | 0 | **i=0** |
+| **i=0** | `if (arr[0] != 0)` | **arr[0]=2 ≠ 0? YES!** | `[2,0,4,1,3,0,28]` | Same | **0** | 0 | **2 ≠ 0 ✓** |
+| **5** | `swap(arr[0], arr[0])` | **Swap 0th with 0th** | `[**2**,0,4,1,3,0,28]` | Same (no change) | 0 | 0 | **No effect** |
+| **6** | `j++;` | **j = 1** | Same | Same | 0 | **1** | **j=1** |
+| **i=1** | `if (arr[1] != 0)` | **arr[1]=0 == 0? NO!** | `[2,0,4,1,3,0,28]` | Same | **1** | 1 | **0 == 0 ✗** |
+| **7** | **SKIP** | **Zero hai, chhod do** | Same | Same | 1 | 1 | **Skip** |
+| **i=2** | `if (arr[2] != 0)` | **arr[2]=4 ≠ 0? YES!** | `[2,0,4,1,3,0,28]` | `[2,**4**,0,1,3,0,28]` | **2** | 1 | **4 ≠ 0 ✓** |
+| **5** | `swap(arr[2], arr[1])` | **Swap 2nd & 1st** | `[2,**0**,**4**,1,3,0,28]` | `[2,**4**,**0**,1,3,0,28]` | 2 | 1 | **4 moved!** |
+| **6** | `j++;` | **j = 2** | Same | Same | 2 | **2** | **j=2** |
+| **i=3** | `if (arr[3] != 0)` | **arr[3]=1 ≠ 0? YES!** | `[2,4,0,1,3,0,28]` | `[2,4,0,**1**,3,0,28]` | **3** | 2 | **1 ≠ 0 ✓** |
+| **5** | `swap(arr[3], arr[2])` | **Swap 3rd & 2nd** | `[2,4,**0**,**1**,3,0,28]` | `[2,4,**1**,**0**,3,0,28]` | 3 | 2 | **1 moved!** |
+| **6** | `j++;` | **j = 3** | Same | Same | 3 | **3** | **j=3** |
+| **i=4** | `if (arr[4] != 0)` | **arr[4]=3 ≠ 0? YES!** | `[2,4,1,0,3,0,28]` | `[2,4,1,0,**3**,0,28]` | **4** | 3 | **3 ≠ 0 ✓** |
+| **5** | `swap(arr[4], arr[3])` | **Swap 4th & 3rd** | `[2,4,1,**0**,**3**,0,28]` | `[2,4,1,**3**,**0**,0,28]` | 4 | 3 | **3 moved!** |
+| **6** | `j++;` | **j = 4** | Same | Same | 4 | **4** | **j=4** |
+| **i=5** | `if (arr[5] != 0)` | **arr[5]=0 == 0? NO!** | `[2,4,1,3,0,0,28]` | Same | **5** | 4 | **0 == 0 ✗** |
+| **7** | **SKIP** | **Zero hai, chhod do** | Same | Same | 5 | 4 | **Skip** |
+| **i=6** | `if (arr[6] != 0)` | **arr[6]=28 ≠ 0? YES!** | `[2,4,1,3,0,0,28]` | `[2,4,1,3,0,0,**28**]` | **6** | 4 | **28 ≠ 0 ✓** |
+| **5** | `swap(arr[6], arr[4])` | **Swap 6th & 4th** | `[2,4,1,3,**0**,0,**28**]` | `[2,4,1,3,**28**,0,**0**]` | 6 | 4 | **28 moved!** |
+| **6** | `j++;` | **j = 5** | Same | Same | 6 | **5** | **j=5** |
+| **END** | **LOOP END** | **i=7, loop stop** | `[2,4,1,3,28,0,0]` | **FINAL!** | **7** | 5 | **DONE!** |
+
+---
+
+## **STEP 4: VISUAL SUMMARY** (Ek Photo Mein Samajh Lo!) 📸
+
+```
+INITIAL:    [2][0][4][1][3][0][28]   j=0
+i=0:        [2][0][4][1][3][0][28]   j=1  (2 already front)
+i=2:        [2][4][0][1][3][0][28]   j=2  (4 moved to pos 1)
+i=3:        [2][4][1][0][3][0][28]   j=3  (1 moved to pos 2)
+i=4:        [2][4][1][3][0][0][28]   j=4  (3 moved to pos 3)
+i=6:        [2][4][1][3][28][0][0]   j=5  (28 moved to pos 4)
+FINAL:      [2][4][1][3][28][0][0]   ✓
+```
+
+**SEE?** **Non-zeros front mein aa gaye**, **zeros end mein**! **Order same**! 🎉
+
+---
+
+## **STEP 5: HAR LINE KO 1 MINUTE MEIN SAMJHO** (Easy Words)
+
+| **LINE** | **CODE** | **KYA KARTA HAI?** | **EXAMPLE** |
+|----------|----------|---------------------|-------------|
+| **1** | `int n = arr.size();` | **Array mein kitne boxes?** | `n=7` boxes |
+| **2** | `int j = 0;` | **Front seat number** | `j=0` (pehla seat) |
+| **3** | `for (int i=0; i<n; i++)` | **Har box check karo** | `i=0,1,2,3,4,5,6` |
+| **4** | `if (arr[i] != 0)` | **Box mein student hai?** | `arr[0]=2` → YES! |
+| **5** | `swap(arr[i], arr[j])` | **Student ko front seat pe bitha do** | `2` ko seat `0` pe |
+| **6** | `j++;` | **Next seat khali karo** | `j=1` (dusra seat) |
+| **7** | **Skip** | **Empty chair? Chhod do** | `arr[1]=0` → SKIP |
+
+**EASY NA?** Bas **students ko front**, **chairs ko back**! 😄
+
+---
+
+## **STEP 6: ANOTHER EXAMPLE** (Quick Check)
+
+**Input**: `[0, 0, 0, 0, 1]`  
+**Dry Run**:
+| i | arr[i] | Swap? | Array | j |
+|---|--------|-------|-------|---|
+| 0 | 0 | NO | `[0,0,0,0,1]` | 0 |
+| 1 | 0 | NO | Same | 0 |
+| 2 | 0 | NO | Same | 0 |
+| 3 | 0 | NO | Same | 0 |
+| **4** | **1** | **YES** | **`[1,0,0,0,0]`** | **1** |
+
+**Output**: `[1, 0, 0, 0, 0]` ✓ **PERFECT!**
+
+---
+
+## **STEP 7: WHY THIS CODE IS GENIUS?** 🤯
+
+| **Normal Way** | **Our Way** |
+|----------------|-------------|
+| Extra array banaye (O(n) space) ❌ | **O(1) space** ✓ |
+| 2 loops (O(n) time) ❌ | **1 loop** ✓ |
+| Order kharab ho jata ❌ | **Order same** ✓ |
+
+**BRO, YE TO ROCKET SCIENCE HAI!** 🚀
+
+---
+
+## **STEP 8: TIPS FOR BEGINNER** (Yaad Rakh Lo!)
+1. **`j`** = **Non-zero kitne mile?** (Counter)
+2. **`i`** = **Array scan** (Har position check)
+3. **Non-zero mila?** → **Swap with j**, **j++**
+4. **Zero mila?** → **Skip!** (End mein rahega)
+5. **Visualize**: **Paper pe draw karo** `i`, `j`, arrows!
+
+**Debug Trick**:
+```cpp
+cout << "i=" << i << ", j=" << j << ", arr[i]=" << arr[i] << endl;
+```
+
+---
+
+## **STEP 9: CONNECTION TO PREVIOUS PROBLEMS** (Tu Pehle Kya Kiya?)
+- **3Sum**: **Two pointers** (`left`, `right`) → Yahan `i`, `j`
+- **String Sort**: **Swap** (`swap(a,b)`) → Same!
+- **Word Count**: **Single pass** → Same loop!
+
+---
+
+## **STEP 10: FINAL SUMMARY** (1 Line Mein!)
+**"Scan array, non-zero ko front position `j` pe swap karo, `j++`, zeros automatic end mein!"**
+
+---
+
+**BRO, AB SAMAJH AA GAYA NA?** 🔥  
+**Har line clear?** **Dry run clear?** **Problem clear?**  
+**Koi doubt?** Bol de, **aur 10 examples kar dunga**!  
+**Tu to ROCKET ban gaya hai coding mein!** 😎🚀
+
+**NEXT PROBLEM KARNA HAI?** 😊
