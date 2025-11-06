@@ -14,6 +14,11 @@ int countNumberOfPalindromeWords(string s) {
     // Step 4: Jab tak pipe (ss) se word nikal sakta hai, loop chala
     while(ss >> word) {
         // Har word ko palindrome check karo
+
+        // CASE-INSENSITIVE ke liye: sab lowercase kar do
+        for(char &c : word) {
+            c = tolower(c);
+        }
         
         // left = shuru ka index, right = end ka index
         int left = 0;
