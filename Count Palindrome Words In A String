@@ -1,0 +1,209 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int countNumberOfPalindromeWords(string s) {
+    // Step 1: String ko words mein todne ke liye pipe (stringstream) banao
+    stringstream ss(s);
+    
+    // Step 2: Ek khali dabba (word) banao jisme ek ek word aayega
+    string word;
+    
+    // Step 3: Palindrome words ka count rakho
+    int count = 0;
+    
+    // Step 4: Jab tak pipe (ss) se word nikal sakta hai, loop chala
+    while(ss >> word) {
+        // Har word ko palindrome check karo
+        
+        // left = shuru ka index, right = end ka index
+        int left = 0;
+        int right = word.length() - 1;
+        
+        // Maan lo ki word palindrome hai (true)
+        bool isPal = true;
+        
+        // Jab tak left aur right beech mein mil nahi jate
+        while(left < right) {
+            // Agar left aur right ke characters alag hain
+            if(word[left] != word[right]) {
+                isPal = false;     // Palindrome nahi hai
+                break;             // Loop se bahar nikal jao (time bacha)
+            }
+            // Agar same hain, to aage badho
+            left++;   // left ko right ki taraf
+            right--;  // right ko left ki taraf
+        }
+        
+        // Agar isPal abhi bhi true hai → word palindrome hai
+        if(isPal) {
+            count++;  // Count badhao
+        }
+    }
+    
+    // Final palindrome words ki sankhya return karo
+    return count;
+}
+
+######################################################################################################################################
+
+**BRO! `stringstream`, `ss >> word` - 1000% BEGINNER EXPLANATION**
+
+Tumne poocha:  
+- `stringstream ss(s)` kya karta hai?  
+- `string word` mein kya store hoga?  
+- `ss >> word` kya hai? `>>` kyun?  
+- **Pura code flow** kaisa hai?
+
+Main **zero se**, **Hindi mein**, **picture jaisa**, **tumhare dimaag mein ghus ke** samjhaunga!
+
+---
+
+## 1. `stringstream` KYA HAI?
+
+**`stringstream` = String + Stream**  
+Jaise **paani ki pipe** — ek taraf se daalo, dusri taraf se nikalo
+
+```cpp
+#include <sstream>
+```
+
+**Use:**  
+> **String ko words mein todna**  
+> **Words ko ek ek karke nikaalna**
+
+---
+
+## 2. `stringstream ss(s);` — KYA HUA?
+
+```cpp
+string s = "Nitin and I are good friends";
+stringstream ss(s);
+```
+
+**Picture jaisa samjho:**
+
+```
+s = "Nitin and I are good friends"
+        ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+      [Nitin] [and] [I] [are] [good] [friends]
+        ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+             ss (pipe)
+```
+
+**`ss` ab ek "pipe" ban gaya**  
+Isme saare words **line mein khade hain**  
+Ek ek karke nikal sakte hain
+
+---
+
+## 3. `string word;` — KYA HAI?
+
+```cpp
+string word;
+```
+
+**Yeh ek khali dabba hai**  
+Jab hum `ss` se word nikalenge, yahan daal denge
+
+---
+
+## 4. `ss >> word` — KYA HUA?
+
+```cpp
+while(ss >> word) {
+    // yahan word mil gaya
+}
+```
+
+### `>>` KA MATLAB?
+
+> **`>>` = "nikalo aur daalo"**
+
+**Picture:**
+
+```
+ss (pipe): [Nitin] → [and] → [I] → ...
+              ↓
+             >> 
+              ↓
+           word = "Nitin"
+```
+
+**Phir next iteration mein:**
+
+```
+ss (pipe): [and] → [I] → ...
+              ↓
+             >>
+              ↓
+           word = "and"
+```
+
+---
+
+### `while(ss >> word)` KA MATLAB?
+
+> **Jab tak `ss` se word nikal sakta hai, loop chala**
+
+**Jab `ss` khali ho jayega → loop ruk jayega**
+
+---
+
+## 5. PURA CODE FLOW (STEP BY STEP)
+
+```cpp
+int countNumberOfPalindromeWords(string s) {
+    stringstream ss(s);     // Step 1: String ko pipe mein daalo
+    string word;            // Step 2: Khali dabba banao
+    int count = 0;          // Step 3: Palindrome count
+
+    while(ss >> word) {     // Step 4: Ek ek word nikaalo
+        // word ab "Nitin", "and", "I" aayega
+        if(isPalindrome(word)) {
+            count++;
+        }
+    }
+
+    return count;           // Step 5: Final count return
+}
+```
+
+---
+
+## 6. DRY RUN: `s = "Nitin and I"`
+
+| **Step** | **`ss` pipe** | **`ss >> word`** | **`word`** | **Palindrome?** | **`count`** |
+|--------|--------------|------------------|-----------|----------------|------------|
+| 1 | `[Nitin] [and] [I]` | → | `"Nitin"` | YES | 1 |
+| 2 | `[and] [I]` | → | `"and"` | NO | 1 |
+| 3 | `[I]` | → | `"I"` | YES | **2** |
+| 4 | `khali` | X | — | — | **STOP** |
+
+**Return:** `2`
+
+---
+
+## 7. `isPalindrome` KO SAMJHO
+
+```cpp
+bool isPalindrome(string word) {
+    int left = 0, right = word.length() - 1;
+    while(left < right) {
+        if(word[left] != word[right]) return false;
+        left++;
+        right--;
+    }
+    return true;
+}
+```
+
+**Example: `word = "Nitin"`**
+
+| **left** | **right** | **word[left]** | **word[right]** | **Match?** |
+|---------|----------|---------------|----------------|-----------|
+| 0 | 4 | `N` | `n` | No |
+| 1 | 3 | `i` | `i` | Yes |
+| 2 | 2 | `t` | `t` | Yes |
+
+→ **YES** (kyunki `N` aur `n` alag hain, lekin **case-sensitive** hai)
+
