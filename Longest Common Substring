@@ -1,0 +1,113 @@
+Problem in one line
+
+Do strings me jo continuous same part ho, uski maximum length nikaalni hai.
+
+💻 C++ Code (Humanized comments)
+int lcs(string &str1, string &str2){
+    int n = str1.size();   // length of first string
+    int m = str2.size();   // length of second string
+    int ans = 0;           // stores the maximum length found
+
+    // Pick every character of str1 as a starting point
+    for(int i = 0; i < n; i++){
+
+        // Compare it with every character of str2
+        for(int j = 0; j < m; j++){
+
+            int k = 0;  // used to move forward while characters match
+
+            // Move forward from i and j while characters are same
+            while(i + k < n && j + k < m && str1[i + k] == str2[j + k]){
+                k++;   // increase length of matching substring
+            }
+
+            // Update maximum length found so far
+            ans = max(ans, k);
+        }
+    }
+
+    return ans;  // return the longest common substring length
+}
+
+🔍 Line-by-Line Dry Run
+
+Take example:
+
+str1 = "abcjklp"
+str2 = "acjkp"
+
+
+Indexes:
+
+str1:  0 1 2 3 4 5 6
+       a b c j k l p
+
+str2:  0 1 2 3 4
+       a c j k p
+
+Step 1: i = 0 → 'a'
+
+j = 0 → 'a'
+
+k=0 → a==a ✔
+
+k=1 → b!=c ❌
+Length = 1 → ans = 1
+
+j = 1,2,3,4 → no match
+
+Step 2: i = 1 → 'b'
+
+All j pe mismatch → nothing changes
+
+Step 3: i = 2 → 'c' ⭐ (important)
+
+j = 1 → 'c'
+
+Now while loop:
+
+k	str1[i+k]	str2[j+k]	Match
+0	c	c	✔
+1	j	j	✔
+2	k	k	✔
+3	l	p	❌
+
+Length = 3
+
+ans = 3
+
+Substring found = "cjk"
+
+Step 4: i = 3 → 'j'
+
+j = 2 → 'j'
+
+j==j ✔
+
+k==k ✔
+
+l!=p ❌
+Length = 2 → ans still 3
+
+Baaki sab positions pe chhote matches milte hain (1 or 2)
+🧠 How this code actually works
+
+Har (i, j) ko starting point maana
+
+while loop substring ko forward check karta hai
+
+Mismatch aate hi substring break
+
+Maximum length store karte jaate hain
+
+Ye approach naturally substring ko model karta hai.
+Isliye DP ki zarurat nahi padti.
+
+⏱ Time Complexity
+
+Worst case:
+O(n * m * min(n, m))
+But constraints (≤1000) me chal jaata hai.
+
+🏁 Final Output for example
+3
