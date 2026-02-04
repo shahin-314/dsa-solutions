@@ -1,0 +1,157 @@
+
+
+# 🧩 Length of the Largest Subarray with Continuous Elements
+
+## ✅ Problem Summary
+
+Given an array of **distinct integers**, find the length of the **longest subarray** such that the numbers inside that subarray form a **continuous sequence**.
+
+> Subarray must be **continuous index-wise**
+> Values must be **continuous number-wise**
+
+---
+
+## 🔑 Key Observation (Core Logic)
+
+For any subarray `arr[i … j]` to contain continuous numbers:
+
+```
+max(arr[i..j]) - min(arr[i..j]) == (j - i)
+```
+
+### Why?
+
+If numbers are continuous like: `[5,6,7,8]`
+
+```
+max = 8
+min = 5
+length = 4
+
+8 - 5 = 3 = length - 1
+```
+
+Since elements are **distinct**, this condition is enough to guarantee continuity.
+
+---
+
+## 💻 C++ Implementation (Fully Commented)
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int maxLength(int n, vector<int> &arr){
+
+    // Minimum possible answer is 1,
+    // because a single element is always a valid continuous subarray
+    int ans = 1;
+
+    // Fix the starting point of subarray
+    for(int i = 0; i < n; i++){
+
+        int mini = arr[i];  // smallest element in current window
+        int maxi = arr[i];  // largest element in current window
+
+        // Extend the subarray from i to j
+        for(int j = i + 1; j < n; j++){
+
+            // Update minimum and maximum for this window
+            mini = min(mini, arr[j]);
+            maxi = max(maxi, arr[j]);
+
+            // Check if elements between i and j are continuous
+            // Condition: max - min == window size - 1
+            if(maxi - mini == j - i){
+
+                // Length of subarray = j - i + 1
+                ans = max(ans, j - i + 1);
+            }
+        }
+    }
+
+    return ans;
+}
+```
+
+---
+
+## 🧪 Detailed Dry Run
+
+### Example Input
+
+```
+arr = [14, 12, 11, 20]
+index  0    1    2    3
+```
+
+---
+
+### ▶ i = 0 (start from 14)
+
+| j | Subarray      | mini | maxi | maxi-mini | j-i | Continuous? |
+| - | ------------- | ---- | ---- | --------- | --- | ----------- |
+| 1 | [14,12]       | 12   | 14   | 2         | 1   | ❌           |
+| 2 | [14,12,11]    | 11   | 14   | 3         | 2   | ❌           |
+| 3 | [14,12,11,20] | 11   | 20   | 9         | 3   | ❌           |
+
+No valid subarray from i=0
+
+---
+
+### ▶ i = 1 (start from 12)
+
+| j | Subarray   | mini | maxi | maxi-mini | j-i | Continuous? |
+| - | ---------- | ---- | ---- | --------- | --- | ----------- |
+| 2 | [12,11]    | 11   | 12   | 1         | 1   | ✅           |
+| 3 | [12,11,20] | 11   | 20   | 9         | 2   | ❌           |
+
+Valid subarray: `[12,11]` → length = **2**
+
+`ans = 2`
+
+---
+
+### ▶ i = 2 (start from 11)
+
+| j | Subarray | mini | maxi | maxi-mini | j-i | Continuous? |
+| - | -------- | ---- | ---- | --------- | --- | ----------- |
+| 3 | [11,20]  | 11   | 20   | 9         | 1   | ❌           |
+
+---
+
+### ▶ i = 3
+
+Single element → already counted via `ans = 1`
+
+---
+
+## ✅ Final Answer = **2**
+
+---
+
+## 🧠 Why `ans = 1` initially?
+
+Even if no pair forms a continuous sequence, **any single element** is always valid.
+
+---
+
+## 🧠 Why `j - i + 1`?
+
+Length of subarray formula:
+
+```
+length = ending index - starting index + 1
+```
+
+---
+
+## ⏱ Complexity
+
+| Type  | Value |
+| ----- | ----- |
+| Time  | O(n²) |
+| Space | O(1)  |
+
+Works smoothly for `n ≤ 5000`.
+
